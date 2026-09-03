@@ -3,82 +3,146 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#020711">
   <title>CICE — Teachers' Day</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <!-- Section 1: boxed terminal boot -->
-  <section class="scene boot active">
-    <div class="background-glow"></div>
-    <div class="terminal-window">
-      <div class="terminal-header">
-        <div class="window-buttons">
-          <span></span><span></span><span></span>
+  <!-- Full-screen cinematic sequence. -->
+  <main id="experience">
+
+    <!-- 01 — SYSTEM BOOT -->
+    <section class="scene boot active" data-scene="boot">
+      <div class="background-glow"></div>
+      <div class="terminal-window">
+        <div class="terminal-header">
+          <div class="window-buttons"><span></span><span></span><span></span></div>
+          <div class="terminal-name">CICE TERMINAL</div>
+          <div class="system-name">SYSTEM 01</div>
         </div>
-        <div class="terminal-name">CICE TERMINAL</div>
-        <div class="system-name">SYSTEM 01</div>
+        <div class="terminal-screen">
+          <div id="terminalText"></div>
+          <span id="cursor" class="cursor"></span>
+        </div>
+        <div class="terminal-footer">
+          <span>CICE</span><span>SECURE TERMINAL</span>
+        </div>
       </div>
-      <div class="terminal-screen">
-        <div id="terminalText"></div>
-        <span id="cursor" class="cursor"></span>
-      </div>
-      <div class="terminal-footer">
-        <span>CICE</span>
-        <span>SECURE TERMINAL</span>
-      </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- Section 2: keyboard and greeting -->
-  <section class="scene greeting">
-    <!-- Real QWERTY layout with labelled keys. -->
-    <div class="keyboard" aria-hidden="true">
-      <div class="key-row row-1">
-        <span>Esc</span><span>1</span><span>2</span><span>3</span>
-        <span>4</span><span>5</span><span>6</span><span>7</span>
-        <span>8</span><span>9</span><span>0</span><span>-</span>
-        <span>=</span><span class="wide">Backspace</span>
+    <!-- 02 — THE GREETING -->
+    <section class="scene greeting" data-scene="greeting">
+      <div id="keyboard" class="keyboard" aria-label="QWERTY keyboard">
+        <div class="key-row">
+          <span class="key utility">Esc</span><span class="key" data-key="1">1</span><span class="key" data-key="2">2</span><span class="key" data-key="3">3</span><span class="key" data-key="4">4</span><span class="key" data-key="5">5</span><span class="key" data-key="6">6</span><span class="key" data-key="7">7</span><span class="key" data-key="8">8</span><span class="key" data-key="9">9</span><span class="key" data-key="0">0</span><span class="key">-</span><span class="key">=</span><span class="key wide">Backspace</span>
+        </div>
+        <div class="key-row">
+          <span class="key wide-small">Tab</span><span class="key" data-key="Q">Q</span><span class="key" data-key="W">W</span><span class="key" data-key="E">E</span><span class="key" data-key="R">R</span><span class="key" data-key="T">T</span><span class="key" data-key="Y">Y</span><span class="key" data-key="U">U</span><span class="key" data-key="I">I</span><span class="key" data-key="O">O</span><span class="key" data-key="P">P</span><span class="key">[</span><span class="key">]</span><span class="key">\</span>
+        </div>
+        <div class="key-row">
+          <span class="key wide-small">Caps</span><span class="key" data-key="A">A</span><span class="key" data-key="S">S</span><span class="key" data-key="D">D</span><span class="key" data-key="F">F</span><span class="key" data-key="G">G</span><span class="key" data-key="H">H</span><span class="key" data-key="J">J</span><span class="key" data-key="K">K</span><span class="key" data-key="L">L</span><span class="key">;</span><span class="key" data-key="'">'</span><span class="key wide-small">Enter</span>
+        </div>
+        <div class="key-row">
+          <span class="key wide">Shift</span><span class="key" data-key="Z">Z</span><span class="key" data-key="X">X</span><span class="key" data-key="C">C</span><span class="key" data-key="V">V</span><span class="key" data-key="B">B</span><span class="key" data-key="N">N</span><span class="key" data-key="M">M</span><span class="key">,</span><span class="key">.</span><span class="key">/</span><span class="key wide">Shift</span>
+        </div>
+        <div class="key-row bottom-row">
+          <span class="key utility">Ctrl</span><span class="key utility">Win</span><span class="key utility">Alt</span><span class="key space-key">Space</span><span class="key utility">Alt</span><span class="key utility">Menu</span><span class="key utility">Ctrl</span>
+        </div>
       </div>
-      <div class="key-row row-2">
-        <span class="wide-small">Tab</span><span>Q</span><span>W</span>
-        <span>E</span><span>R</span><span>T</span><span>Y</span>
-        <span>U</span><span>I</span><span>O</span><span>P</span>
-        <span>[</span><span>]</span><span>\</span>
-      </div>
-      <div class="key-row row-3">
-        <span class="wide-small">Caps</span><span>A</span><span>S</span>
-        <span>D</span><span>F</span><span>G</span><span>H</span>
-        <span>J</span><span>K</span><span>L</span><span>;</span>
-        <span>'</span><span class="wide-small">Enter</span>
-      </div>
-      <div class="key-row row-4">
-        <span class="wide">Shift</span><span>Z</span><span>X</span>
-        <span>C</span><span>V</span><span>B</span><span>N</span>
-        <span>M</span><span>,</span><span>.</span><span>/</span>
-        <span class="wide">Shift</span>
-      </div>
-      <div class="key-row row-5">
-        <span class="space-key">Space</span>
-      </div>
-    </div>
 
-    <!-- Greeting deliberately stays at the top. -->
-    <div id="greetingTitle" class="greeting-title">
-      <div class="title-line" id="titleLine1"></div>
-      <div class="title-line" id="titleLine2"></div>
-      <div class="title-line" id="titleLine3"></div>
-    </div>
+      <div class="greeting-title" id="greetingTitle">
+        <div class="title-line" id="titleLine1"></div>
+        <div class="title-line" id="titleLine2"></div>
+        <div class="title-line" id="titleLine3"></div>
+      </div>
 
-    <div class="greeting-copy">
-      <p>Years may pass and lessons may become memories,</p>
-      <p>But the guidance behind them stays with us.</p>
-      <p>Thank You, Sir, for your patience, your encouragement,</p>
-      <p>And for teaching us to never be afraid of trying again.</p>
-    </div>
+      <div class="greeting-copy">
+        <p>Years may pass and lessons may become memories,</p>
+        <p>But the guidance behind them stays with us.</p>
+        <p>Thank You, Sir, for your patience, your encouragement,</p>
+        <p>And for teaching us to never be afraid of trying again.</p>
+      </div>
+      <div id="morePrompt" class="more-prompt"></div>
+    </section>
 
-    <div id="morePrompt" class="more-prompt"></div>
-  </section>
+    <!-- 03 — FOUNDING ARCHIVE -->
+    <section class="scene archive" data-scene="archive">
+      <div class="archive-card">
+        <div id="archiveStatus" class="mono"></div>
+        <div class="archive-progress"><span id="archiveBar"></span></div>
+        <div id="archivePercent" class="mono muted">0%</div>
+        <div id="archiveFound" class="archive-found mono"></div>
+        <div id="originRecord" class="origin-record">
+          <div class="eyebrow">ORIGIN RECORD</div>
+          <div class="origin-year">2016</div>
+          <div class="origin-line">This is where it began.</div>
+        </div>
+      </div>
+    </section>
 
+    <!-- 04 — THE CLASSROOM -->
+    <section class="scene classroom" data-scene="classroom">
+      <div class="photo-stage" id="classroomPhotos"></div>
+      <div class="scene-caption" id="classroomCaption"></div>
+      <div class="time-record" id="timeRecord">
+        <div class="eyebrow">TIME RECORD</div>
+        <div id="timeYear" class="time-year">2016</div>
+        <div id="timeMessage" class="time-message"></div>
+      </div>
+    </section>
+
+    <!-- 05 — THE PEOPLE -->
+    <section class="scene people" data-scene="people">
+      <div class="people-intro">
+        <p>But a classroom is never just a room.</p>
+        <p>It is the people who fill it.</p>
+      </div>
+      <div class="people-stage" id="peopleStage"></div>
+      <div class="scene-caption" id="peopleCaption"></div>
+    </section>
+
+    <!-- 06 — THE TEACHER -->
+    <section class="scene teacher" data-scene="teacher">
+      <div class="teacher-stage" id="teacherStage"></div>
+      <div class="scene-caption" id="teacherCaption"></div>
+      <div class="teacher-closing" id="teacherClosing">
+        <p>And somewhere between the questions and the answers,</p>
+        <p>we learned to find our own way.</p>
+        <div class="closing-gap"></div>
+        <p>Some lessons are taught.</p>
+        <p>Others become a part of who we are.</p>
+      </div>
+    </section>
+
+    <!-- 07 — THE IMPACT -->
+    <section class="scene impact" data-scene="impact">
+      <div class="impact-stage" id="impactStage"></div>
+      <div class="scene-caption" id="impactCaption"></div>
+      <div class="counter-screen" id="counterScreen">
+        <div class="counter" id="studentCounter">0</div>
+      </div>
+    </section>
+
+    <!-- 08 — FINAL MEMORY -->
+    <section class="scene memory" data-scene="memory">
+      <div class="memory-opening" id="memoryOpening">
+        <p>Some things are measured in numbers.</p>
+        <p>Some are remembered in moments.</p>
+      </div>
+      <div class="mosaic" id="mosaic"></div>
+      <div class="poem" id="poem">
+        <p>You lit the spark, we learned to see,</p>
+        <p>You helped us find what we could be.</p>
+        <p>Though years may take us far away,</p>
+        <p>Your lessons walk with us each day.</p>
+      </div>
+      <div class="final-thanks" id="finalThanks">
+        <div>Thank you, Sir.</div>
+        <div>Happy Teachers' Day, Sir.</div>
+      </div>
+    </section>
+
+  </main>
   <script src="script.js"></script>
 </body>
 </html>
