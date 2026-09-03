@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CICE — Teachers' Day</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Section 1: boxed terminal boot -->
+  <section class="scene boot active">
+    <div class="background-glow"></div>
+
+    <div class="terminal-window">
+      <div class="terminal-header">
+        <div class="window-buttons">
+          <span></span><span></span><span></span>
+        </div>
+        <div class="terminal-name">CICE TERMINAL</div>
+        <div class="system-name">SYSTEM 01</div>
+      </div>
+
+      <div class="terminal-screen">
+        <div id="terminalText"></div>
+        <span id="cursor" class="cursor"></span>
+      </div>
+
+      <div class="terminal-footer">
+        <span>CICE</span>
+        <span>SECURE TERMINAL</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 2: greeting -->
+  <section class="scene greeting">
+    <div class="keyboard" aria-hidden="true">
+      <div class="key-row">
+        <span></span><span></span><span></span><span></span><span></span>
+        <span></span><span></span><span></span><span></span><span></span>
+      </div>
+      <div class="key-row">
+        <span></span><span></span><span></span><span></span><span></span>
+        <span></span><span></span><span></span><span></span>
+      </div>
+      <div class="key-row">
+        <span></span><span></span><span></span><span></span><span></span>
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+
+    <div id="greetingTitle" class="greeting-title"></div>
+
+    <div class="greeting-copy">
+      <p>Years may pass and lessons may become memories,</p>
+      <p>But the guidance behind them stays with us.</p>
+      <p>Thank You, Sir, for your patience, your encouragement,</p>
+      <p>And for teaching us to never be afraid of trying again.</p>
+    </div>
+
+    <div id="morePrompt" class="more-prompt"></div>
+  </section>
+
+  <script src="script.js"></script>
+</body>
+</html>
