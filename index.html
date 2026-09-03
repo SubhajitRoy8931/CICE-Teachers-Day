@@ -10,7 +10,6 @@
   <!-- Section 1: boxed terminal boot -->
   <section class="scene boot active">
     <div class="background-glow"></div>
-
     <div class="terminal-window">
       <div class="terminal-header">
         <div class="window-buttons">
@@ -19,12 +18,10 @@
         <div class="terminal-name">CICE TERMINAL</div>
         <div class="system-name">SYSTEM 01</div>
       </div>
-
       <div class="terminal-screen">
         <div id="terminalText"></div>
         <span id="cursor" class="cursor"></span>
       </div>
-
       <div class="terminal-footer">
         <span>CICE</span>
         <span>SECURE TERMINAL</span>
@@ -49,7 +46,12 @@
       </div>
     </div>
 
-    <div id="greetingTitle" class="greeting-title"></div>
+    <!-- Three deliberate lines, not one giant sentence. -->
+    <div id="greetingTitle" class="greeting-title">
+      <div class="title-line" id="titleLine1"></div>
+      <div class="title-line" id="titleLine2"></div>
+      <div class="title-line" id="titleLine3"></div>
+    </div>
 
     <div class="greeting-copy">
       <p>Years may pass and lessons may become memories,</p>
