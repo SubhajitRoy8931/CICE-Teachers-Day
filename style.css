@@ -19,16 +19,19 @@ body{font-family:Inter,"Segoe UI",Arial,sans-serif}
 @keyframes cursor-blink{50%{opacity:0}}
 .terminal-footer{height:42px;flex-shrink:0;display:flex;align-items:center;justify-content:space-between;padding:0 20px;border-top:1px solid rgba(105,137,183,.16);background:rgba(4,13,26,.9);color:rgba(75,105,146,.55);font:9px Consolas,"Courier New",monospace;letter-spacing:.12em}
 .greeting{background:radial-gradient(circle at 50% 18%,#0a1730 0%,#030711 42%,#020307 100%)}
-.keyboard{position:absolute;bottom:9vh;width:min(760px,82vw);height:108px;padding:13px;border:1px solid #31415e;border-radius:16px;background:#0b1220;box-shadow:0 22px 70px #000;transition:transform 1.5s ease,opacity 1.2s ease}
-.keyboard.hide{transform:translateY(160px);opacity:0}
+.keyboard{position:absolute;left:50%;bottom:7vh;transform:translateX(-50%);width:min(760px,82vw);height:108px;padding:13px;border:1px solid #31415e;border-radius:16px;background:#0b1220;box-shadow:0 22px 70px #000;transition:transform 1.5s ease,opacity 1.2s ease}
+.keyboard.hide{transform:translate(-50%,160px);opacity:0}
 .key-row{display:flex;justify-content:center;gap:6px;margin:6px 0}
 .key-row span{display:block;width:8%;height:18px;border:1px solid #293a5a;border-radius:3px;background:#18233a}
-.greeting-title{position:absolute;bottom:24vh;left:50%;width:92vw;transform:translateX(-50%);text-align:center;font-size:clamp(30px,6vw,82px);font-weight:700;letter-spacing:.08em}
-.greeting-letter{display:inline-block;opacity:0;transform:translateY(35px);animation:letter-rise .55s forwards}
+.greeting-title{position:absolute;left:50%;bottom:25vh;transform:translateX(-50%);width:min(1000px,92vw);text-align:center;font-size:clamp(36px,5.8vw,78px);font-weight:750;line-height:.96;letter-spacing:.09em}
+.title-line{display:block;min-height:1em;white-space:nowrap}
+.title-line:nth-child(2){font-size:.9em}
+.title-line:nth-child(3){font-size:.82em}
+.greeting-letter{display:inline-block;opacity:0;transform:translateY(42px);animation:letter-rise .7s cubic-bezier(.2,.8,.2,1) forwards}
 @keyframes letter-rise{to{opacity:1;transform:translateY(0)}}
-.greeting-copy{position:absolute;top:25vh;width:min(900px,88vw);text-align:center;font-size:clamp(16px,2vw,23px);line-height:1.7}
+.greeting-copy{position:absolute;top:10vh;width:min(900px,88vw);text-align:center;font-size:clamp(16px,1.75vw,22px);line-height:1.65}
 .greeting-copy p{margin:0;opacity:0;transform:translateY(12px);transition:opacity .9s ease,transform .9s ease}
 .greeting-copy p.show{opacity:1;transform:none}
-.more-prompt{position:absolute;bottom:7vh;min-height:1.5em;color:#cbd5eb;font:18px Consolas,"Courier New",monospace}
-@media(max-width:700px){.terminal-window{width:92vw;height:58vh;min-height:350px}.terminal-header{height:55px}.terminal-name{font-size:11px}.system-name{display:none}.terminal-screen{padding:35px 25px}#terminalText{font-size:15px;line-height:1.9}.terminal-footer{height:38px}.greeting-title{width:90vw}.greeting-copy{top:15vh}}
-@media(max-height:600px){.terminal-window{height:78vh}}
+.more-prompt{position:absolute;bottom:5vh;min-height:1.5em;color:#cbd5eb;font:17px Consolas,"Courier New",monospace}
+@media(max-width:700px){.terminal-window{width:92vw;height:58vh;min-height:350px}.terminal-header{height:55px}.terminal-name{font-size:11px}.system-name{display:none}.terminal-screen{padding:35px 25px}#terminalText{font-size:15px;line-height:1.9}.terminal-footer{height:38px}.greeting-title{bottom:23vh;font-size:clamp(30px,9vw,58px)}.greeting-copy{top:9vh;width:92vw;font-size:15px;line-height:1.55}.keyboard{width:88vw;height:94px;bottom:6vh}}
+@media(max-height:600px){.terminal-window{height:78vh}.greeting-copy{top:5vh}.greeting-title{bottom:20vh}}
