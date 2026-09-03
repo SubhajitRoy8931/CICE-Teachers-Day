@@ -37,7 +37,6 @@ async function boot(){
     "command",
     85
   );
-
   await wait(1600);
   await blankLine();
 
@@ -46,7 +45,6 @@ async function boot(){
     "boot-line",
     120
   );
-
   await wait(2200);
 
   await typeLine(
@@ -54,7 +52,6 @@ async function boot(){
     "detected",
     120
   );
-
   await wait(2800);
   await blankLine();
 
@@ -63,7 +60,6 @@ async function boot(){
     "boot-line",
     120
   );
-
   await wait(2300);
 
   await typeLine(
@@ -71,65 +67,78 @@ async function boot(){
     "ready",
     125
   );
-
   await wait(4000);
 
   cursor.style.display="none";
-
   showScene(1);
   await greeting();
 }
 
-async function greeting(){
-  const title=document.querySelector("#greetingTitle");
-  const words=["HAPPY","TEACHERS'","DAY","SIR"];
+/* Form the approved three-line greeting. */
+async function buildTitleLine(id,text){
+  const line=document.querySelector(id);
 
-  for(const word of words){
-    for(const letter of word){
-      const span=document.createElement("span");
-      span.className="greeting-letter";
-      span.textContent=letter;
-      title.appendChild(span);
-      await wait(90);
-    }
-
-    const space=document.createElement("span");
-    space.innerHTML="&nbsp;";
-    title.appendChild(space);
-
-    await wait(350);
+  for(const character of text){
+    const span=document.createElement("span");
+    span.className="greeting-letter";
+    span.textContent=character;
+    line.appendChild(span);
+    await wait(90);
   }
+}
 
-  await wait(750);
+async function greeting(){
+  /* Keyboard is visible before any letters are formed. */
+  await wait(1000);
 
+  /* Letters rise from the keyboard and settle in three lines. */
+  await buildTitleLine(
+    "#titleLine1",
+    "HAPPY"
+  );
+  await wait(300);
+
+  await buildTitleLine(
+    "#titleLine2",
+    "TEACHERS'"
+  );
+  await wait(300);
+
+  await buildTitleLine(
+    "#titleLine3",
+    "DAY SIR"
+  );
+
+  await wait(900);
+
+  /* Keep the formed greeting fixed while keyboard leaves. */
   document
     .querySelector(".keyboard")
     .classList.add("hide");
 
-  await wait(900);
+  await wait(1600);
 
-  const lines=
-    document.querySelectorAll(
-      ".greeting-copy p"
-    );
+  /* Reveal the four approved lines one by one. */
+  const lines=document.querySelectorAll(
+    ".greeting-copy p"
+  );
 
   for(const line of lines){
     line.classList.add("show");
     await wait(900);
   }
 
-  /* Required ten-second pause. */
+  /* Approved ten-second pause. */
   await wait(10000);
 
-  const prompt=
-    document.querySelector(
-      "#morePrompt"
-    );
+  const prompt=document.querySelector(
+    "#morePrompt"
+  );
 
-  for(
-    const character of
-    "There is something more →"
-  ){
+  prompt.textContent="";
+
+  for(const character of
+    "There is something more →"){
     prompt.textContent+=character;
     await wait(65);
   }
@@ -143,19 +152,10 @@ document.addEventListener(
       event.code==="ArrowRight"
     ){
       event.preventDefault();
-      if(!running){
-        running=true;
-        if(current===0){
-          showScene(1);
-          greeting().finally(
-            ()=>running=false
-          );
-        }
-      }
     }
   }
 );
 
-/* Start with the boxed terminal. */
+/* Start automatically with Section 1. */
 showScene(0);
 boot();
