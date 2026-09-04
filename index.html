@@ -235,5 +235,63 @@
 
   <!-- All interaction and animation lives in script.js. -->
   <script src="script.js"></script>
+
+  <!-- Small archive-only override; all other website logic stays untouched. -->
+  <script>
+    window.archive = async function archive() {
+      const bar = document.querySelector('#archiveBar');
+      const percent = document.querySelector('#archivePercent');
+      const found = document.querySelector('#archiveFound');
+      const origin = document.querySelector('#originRecord');
+      const year = document.querySelector('.origin-year');
+      const line = document.querySelector('.origin-line');
+
+      document.querySelector('#archiveStatus').textContent =
+        'Searching archives...';
+
+      // Animate the archive scan from 0 to 100 percent.
+      for (let n = 0; n <= 100; n += 2) {
+        bar.style.width = `${n}%`;
+        percent.textContent = `${n}%`;
+        await wait(28);
+      }
+
+      await wait(450);
+
+      found.textContent = 'Archive found.';
+
+      await wait(900);
+
+      // Keep the year and closing line hidden until their sequence begins.
+      year.textContent = '';
+      line.textContent = '';
+
+      origin.classList.add('show');
+
+      await wait(500);
+
+      // Reveal the founding year one part at a time.
+      year.textContent = '2';
+      await wait(450);
+
+      year.textContent = '20';
+      await wait(450);
+
+      year.textContent = '201';
+      await wait(450);
+
+      year.textContent = '2016';
+
+      // Only show the sentence after 2016 is completely visible.
+      await wait(250);
+      line.textContent = 'This is when it all began.';
+
+      await wait(2500);
+
+      // Continue to the classroom.
+      showScene(3);
+      await classroom();
+    };
+  </script>
 </body>
 </html>
