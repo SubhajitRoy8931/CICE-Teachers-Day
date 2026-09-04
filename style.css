@@ -69,10 +69,14 @@
 
 /* Replace the generic label with the story's opening sentence. */
 .time-record .eyebrow {
+  width: 100% !important;
+  text-align: center !important;
   color: transparent !important;
   font-size: clamp(18px, 2.2vw, 28px) !important;
   letter-spacing: 0.01em !important;
   text-transform: none !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
 }
 
 .time-record .eyebrow::after {
