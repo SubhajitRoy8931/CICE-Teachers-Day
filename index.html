@@ -116,6 +116,7 @@
       opacity: 1;
       visibility: visible;
       transform: translate(-50%, -50%) scale(2.35);
+      z-index: 6;
     }
 
     .door-room img {
@@ -148,11 +149,11 @@
       filter: blur(20px);
       pointer-events: none;
       transition: opacity 3.3s ease, transform 3.3s ease;
-      z-index: 4;
+      z-index: 1;
       mix-blend-mode: screen;
     }
 
-    /* The glow becomes overwhelming as the door opens. */
+    /* The glow stays behind the opaque door. */
     .physical-doorway.door-opening .door-warm-light {
       opacity: 1;
       transform: translate(-50%, -50%) scale(1.18);
@@ -178,7 +179,7 @@
       filter: blur(12px);
       opacity: 1;
       pointer-events: none;
-      z-index: 4;
+      z-index: 2;
       animation: heavenlyPulse 1.05s ease-in-out infinite alternate;
     }
 
