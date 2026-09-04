@@ -143,6 +143,60 @@
     </section>
 
   </main>
+
   <script src="script.js"></script>
+
+  <!-- Keep the existing storyboard code, but map the uploaded JPG filenames. -->
+  <script>
+    (() => {
+      const originalMakePhoto = window.makePhoto;
+
+      if (!originalMakePhoto) return;
+
+      const uploaded = {
+        '01 — Empty old classroom with laptop.png':
+          '02 — Empty old classroom with laptop.jpg',
+        '02 — Old computer workstation.png':
+          '03 — Old computer workstation.jpg',
+        '05 — Students attending class in old classroom(2).png':
+          '05 — Students attending class in old classroom(2).jpg',
+        '01 — Teacher teaching in old classroom(2).png':
+          '01 — Teacher teaching in old classroom(2).jpg',
+        '06 — Sir teaching with projector in old classroom(2).png':
+          '06 — Sir teaching with projector in old classroom(2).jpg',
+        '14 — Student batch, mixed group(1).png':
+          '14 — Student batch, mixed group(1).jpg',
+        '16 — Medium student batch, newer classroom(1).jpg':
+          '16 — Medium student batch, newer classroom(1).jpg',
+        '18 — Sir addressing a class(2).png':
+          '18 — Sir addressing a class(2).jpg',
+        '21 — Sir teaching with projector(2).webp':
+          '21 — Sir teaching with projector(2).jpg',
+        '31 — Large classroom actively working(1).jpeg':
+          '31 — Large classroom actively working(1).jpg',
+        'Career Infotech Certificate Ceremony Collage.png':
+          'Career Infotech Certificate Ceremony Collage.jpg',
+        '32 — Large certificate group with Sir(1).jpg':
+          '32 — Large certificate group with Sir(1).jpg'
+      };
+
+      window.makePhoto = function(stage, name, caption = '') {
+        let actualName = uploaded[name] || name;
+
+        if (stage && stage.id === 'teacherStage') {
+          if (name === '08 — Sir teaching seated classroom.png') {
+            actualName = '19 — Sir helping students at computers.jpg';
+          }
+
+          if (name ===
+              '05 — Students attending class in old classroom(2).png') {
+            actualName = '20 — Students practicing on computers.jpg';
+          }
+        }
+
+        return originalMakePhoto(stage, actualName, caption);
+      };
+    })();
+  </script>
 </body>
 </html>
