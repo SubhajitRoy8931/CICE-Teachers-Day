@@ -537,11 +537,11 @@ const memoryPrefix =
   'WhatsApp Image 2026-09-04 at 11.54.05 AM';
 
 
-// Build filenames from 1 through 50 inside the memory folder.
+// Build filenames from 1 through 50.
 assets.memory = Array.from(
   { length: 50 },
   (_, index) =>
-    `memory/${memoryPrefix} (${index + 1}).jpeg`
+    `${memoryPrefix} (${index + 1}).jpeg`
 );
 
 
@@ -613,7 +613,7 @@ async function classroom() {
     await wait(900);
   }
 
-  /* -------------------- PASSAGE OF YEARS -------------------- */
+  /* -------------------- TIME RECORD -------------------- */
 
   const record = document.querySelector('#timeRecord');
   const year = document.querySelector('#timeYear');
@@ -621,7 +621,6 @@ async function classroom() {
 
   record.classList.add('show');
 
-  // Give the opening sentence time to settle before the years begin.
   await wait(1700);
 
   year.textContent = '2016';
@@ -644,10 +643,9 @@ async function classroom() {
 
   year.textContent = '2026';
 
-  // Hold the completed decade before revealing the story's next thought.
   await wait(1600);
 
-  message.textContent = 'And along the way, lives were shaped.';
+  message.textContent = 'Years passed.';
 
   await wait(2200);
 
@@ -670,18 +668,18 @@ async function people() {
 
   const captions = [
     'Different faces.',
-    'Different journeys.'
+    'Different beginnings.'
   ];
+
+  stage.innerHTML = '';
 
   intro.classList.add('show');
 
-  await wait(2600);
+  await wait(2800);
 
   intro.classList.remove('show');
 
-  await wait(800);
-
-  stage.innerHTML = '';
+  await wait(700);
 
   for (
     let i = 0;
@@ -699,13 +697,22 @@ async function people() {
     card.classList.add('show');
     caption.classList.add('show');
 
-    await wait(3800);
+    await wait(3600);
 
     card.classList.remove('show');
     caption.classList.remove('show');
 
-    await wait(900);
+    await wait(800);
   }
+
+  caption.textContent =
+    'And these were only a few of them.';
+
+  caption.classList.add('show');
+
+  await wait(1800);
+
+  caption.classList.remove('show');
 
   showScene(5);
   await teacher();
@@ -713,21 +720,20 @@ async function people() {
 
 
 /* =========================================================
-   06 — THE TEACHER
+   06 — TEACHER
    ========================================================= */
 
 async function teacher() {
 
+  const captions = [
+    'At the front of the room, a path begins.',
+    'Where questions meet a patient guide.',
+    'Where knowledge leaves the page and finds its hands.',
+    'Where even the difficult finds a way to become clear.'
+  ];
+
   const stage = document.querySelector('#teacherStage');
   const caption = document.querySelector('#teacherCaption');
-  const closing = document.querySelector('#teacherClosing');
-
-  const captions = [
-    'A teacher does more than teach.',
-    'He notices when we struggle.',
-    'He stays when the answer is difficult.',
-    'And he keeps asking us to try again.'
-  ];
 
   stage.innerHTML = '';
 
@@ -752,14 +758,18 @@ async function teacher() {
     card.classList.remove('show');
     caption.classList.remove('show');
 
-    await wait(900);
+    await wait(850);
   }
+
+  const closing = document.querySelector('#teacherClosing');
 
   closing.classList.add('show');
 
-  await wait(7000);
+  await wait(5000);
 
   closing.classList.remove('show');
+
+  await wait(800);
 
   showScene(6);
   await impact();
@@ -767,21 +777,24 @@ async function teacher() {
 
 
 /* =========================================================
-   07 — THE IMPACT
+   07 — IMPACT
    ========================================================= */
 
 async function impact() {
 
+  const captions = [
+    [
+      'And then, we begin to use what we learned.'
+    ],
+    [
+      'One step becomes a milestone.',
+      'A milestone becomes a new beginning.'
+    ],
+    []
+  ];
+
   const stage = document.querySelector('#impactStage');
   const caption = document.querySelector('#impactCaption');
-  const counterScreen = document.querySelector('#counterScreen');
-  const counter = document.querySelector('#studentCounter');
-
-  const captions = [
-    'A classroom became a community.',
-    'Learning became confidence.',
-    'And the journey kept growing.'
-  ];
 
   stage.innerHTML = '';
 
@@ -793,15 +806,18 @@ async function impact() {
     const card = makePhoto(
       stage,
       assets.impact[i],
-      captions[i]
+      captions[i].join(' ')
     );
 
-    caption.textContent = captions[i];
+    caption.innerHTML = captions[i].join('<br>');
 
     card.classList.add('show');
-    caption.classList.add('show');
 
-    await wait(4000);
+    if (captions[i].length > 0) {
+      caption.classList.add('show');
+    }
+
+    await wait(i === 2 ? 4200 : 3800);
 
     card.classList.remove('show');
     caption.classList.remove('show');
@@ -809,18 +825,48 @@ async function impact() {
     await wait(900);
   }
 
-  counterScreen.classList.add('show');
+  /* -------------------- STUDENT COUNTER -------------------- */
 
-  for (let n = 0; n <= 1000; n += 25) {
-    counter.textContent = n;
-    await wait(28);
+  const screen = document.querySelector('#counterScreen');
+  const counter = document.querySelector('#studentCounter');
+
+  screen.classList.add('show');
+
+  const start = performance.now();
+  const duration = 6000;
+
+  // Count from 0 to 3000+ over six seconds.
+  while (performance.now() - start < duration) {
+    const progress =
+      (performance.now() - start) / duration;
+
+    let eased;
+
+    if (progress < 0.15) {
+      eased =
+        0.12 *
+        Math.pow(progress / 0.15, 1.5);
+    } else {
+      eased =
+        0.12 +
+        0.88 *
+        Math.pow(
+          (progress - 0.15) / 0.85,
+          1.7
+        );
+    }
+
+    counter.textContent =
+      Math.floor(3000 * eased).toLocaleString();
+
+    await wait(20);
   }
 
-  counter.textContent = '1000+';
+  counter.textContent = '3000+';
 
-  await wait(3200);
+  await wait(2200);
 
-  counterScreen.classList.remove('show');
+  screen.classList.remove('show');
 
   showScene(7);
   await memory();
