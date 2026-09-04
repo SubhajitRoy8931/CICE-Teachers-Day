@@ -163,25 +163,20 @@
     <!-- 06 — THE TEACHER -->
     <section class="scene teacher" data-scene="teacher">
       <!-- Transition from Section 05 to Section 06. -->
-<div class="teacher-transition" id="teacherTransition">
-
-  <div class="teacher-transition-line">
-    But behind every beginning,
-  </div>
-
-  <div class="teacher-transition-line">
-    there was someone.
-  </div>
-
-</div>
+      <div class="teacher-transition" id="teacherTransition">
+        <div class="teacher-transition-line">
+          But behind every beginning,
+        </div>
+        <div class="teacher-transition-line">
+          there was someone.
+        </div>
+      </div>
       <div class="teacher-stage" id="teacherStage"></div>
       <div class="scene-caption" id="teacherCaption"></div>
       <div class="teacher-closing" id="teacherClosing">
         <p>And somewhere between the questions and the answers,</p>
         <p>we learned to find our own way.</p>
-        <div class="closing-gap">
-          
-        </div>
+        <div class="closing-gap"></div>
         <p>Some lessons are taught.</p>
         <p>Others become a part of who we are.</p>
       </div>
@@ -216,7 +211,8 @@
     </section>
   </main>
 
-  <script src="script.js"></script>
+  <!-- Cache-busted so GitHub Pages cannot keep an older script.js. -->
+  <script src="script.js?v=20260904"></script>
 
   <!-- Small archive-only override; all other website logic stays untouched. -->
   <script>
@@ -303,7 +299,7 @@
     };
   </script>
 
-  <!-- Fix Section 05 so it no longer depends on the removed intro element. -->
+  <!-- Section 05 ends directly after the student images. -->
   <script>
     window.people = async function people() {
       const stage = document.querySelector('#peopleStage');
@@ -324,51 +320,9 @@
         await wait(800);
       }
 
-      caption.textContent = 'And these were only a few of them.';
-      caption.classList.add('show');
-      await wait(1800);
-      caption.classList.remove('show');
-
-     // Move into Section 06.
-showScene(5);
-
-// Get the transition elements.
-const transition =
-  document.querySelector('#teacherTransition');
-
-const lines =
-  transition.querySelectorAll('.teacher-transition-line');
-
-// Show the transition.
-transition.classList.add('show');
-
-await wait(600);
-
-// Show the first line.
-lines[0].classList.add('show');
-
-await wait(1200);
-
-// Show the second line.
-lines[1].classList.add('show');
-
-await wait(2200);
-
-// Fade the transition away.
-transition.classList.add('exit');
-
-await wait(900);
-
-// Clean up the transition.
-transition.classList.remove('show');
-transition.classList.remove('exit');
-
-lines.forEach(line => {
-  line.classList.remove('show');
-});
-
-// Now begin the teacher section.
-await teacher();
+      // Move directly into Section 06.
+      showScene(5);
+      await teacher();
     };
   </script>
 
@@ -378,57 +332,32 @@ await teacher();
     .time-message-top {margin:0 0 8px;}
     .time-message-bottom {margin:8px 0 0;}
     /* Section 05 → Section 06 transition. */
-
-.teacher-transition {
-  position: absolute;
-  inset: 0;
-
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-
-  gap: 0.35rem;
-
-  background: #020307;
-
-  opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
-
-  transition: opacity 0.9s ease;
-
-  z-index: 20;
-}
-
-.teacher-transition.show {
-  opacity: 1;
-  visibility: visible;
-}
-
-.teacher-transition.exit {
-  opacity: 0;
-}
-
-.teacher-transition-line {
-  opacity: 0;
-
-  transform: translateY(14px);
-
-  font-size: clamp(23px, 3vw, 42px);
-  line-height: 1.45;
-
-  text-align: center;
-
-  transition:
-    opacity 0.8s ease,
-    transform 0.8s ease;
-}
-
-.teacher-transition-line.show {
-  opacity: 1;
-  transform: none;
-}
+    .teacher-transition {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.35rem;
+      background: #020307;
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transition: opacity 0.9s ease;
+      z-index: 20;
+    }
+    .teacher-transition.show {opacity: 1;visibility: visible;}
+    .teacher-transition.exit {opacity: 0;}
+    .teacher-transition-line {
+      opacity: 0;
+      transform: translateY(14px);
+      font-size: clamp(23px, 3vw, 42px);
+      line-height: 1.45;
+      text-align: center;
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+    .teacher-transition-line.show {opacity: 1;transform: none;}
   </style>
 </body>
 </html>
