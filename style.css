@@ -8,11 +8,25 @@
   left: 50% !important;
   top: 47.5% !important;
   transform: translate(-50%, -50%) !important;
+  background: transparent !important;
 }
 
 /* Keep the classroom image completely out of the door section. */
 .door-room {
   display: none !important;
+}
+
+/* The sliding front panels stay completely opaque. */
+.sliding-door-panel {
+  opacity: 1 !important;
+  background: linear-gradient(
+    90deg,
+    #08090a 0%,
+    #17191b 18%,
+    #25282b 50%,
+    #151719 82%,
+    #090a0b 100%
+  ) !important;
 }
 
 /* Simple bright glow in the same footprint as the classroom area. */
@@ -43,7 +57,7 @@
   opacity: 0.82 !important;
 }
 
-/* Let the glow show through after the door panels slide away. */
+/* The area revealed behind the panels stays fully transparent. */
 .physical-door.open {
   transform: translate(-50%, -50%) !important;
   background: transparent !important;
