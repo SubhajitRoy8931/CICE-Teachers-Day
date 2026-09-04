@@ -65,6 +65,31 @@
   box-shadow: none !important;
 }
 
+/* -------------------- PASSAGE OF YEARS -------------------- */
+
+/* Replace the generic label with the story's opening sentence. */
+.time-record .eyebrow {
+  color: transparent !important;
+  font-size: clamp(18px, 2.2vw, 28px) !important;
+  letter-spacing: 0.01em !important;
+  text-transform: none !important;
+}
+
+.time-record .eyebrow::after {
+  content: "And then, the years began to pass.";
+  color: #cbd5e7;
+}
+
+/* Give the final story line enough visual weight to land before PEOPLE. */
+.time-record .time-message {
+  width: min(900px, 88vw);
+  text-align: center;
+  color: #cbd5e7;
+  font-size: clamp(18px, 2.2vw, 28px);
+  line-height: 1.5;
+  letter-spacing: 0.01em;
+}
+
 /* Remove the old sharp/heavenly secondary glow. */
 .physical-doorway.door-opening::after {
   display: none !important;
