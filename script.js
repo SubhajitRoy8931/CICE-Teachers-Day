@@ -330,10 +330,8 @@ async function archive() {
   const found = document.querySelector('#archiveFound');
   const origin = document.querySelector('#originRecord');
 
-
   document.querySelector('#archiveStatus').textContent =
     'Searching founding archives...';
-
 
   // Animate the archive scan from 0 to 100 percent.
   for (let n = 0; n <= 100; n += 2) {
@@ -351,7 +349,6 @@ async function archive() {
   origin.classList.add('show');
 
   await wait(3200);
-
 
   // Continue to the classroom.
   showScene(3);
@@ -395,19 +392,8 @@ const assets = {
     '32 — Large certificate group with Sir(1).jpg'
   ],
 
-  // Section 8 fallback list.
-  // GitHub normally discovers all memory files automatically.
-  memory: [
-    '#CICE_Computer_Institute_Halakura✅ Picnic 2023.✅To Lal Jhamela Basti(WB).✅ Beautiful moments th.webp',
-    '01 — Teacher teaching in old classroom(2).jpg',
-    '02 — Empty old classroom with laptop.jpg',
-    '03 — Old computer workstation.jpg',
-    '05 — Students attending class in old classroom(2).jpg',
-    '06 — Sir teaching with projector in old classroom(2).jpg',
-    '07 — Large class watching projector.png',
-    '08 — Sir teaching seated classroom.png',
-    '09 — Large student batch, colorful classroom.png'
-  ]
+  // Section 8 uses the 50 renamed JPEG files.
+  memory: []
 };
 
 
@@ -419,84 +405,19 @@ function imagePath(name) {
 }
 
 
-// GitHub repository used for memory discovery.
-const memoryRepo =
-  'SubhajitRoy8931/CICE-Teachers-Day';
+/* -------------------- MEMORY FILENAMES -------------------- */
 
-const memoryBranch = 'main';
-
-
-// Direct raw GitHub path for memory images.
-function memoryRawPath(name) {
-  return (
-    'https://raw.githubusercontent.com/' +
-    `${memoryRepo}/` +
-    `${memoryBranch}/` +
-    'assets/memory/' +
-    encodeURIComponent(name)
-  );
-}
+// All memory photos share this exact WhatsApp filename prefix.
+const memoryPrefix =
+  'WhatsApp Image 2026-09-04 at 11.54.05 AM';
 
 
-// GitHub Pages path used only as a fallback.
-function memoryPagePath(name) {
-  return (
-    'assets/memory/' +
-    encodeURIComponent(name)
-  );
-}
-
-
-/* -------------------- MEMORY DISCOVERY -------------------- */
-
-// Ask GitHub for every file in assets/memory/.
-async function discoverMemoryImages() {
-
-  const apiUrl =
-    `https://api.github.com/repos/${memoryRepo}` +
-    `/contents/assets/memory?ref=${memoryBranch}`;
-
-  try {
-    const response = await fetch(apiUrl, {
-      cache: 'no-store'
-    });
-
-    if (!response.ok) {
-      throw new Error(
-        `GitHub returned ${response.status}.`
-      );
-    }
-
-    const files = await response.json();
-
-    if (!Array.isArray(files)) {
-      throw new Error(
-        'GitHub returned an unexpected folder response.'
-      );
-    }
-
-    const images = files
-      .filter(file => file.type === 'file')
-      .filter(file =>
-        /\.(jpe?g|png|webp)$/i.test(file.name)
-      )
-      .map(file => file.name);
-
-    if (images.length > 0) {
-      assets.memory = images;
-    }
-
-    console.info(
-      `Memory images found: ${assets.memory.length}`
-    );
-
-  } catch (error) {
-    console.warn(
-      'Memory discovery failed. Using fallback images.',
-      error
-    );
-  }
-}
+// Build the 50 filenames in numeric order.
+assets.memory = Array.from(
+  { length: 50 },
+  (_, index) =>
+    `${memoryPrefix} (${index + 1}).jpeg`
+);
 
 
 /* -------------------- NORMAL PHOTO CREATION -------------------- */
@@ -882,7 +803,6 @@ function createMemoryPhoto(name, index, mosaic) {
   img.className = 'mosaic-photo';
   img.alt = 'CICE memory';
 
-
   // Starting point for the flying animation.
   img.style.setProperty(
     '--sx',
@@ -893,7 +813,6 @@ function createMemoryPhoto(name, index, mosaic) {
     '--sy',
     `${45 + (index % 4) * 7}%`
   );
-
 
   // Final mosaic position.
   img.style.setProperty(
@@ -917,46 +836,39 @@ function createMemoryPhoto(name, index, mosaic) {
 }
 
 
-// Load one memory image reliably.
-// Raw GitHub is tried first because it handles
-// unusual filenames very reliably.
+// Load one memory image from GitHub Pages.
 function loadMemoryPhoto(img, name) {
 
   return new Promise(resolve => {
 
     let finished = false;
 
+    // Prevent a failed network request from stopping Section 8.
+    const timeout = setTimeout(() => {
+      finish(false);
+    }, 12000);
+
     // Finish only once.
     const finish = success => {
       if (finished) return;
       finished = true;
+      clearTimeout(timeout);
       resolve(success);
     };
 
-
-    // Reveal the image only after it really loads.
+    // Reveal only after the image really loads.
     img.addEventListener('load', () => {
       finish(true);
     }, { once: true });
 
-
-    // If raw GitHub fails, try GitHub Pages once.
+    // Hide an image that could not be loaded.
     img.addEventListener('error', () => {
-
-      if (img.dataset.fallback !== 'used') {
-        img.dataset.fallback = 'used';
-        img.src = memoryPagePath(name);
-        return;
-      }
-
       img.classList.add('asset-missing');
       finish(false);
+    }, { once: true });
 
-    }, { once: false });
-
-
-    // Start the first request.
-    img.src = memoryRawPath(name);
+    // Start the request using the encoded relative path.
+    img.src = `assets/memory/${encodeURIComponent(name)}`;
   });
 }
 
@@ -968,7 +880,7 @@ async function revealMemoryPhoto(img, index) {
 
   await wait(delay);
 
-  // Do not reveal an image that failed both URLs.
+  // Do not reveal an image that failed to load.
   if (img.classList.contains('asset-missing')) {
     return;
   }
@@ -985,19 +897,11 @@ async function memory() {
   const poem = document.querySelector('#poem');
   const thanks = document.querySelector('#finalThanks');
 
-
   // Reset the section.
   mosaic.innerHTML = '';
   poem.classList.remove('show');
   thanks.classList.remove('show');
   opening.classList.remove('hide');
-
-
-  /* -------------------- FIND ALL MEMORY IMAGES -------------------- */
-
-  // This replaces the old hard-coded nine-image limitation.
-  await discoverMemoryImages();
-
 
   /* -------------------- OPENING TEXT -------------------- */
 
@@ -1006,7 +910,6 @@ async function memory() {
   opening.classList.add('hide');
 
   await wait(1300);
-
 
   /* -------------------- CREATE AND LOAD PHOTOS -------------------- */
 
@@ -1024,8 +927,7 @@ async function memory() {
     };
   });
 
-
-  // Load all files in parallel.
+  // Load all 50 files in parallel.
   await Promise.all(
     images.map(item =>
       loadMemoryPhoto(
@@ -1034,7 +936,6 @@ async function memory() {
       )
     )
   );
-
 
   /* -------------------- BUILD THE MOSAIC -------------------- */
 
@@ -1048,10 +949,8 @@ async function memory() {
     )
   );
 
-
   // Give the completed mosaic time to settle.
   await wait(3200);
-
 
   /* -------------------- POEM -------------------- */
 
@@ -1060,7 +959,6 @@ async function memory() {
   await wait(5200);
 
   poem.classList.remove('show');
-
 
   /* -------------------- FINAL THANK YOU -------------------- */
 
