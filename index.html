@@ -9,7 +9,6 @@
 
   <!-- Door transition styling. -->
   <style>
-    /* The archive transition covers the archive scene. */
     .door-transition {
       position: absolute;
       inset: 0;
@@ -28,7 +27,6 @@
       visibility: visible;
     }
 
-    /* Automatic CICE access screen. */
     .door-access {
       position: absolute;
       inset: 0;
@@ -83,7 +81,6 @@
       letter-spacing: .13em;
     }
 
-    /* The physical doorway appears after authentication. */
     .physical-doorway {
       position: absolute;
       inset: 0;
@@ -128,7 +125,6 @@
       pointer-events: none;
     }
 
-    /* The door is a real-looking surface covering the classroom. */
     .physical-door {
       position: absolute;
       left: 50%;
@@ -163,7 +159,6 @@
       border: 1px solid #ffffff08;
     }
 
-    /* Simple physical lock/handle. */
     .physical-lock {
       position: absolute;
       right: 11%;
@@ -223,31 +218,24 @@
   </style>
 </head>
 <body>
-  <!-- Full-screen cinematic sequence. -->
   <main id="experience">
 
     <!-- 01 — SYSTEM BOOT -->
     <section class="scene boot active" data-scene="boot">
       <div class="background-glow"></div>
-
       <div class="terminal-window">
         <div class="terminal-header">
           <div class="window-buttons">
-            <span></span>
-            <span></span>
-            <span></span>
+            <span></span><span></span><span></span>
           </div>
           <div class="terminal-name">CICE TERMINAL</div>
           <div class="system-name">SYSTEM 01</div>
         </div>
-
         <div class="terminal-screen">
           <div id="terminalText"></div>
         </div>
-
         <div class="terminal-footer">
-          <span>CICE</span>
-          <span>SECURE TERMINAL</span>
+          <span>CICE</span><span>SECURE TERMINAL</span>
         </div>
       </div>
     </section>
@@ -262,8 +250,7 @@
           <span class="key" data-key="5">5</span><span class="key" data-key="6">6</span>
           <span class="key" data-key="7">7</span><span class="key" data-key="8">8</span>
           <span class="key" data-key="9">9</span><span class="key" data-key="0">0</span>
-          <span class="key">-</span><span class="key">=</span>
-          <span class="key wide">Backspace</span>
+          <span class="key">-</span><span class="key">=</span><span class="key wide">Backspace</span>
         </div>
         <div class="key-row">
           <span class="key wide-small">Tab</span>
@@ -294,8 +281,7 @@
         <div class="key-row bottom-row">
           <span class="key utility">Ctrl</span><span class="key utility">Win</span>
           <span class="key utility">Alt</span><span class="key space-key">Space</span>
-          <span class="key utility">Alt</span><span class="key utility">Menu</span>
-          <span class="key utility">Ctrl</span>
+          <span class="key utility">Alt</span><span class="key utility">Menu</span><span class="key utility">Ctrl</span>
         </div>
       </div>
 
@@ -304,14 +290,12 @@
         <div class="title-line" id="titleLine2"></div>
         <div class="title-line" id="titleLine3"></div>
       </div>
-
       <div class="greeting-copy">
         <p>Years may pass and lessons may become memories,</p>
         <p>But the guidance behind them stays with us.</p>
         <p>Thank You, Sir, for your patience, your encouragement,</p>
         <p>And for teaching us to never be afraid of trying again.</p>
       </div>
-
       <div id="morePrompt" class="more-prompt"></div>
     </section>
 
@@ -319,12 +303,9 @@
     <section class="scene archive" data-scene="archive">
       <div class="archive-card" id="archiveCard">
         <div id="archiveStatus" class="mono"></div>
-        <div class="archive-progress">
-          <span id="archiveBar"></span>
-        </div>
+        <div class="archive-progress"><span id="archiveBar"></span></div>
         <div id="archivePercent" class="mono muted">0%</div>
         <div id="archiveFound" class="archive-found mono"></div>
-
         <div id="originRecord" class="origin-record">
           <div class="eyebrow">ORIGIN RECORD</div>
           <div class="origin-year">2016</div>
@@ -339,10 +320,8 @@
             <div class="door-access-title">CICE ARCHIVE</div>
             <div class="door-access-label">AUTHENTICATING ACCESS CODE</div>
             <div class="door-code">
-              <span id="doorCode1"></span>
-              <span id="doorCode2"></span>
-              <span id="doorCode3"></span>
-              <span id="doorCode4"></span>
+              <span id="doorCode1"></span><span id="doorCode2"></span>
+              <span id="doorCode3"></span><span id="doorCode4"></span>
             </div>
             <div class="door-access-status" id="doorAccessStatus"></div>
           </div>
@@ -350,19 +329,16 @@
 
         <div class="physical-doorway" id="physicalDoorway">
           <div class="door-warm-light"></div>
-
           <div class="door-room">
             <img
               src="assets/02%20%E2%80%94%20Empty%20old%20classroom%20with%20laptop.jpg"
               alt="The old CICE classroom"
             >
           </div>
-
           <div class="physical-door" id="physicalDoor">
             <div class="door-panel-large"></div>
             <div class="physical-lock" id="physicalLock"></div>
           </div>
-
           <div class="door-click" id="doorClick">LOCK RELEASED</div>
         </div>
       </div>
@@ -372,7 +348,6 @@
     <section class="scene classroom" data-scene="classroom">
       <div class="photo-stage" id="classroomPhotos"></div>
       <div class="scene-caption" id="classroomCaption"></div>
-
       <div class="time-record" id="timeRecord">
         <div class="eyebrow">TIME RECORD</div>
         <div id="timeYear" class="time-year">2016</div>
@@ -444,6 +419,7 @@
       const percent = document.querySelector('#archivePercent');
       const found = document.querySelector('#archiveFound');
       const origin = document.querySelector('#originRecord');
+      const year = origin.querySelector('.origin-year');
       const card = document.querySelector('#archiveCard');
       const transition = document.querySelector('#doorTransition');
       const access = document.querySelector('#doorAccess');
@@ -458,6 +434,7 @@
       bar.style.width = '0%';
       percent.textContent = '0%';
       found.textContent = '';
+      year.textContent = '';
       origin.classList.remove('show');
       transition.classList.remove('show');
       access.classList.remove('hide');
@@ -477,9 +454,20 @@
       found.textContent = 'Archive found.';
       await wait(900);
 
-      // Show the revised poetic line.
+      // Reveal the origin record first, but keep the year empty.
       origin.classList.add('show');
-      await wait(3000);
+      await wait(500);
+
+      // Build the year exactly as: 2 → 20 → 201 → 2016.
+      const yearParts = ['2', '20', '201', '2016'];
+
+      for (const part of yearParts) {
+        year.textContent = part;
+        await wait(650);
+      }
+
+      // Hold the completed founding record before the door sequence.
+      await wait(3200);
 
       // Leave the archive world and enter the access sequence.
       card.style.transition = 'opacity 1s ease';
@@ -489,6 +477,7 @@
 
       // Type CICE automatically. No click and no Enter key.
       const letters = ['C', 'I', 'C', 'E'];
+
       for (let i = 0; i < letters.length; i++) {
         await wait(650);
         document.querySelector(`#doorCode${i + 1}`).textContent = letters[i];
