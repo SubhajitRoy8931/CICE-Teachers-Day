@@ -141,7 +141,7 @@ async function impact() {
   screen.classList.remove('show');
   showScene(7);
 
-  /* Section 08 fixes: use the real memory folder and hide the opening text after its hold. */
+  /* Section 08: use the real memory folder. */
   assets.memory = assets.memory.map(name => `memory/${name}`);
 
   const memoryStyle = document.createElement('style');
@@ -158,4 +158,72 @@ async function impact() {
   document.head.appendChild(memoryStyle);
 
   await memory();
+}
+
+/* ---------------------------------------------------------
+   Sections 08–10 closing sequence
+   Keeps the final words clear of the photo mosaic.
+   --------------------------------------------------------- */
+
+async function memory() {
+  const opening = document.querySelector('#memoryOpening');
+  const mosaic = document.querySelector('#mosaic');
+
+  mosaic.innerHTML = '';
+
+  opening.classList.add('show');
+  await wait(3000);
+  opening.classList.remove('show');
+
+  for (let i = 0; i < assets.memory.length; i++) {
+    const img = createMemoryPhoto(assets.memory[i], i, mosaic);
+    const success = await loadMemoryPhoto(img, assets.memory[i]);
+
+    if (success) {
+      img.classList.add('show');
+    } else {
+      img.remove();
+    }
+
+    await wait(100);
+  }
+
+  /* Let the completed memory mosaic breathe before moving on. */
+  await wait(2500);
+
+  showScene(8);
+  await poetry();
+}
+
+async function poetry() {
+  const lines = [
+    ...document.querySelectorAll('#poeticLines p')
+  ];
+
+  lines.forEach(line => line.classList.remove('show'));
+
+  for (const line of lines) {
+    line.classList.add('show');
+    await wait(2500);
+  }
+
+  /* Hold the complete poem before the final message. */
+  await wait(3500);
+
+  showScene(9);
+  await finalMessage();
+}
+
+async function finalMessage() {
+  const lines = [
+    ...document.querySelectorAll('#finalMessage div')
+  ];
+
+  lines.forEach(line => line.classList.remove('show'));
+
+  lines[0].classList.add('show');
+  await wait(1800);
+
+  lines[1].classList.add('show');
+  await wait(6000);
 }
