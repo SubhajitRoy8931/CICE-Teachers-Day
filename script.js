@@ -222,33 +222,26 @@ const assets = {
     '32 — Large certificate group with Sir(1).jpg'
   ],
 
+  /* Section 8 images live in their own memory folder. */
   memory: [
-    '13 — Student batch, women prominent in front.png',
-    '09 — Large student batch, colorful classroom.png',
-    '15 — Large recent student batch(1).webp',
-    '10 — Large student batch, green wall.png',
-    '11 — Large mixed student batch, colorful classroom.jpg',
-    '12 — Student batch, green-wall classroom.png',
-    '17 — Another large student batch, green wall(1).jpg',
-    '17 — Another large student batch, green wall.jpg',
+    '#CICE_Computer_Institute_Halakura✅ Picnic 2023.✅To Lal Jhamela Basti(WB).✅ Beautiful moments th.webp',
+    '01 — Teacher teaching in old classroom(2).jpg',
+    '02 — Empty old classroom with laptop.jpg',
+    '03 — Old computer workstation.jpg',
+    '05 — Students attending class in old classroom(2).jpg',
+    '06 — Sir teaching with projector in old classroom(2).jpg',
     '07 — Large class watching projector.png',
     '08 — Sir teaching seated classroom.png',
-    'WhatsApp Image 2026-09-03 at 2.16.55 PM.jpeg',
-    'WhatsApp Image 2026-09-03 at 2.18.49 PM.jpeg',
-    'WhatsApp Image 2026-09-03 at 2.19.40 PM.jpeg',
-    'WhatsApp Image 2026-09-03 at 2.21.00 PM.jpeg',
-    'WhatsApp Image 2026-09-03 at 2.18.22 PM.jpeg',
-    'WhatsApp Image 2026-09-03 at 2.16.59 PM.jpeg',
-    'WhatsApp Image 2026-09-03 at 2.18.48 PM.jpeg',
-    'WhatsApp Image 2026-09-03 at 2.20.27 PM.jpeg',
-    'WhatsApp Image 2026-09-03 at 2.20.22 PM.jpeg',
-    'WhatsApp Image 2026-09-03 at 2.21.04 PM.jpeg',
-    'WhatsApp Image 2026-09-03 at 2.18.47 PM.jpeg'
+    '09 — Large student batch, colorful classroom.png'
   ]
 };
 
 function imagePath(name) {
   return `assets/${encodeURIComponent(name)}`;
+}
+
+function memoryImagePath(name) {
+  return `assets/memory/${encodeURIComponent(name)}`;
 }
 
 function makePhoto(stage, name, caption = '') {
@@ -465,37 +458,46 @@ async function memory() {
     [31, 21, -3], [52, 24, 2], [73, 22, -2],
     [88, 25, 3], [3, 45, -2], [23, 43, 2],
     [44, 46, -3], [65, 44, 2], [84, 46, -2],
-    [9, 67, 3], [30, 65, -2], [51, 68, 2],
-    [72, 66, -3], [89, 68, 2], [19, 84, -2]
+    [12, 67, 3], [34, 65, -2], [55, 68, 2],
+    [76, 66, -3], [91, 69, 2], [3, 88, -2],
+    [25, 87, 3], [48, 89, -2], [70, 87, 2],
+    [89, 88, -3]
   ];
 
-  for (let i = 0; i < assets.memory.length; i++) {
+  const shuffled = [...assets.memory];
+
+  shuffled.forEach((name, i) => {
     const img = document.createElement('img');
     const pos = positions[i % positions.length];
 
     img.className = 'mosaic-photo';
-    img.src = imagePath(assets.memory[i]);
+    img.src = memoryImagePath(name);
     img.alt = 'CICE memory';
-    img.style.left = `${pos[0]}%`;
-    img.style.top = `${pos[1]}%`;
+    img.style.setProperty('--sx', `${50 + (i % 5) * 6}%`);
+    img.style.setProperty('--sy', `${45 + (i % 4) * 7}%`);
+    img.style.setProperty('--x', `${pos[0]}%`);
+    img.style.setProperty('--y', `${pos[1]}%`);
     img.style.setProperty('--rot', `${pos[2]}deg`);
-    img.style.setProperty('--sx', `${i % 2 ? 35 : -35}vw`);
-    img.style.setProperty('--sy', `${(i % 3 - 1) * 25}vh`);
+
+    img.addEventListener('error', () => {
+      img.classList.add('asset-missing');
+    });
 
     mosaic.appendChild(img);
-    img.addEventListener('error', () => img.remove());
-    await wait(170);
-    img.classList.add('show');
-  }
 
-  await wait(3500);
+    setTimeout(() => {
+      img.classList.add('show');
+    }, 180 + i * 220);
+  });
+
+  await wait(180 + shuffled.length * 220 + 3200);
   poem.classList.add('show');
-  await wait(6500);
+  await wait(5200);
   poem.classList.remove('show');
-  await wait(1300);
+  await wait(1600);
 
   thanks.classList.add('show');
-  await wait(7000);
+  await wait(5000);
 }
 
 /* -------------------- START -------------------- */
