@@ -197,32 +197,32 @@ async function archive() {
 /* -------------------- PHOTO ASSETS -------------------- */
 const assets = {
   classroom: [
-    '01 — Empty old classroom with laptop.png',
-    '02 — Old computer workstation.png',
-    '05 — Students attending class in old classroom(2).png',
-    '01 — Teacher teaching in old classroom(2).png',
-    '06 — Sir teaching with projector in old classroom(2).png'
+    '02 — Empty old classroom with laptop.jpg',
+    '03 — Old computer workstation.jpg',
+    '05 — Students attending class in old classroom(2).jpg',
+    '01 — Teacher teaching in old classroom(2).jpg',
+    '06 — Sir teaching with projector in old classroom(2).jpg'
   ],
 
   people: [
-    '14 — Student batch, mixed group(1).png',
+    '14 — Student batch, mixed group(1).jpg',
     '16 — Medium student batch, newer classroom(1).jpg'
   ],
 
   teacher: [
-    '18 — Sir addressing a class(2).png',
-    '08 — Sir teaching seated classroom.png',
-    '05 — Students attending class in old classroom(2).png',
-    '21 — Sir teaching with projector(2).webp'
+    '18 — Sir addressing a class(2).jpg',
+    '19 — Sir helping students at computers.jpg',
+    '20 — Students practicing on computers.jpg',
+    '21 — Sir teaching with projector(2).jpg'
   ],
 
   impact: [
-    '31 — Large classroom actively working(1).jpeg',
-    'Career Infotech Certificate Ceremony Collage.png',
+    '31 — Large classroom actively working(1).jpg',
+    'Career Infotech Certificate Ceremony Collage.jpg',
     '32 — Large certificate group with Sir(1).jpg'
   ],
 
-  /* Section 8 images live in their own memory folder. */
+  /* Section 8 is kept separate from the earlier sections. */
   memory: [
     '#CICE_Computer_Institute_Halakura✅ Picnic 2023.✅To Lal Jhamela Basti(WB).✅ Beautiful moments th.webp',
     '01 — Teacher teaching in old classroom(2).jpg',
@@ -464,9 +464,11 @@ async function memory() {
     [89, 88, -3]
   ];
 
-  const shuffled = [...assets.memory];
-
-  shuffled.forEach((name, i) => {
+  /*
+   * The files are deliberately referenced from assets/memory/.
+   * Every entry is allowed to use its original filename and extension.
+   */
+  assets.memory.forEach((name, i) => {
     const img = document.createElement('img');
     const pos = positions[i % positions.length];
 
@@ -490,7 +492,7 @@ async function memory() {
     }, 180 + i * 220);
   });
 
-  await wait(180 + shuffled.length * 220 + 3200);
+  await wait(180 + assets.memory.length * 220 + 3200);
   poem.classList.add('show');
   await wait(5200);
   poem.classList.remove('show');
