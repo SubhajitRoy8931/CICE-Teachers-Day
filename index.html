@@ -198,5 +198,66 @@
       };
     })();
   </script>
+
+  <!-- Section 8 uses every image currently stored in assets/memory/. -->
+  <script>
+    (() => {
+      const repo =
+        'SubhajitRoy8931/CICE-Teachers-Day';
+      const apiUrl =
+        `https://api.github.com/repos/${repo}/contents/assets/memory?ref=main`;
+      const rawRoot =
+        `https://raw.githubusercontent.com/${repo}/main/assets/memory/`;
+
+      /* Load every image name from the memory folder. */
+      fetch(apiUrl)
+        .then(response => response.ok ? response.json() : [])
+        .then(files => {
+          if (!Array.isArray(files) || !Array.isArray(assets.memory)) {
+            return;
+          }
+
+          const images = files
+            .filter(file => file.type === 'file')
+            .filter(file => /\.(jpe?g|png|webp)$/i.test(file.name))
+            .map(file => file.name);
+
+          if (images.length) {
+            assets.memory = images;
+          }
+        })
+        .catch(() => {
+          /* Keep the existing fallback list if the API is unavailable. */
+        });
+
+      /* Use the raw repository copy if Pages cannot resolve a filename. */
+      const observer = new MutationObserver(mutations => {
+        mutations.forEach(mutation => {
+          mutation.addedNodes.forEach(node => {
+            if (!(node instanceof HTMLImageElement)) return;
+            if (!node.classList.contains('mosaic-photo')) return;
+
+            const src = node.getAttribute('src') || '';
+            const marker = 'assets/memory/';
+
+            if (!src.includes(marker)) return;
+
+            const name = decodeURIComponent(
+              src.split(marker).pop()
+            );
+
+            const encodedName = encodeURIComponent(name);
+            node.src = rawRoot + encodedName;
+          });
+        });
+      });
+
+      const mosaic = document.querySelector('#mosaic');
+
+      if (mosaic) {
+        observer.observe(mosaic, { childList: true });
+      }
+    })();
+  </script>
 </body>
 </html>
