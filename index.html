@@ -163,9 +163,8 @@
       <div class="scene-caption" id="classroomCaption"></div>
 
       <div class="time-record" id="timeRecord">
-        <div class="eyebrow">TIME RECORD</div>
-        <div id="timeYear" class="time-year">2016</div>
         <div id="timeMessage" class="time-message"></div>
+        <div id="timeYear" class="time-year">2016</div>
       </div>
     </section>
 
@@ -291,6 +290,91 @@
       // Continue to the classroom.
       showScene(3);
       await classroom();
+    };
+  </script>
+
+  <!-- Small time-passage override. -->
+  <script>
+    window.classroom = async function classroom() {
+      const captions = [
+        'A Classroom',
+        'A place to learn.',
+        'Then the room came alive.',
+        'Many questions. Many answers.',
+        'The lessons evolved.'
+      ];
+
+      const stage = document.querySelector('#classroomPhotos');
+      const caption = document.querySelector('#classroomCaption');
+
+      stage.innerHTML = '';
+
+      for (let i = 0; i < assets.classroom.length; i++) {
+        const card = makePhoto(
+          stage,
+          assets.classroom[i],
+          captions[i]
+        );
+
+        caption.textContent = captions[i];
+
+        card.classList.add('show');
+        caption.classList.add('show');
+
+        await wait(3600);
+
+        card.classList.remove('show');
+        caption.classList.remove('show');
+
+        await wait(900);
+      }
+
+      /* -------------------- TIME PASSAGE -------------------- */
+
+      const record = document.querySelector('#timeRecord');
+      const year = document.querySelector('#timeYear');
+      const message = document.querySelector('#timeMessage');
+
+      record.classList.add('show');
+
+      // The sentence appears above the year before the transition begins.
+      message.textContent =
+        'And then, the years began to pass.';
+
+      await wait(1700);
+
+      year.textContent = '2016';
+
+      await wait(1000);
+
+      // Move from 2016 to 2026 in exactly two seconds.
+      const start = performance.now();
+
+      while (performance.now() - start < 2000) {
+        const progress =
+          (performance.now() - start) / 2000;
+
+        year.textContent = String(
+          Math.round(2016 + 10 * progress)
+        );
+
+        await wait(20);
+      }
+
+      year.textContent = '2026';
+
+      // Let 2026 settle before revealing the closing thought.
+      await wait(700);
+
+      message.textContent =
+        'And along the way, lives were shaped.';
+
+      await wait(2200);
+
+      record.classList.remove('show');
+
+      showScene(4);
+      await people();
     };
   </script>
 </body>
