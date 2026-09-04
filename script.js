@@ -181,7 +181,7 @@ function startConfetti() {
   }));
 
   const start = performance.now();
-  const duration = 6500;
+  const duration = 3000;
   const colors = [
     '#f7d774', '#8fd3ff', '#f29bb2',
     '#b8e986', '#d8b4fe', '#ffffff'
@@ -205,10 +205,7 @@ function startConfetti() {
       context.save();
       context.translate(piece.x, piece.y);
       context.rotate(piece.rotation);
-      context.globalAlpha = Math.max(
-        0,
-        1 - Math.max(0, elapsed - 5000) / 1500
-      );
+      context.globalAlpha = 1;
       context.fillStyle = colors[index % colors.length];
       context.fillRect(
         -piece.width / 2,
@@ -250,8 +247,10 @@ async function greeting() {
   await wait(800);
 
   document.querySelector('#keyboard').classList.add('hide');
+
+  /* Let the confetti run for 3 seconds before showing any copy. */
   startConfetti();
-  await wait(1600);
+  await wait(3000);
 
   for (const line of document.querySelectorAll('.greeting-copy p')) {
     line.classList.add('show');
@@ -503,7 +502,6 @@ async function teacher() {
   const closing = document.querySelector('#teacherClosing');
   const closingLines = [...closing.querySelectorAll('p')];
 
-  // Prepare lines so they can appear one at a time and stay visible.
   closingLines.forEach(line => {
     line.style.opacity = '0';
     line.style.transform = 'translateY(14px)';
@@ -517,16 +515,13 @@ async function teacher() {
     closingLines[i].style.opacity = '1';
     closingLines[i].style.transform = 'none';
 
-    // "And eventually," gets a shorter one-second pause.
     if (i === 3) await wait(1000);
-    // The complete message gets a five-second final hold.
     else if (i === closingLines.length - 1) await wait(5000);
     else await wait(2500);
   }
 
   closing.classList.remove('show');
   await wait(800);
-
   showScene(6);
   await impact();
 }
@@ -553,9 +548,9 @@ async function impact() {
       captions[i].join(' ')
     );
 
-    caption.innerHTML = captions[i].join('<br>');
+    caption.innerHTML = captions[i].join(' ');
     card.classList.add('show');
-    if (captions[i].length > 0) caption.classList.add('show');
+    caption.classList.add('show');
 
     await wait(i === 2 ? 4200 : 3800);
     card.classList.remove('show');
@@ -565,7 +560,62 @@ async function impact() {
 
   const screen = document.querySelector('#counterScreen');
   const counter = document.querySelector('#studentCounter');
+
+  const content = document.createElement('div');
+  const lead = document.createElement('div');
+  const years = document.createElement('div');
+  const institution = document.createElement('div');
+  const teacherLine = document.createElement('div');
+  const taught = document.createElement('div');
+
+  content.style.display = 'flex';
+  content.style.flexDirection = 'column';
+  content.style.alignItems = 'center';
+  content.style.justifyContent = 'center';
+  content.style.width = '100%';
+  content.style.textAlign = 'center';
+
+  lead.style.display = 'flex';
+  lead.style.flexDirection = 'column';
+  lead.style.alignItems = 'center';
+  lead.style.gap = '0.3rem';
+  lead.style.marginBottom = '2.2rem';
+
+  [years, institution, teacherLine].forEach(line => {
+    line.style.fontSize = 'clamp(22px, 3vw, 38px)';
+    line.style.lineHeight = '1.35';
+    line.style.opacity = '0';
+    line.style.visibility = 'hidden';
+  });
+
+  taught.textContent = 'Students Taught';
+  taught.style.marginTop = '1rem';
+  taught.style.fontSize = 'clamp(22px, 3vw, 38px)';
+  taught.style.lineHeight = '1.35';
+  taught.style.opacity = '0';
+  taught.style.visibility = 'hidden';
+
+  years.textContent = 'Ten Years';
+  institution.textContent = 'One Institution';
+  teacherLine.textContent = 'One Teacher';
+
+  lead.append(years, institution, teacherLine);
+  content.append(lead, counter, taught);
+  screen.replaceChildren(content);
+
   screen.classList.add('show');
+
+  years.style.opacity = '1';
+  years.style.visibility = 'visible';
+  await wait(2000);
+
+  institution.style.opacity = '1';
+  institution.style.visibility = 'visible';
+  await wait(2000);
+
+  teacherLine.style.opacity = '1';
+  teacherLine.style.visibility = 'visible';
+  await wait(900);
 
   const start = performance.now();
   const duration = 6000;
@@ -580,14 +630,39 @@ async function impact() {
       eased = 0.12 + 0.88 * Math.pow((progress - 0.15) / 0.85, 1.7);
     }
 
-    counter.textContent = Math.floor(3000 * eased).toLocaleString();
+    counter.textContent = Math.max(
+      1,
+      Math.floor(3000 * eased)
+    ).toLocaleString();
+
     await wait(20);
   }
 
   counter.textContent = '3000+';
-  await wait(2200);
+  await wait(1500);
+  taught.style.opacity = '1';
+  taught.style.visibility = 'visible';
+
+  await wait(5000);
+
   screen.classList.remove('show');
   showScene(7);
+
+  assets.memory = assets.memory.map(name => `memory/${name}`);
+
+  const memoryStyle = document.createElement('style');
+  memoryStyle.textContent = `
+    #memoryOpening:not(.show) {
+      opacity: 0;
+      visibility: hidden;
+    }
+    #memoryOpening.show {
+      opacity: 1;
+      visibility: visible;
+    }
+  `;
+  document.head.appendChild(memoryStyle);
+
   await memory();
 }
 
@@ -595,54 +670,11 @@ async function impact() {
    08 — FINAL MEMORY
    ========================================================= */
 
-const memoryPositions = [
-  [2, 4, -3], [21, 3, 2], [41, 5, -2], [62, 3, 3], [80, 5, -2],
-  [10, 24, 2], [31, 21, -3], [52, 24, 2], [73, 22, -2], [88, 25, 3],
-  [3, 45, -2], [23, 43, 2], [44, 46, -3], [65, 44, 2], [84, 46, -2],
-  [12, 67, 3], [34, 65, -2], [55, 68, 2], [76, 66, -3], [91, 69, 2],
-  [3, 88, -2], [25, 87, 3], [48, 89, -2], [70, 87, 2], [89, 88, -3]
-];
-
-function createMemoryPhoto(name, index, mosaic) {
-  const img = document.createElement('img');
-  const position = memoryPositions[index % memoryPositions.length];
-
-  img.className = 'mosaic-photo';
-  img.alt = 'CICE memory';
-  img.style.setProperty('--sx', `${50 + (index % 5) * 6}%`);
-  img.style.setProperty('--sy', `${45 + (index % 4) * 7}%`);
-  img.style.setProperty('--x', `${position[0]}%`);
-  img.style.setProperty('--y', `${position[1]}%`);
-  img.style.setProperty('--rot', `${position[2]}deg`);
-  mosaic.appendChild(img);
-  return img;
-}
-
-function loadMemoryPhoto(img, name) {
-  return new Promise(resolve => {
-    let finished = false;
-
-    const finish = success => {
-      if (finished) return;
-      finished = true;
-      resolve(success);
-    };
-
-    img.onload = () => finish(true);
-    img.onerror = () => finish(false);
-    img.src = imagePath(name);
-  });
-}
-
 async function memory() {
   const opening = document.querySelector('#memoryOpening');
   const mosaic = document.querySelector('#mosaic');
-  const poem = document.querySelector('#poem');
-  const finalThanks = document.querySelector('#finalThanks');
 
   mosaic.innerHTML = '';
-  poem.classList.remove('show');
-  finalThanks.classList.remove('show');
 
   opening.classList.add('show');
   await wait(3000);
@@ -652,28 +684,69 @@ async function memory() {
     const img = createMemoryPhoto(assets.memory[i], i, mosaic);
     const success = await loadMemoryPhoto(img, assets.memory[i]);
 
-    if (success) {
-      img.classList.add('show');
-    } else {
-      img.remove();
-    }
+    if (success) img.classList.add('show');
+    else img.remove();
 
     await wait(100);
   }
 
   await wait(2500);
-  poem.classList.add('show');
-  await wait(6500);
-  poem.classList.remove('show');
-  await wait(1000);
+  showScene(8);
+  await poetry();
+}
 
-  finalThanks.classList.add('show');
+async function poetry() {
+  const lines = [
+    ...document.querySelectorAll('#poeticLines p')
+  ];
+
+  lines.forEach(line => line.classList.remove('show'));
+
+  for (const line of lines) {
+    line.classList.add('show');
+    await wait(2500);
+  }
+
+  await wait(3500);
+  showScene(9);
+  await finalMessage();
+}
+
+async function finalMessage() {
+  const lines = [
+    ...document.querySelectorAll('#finalMessage div')
+  ];
+
+  lines.forEach(line => line.classList.remove('show'));
+
+  lines[0].classList.add('show');
+  await wait(1800);
+
+  lines[1].classList.add('show');
+  await wait(6000);
+}
+
+/* -------------------- MEMORY HELPERS -------------------- */
+
+function createMemoryPhoto(name, index, mosaic) {
+  const img = document.createElement('img');
+  img.className = 'memory-photo';
+  img.alt = `CICE memory ${index + 1}`;
+  img.dataset.index = index;
+  mosaic.appendChild(img);
+  return img;
+}
+
+function loadMemoryPhoto(img, name) {
+  return new Promise(resolve => {
+    img.onload = () => resolve(true);
+    img.onerror = () => resolve(false);
+    img.src = imagePath(name);
+  });
 }
 
 /* =========================================================
-   START EXPERIENCE
+   START
    ========================================================= */
 
-window.addEventListener('load', () => {
-  boot();
-});
+boot();
