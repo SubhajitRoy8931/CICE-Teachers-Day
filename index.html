@@ -76,7 +76,7 @@
     .door-access-status {
       min-height: 24px;
       margin-top: 28px;
-      color: #cbd8e6;
+      color: #69d17a;
       font-size: 13px;
       letter-spacing: .13em;
     }
@@ -420,7 +420,6 @@
       const found = document.querySelector('#archiveFound');
       const origin = document.querySelector('#originRecord');
       const year = origin.querySelector('.origin-year');
-      const originLine = origin.querySelector('.origin-line');
       const card = document.querySelector('#archiveCard');
       const transition = document.querySelector('#doorTransition');
       const access = document.querySelector('#doorAccess');
@@ -436,8 +435,6 @@
       percent.textContent = '0%';
       found.textContent = '';
       year.textContent = '';
-      originLine.style.opacity = '0';
-      originLine.style.transition = 'opacity .8s ease';
       origin.classList.remove('show');
       transition.classList.remove('show');
       access.classList.remove('hide');
@@ -468,11 +465,6 @@
         year.textContent = part;
         await wait(650);
       }
-
-      // Reveal the sentence only after 2016 is fully visible.
-      await wait(250);
-      originLine.style.opacity = '1';
-      await wait(800);
 
       // Hold the completed founding record before the door sequence.
       await wait(3200);
