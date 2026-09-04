@@ -94,6 +94,61 @@
   letter-spacing: 0.01em;
 }
 
+/* -------------------- FINAL MEMORY MOSAIC -------------------- */
+
+/* Turn the 50 memory tiles into a visible full-screen mosaic. */
+.mosaic {
+  position: absolute;
+  inset: 3vh 3vw;
+  display: grid !important;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-template-rows: repeat(10, minmax(0, 1fr));
+  gap: 7px;
+  overflow: hidden;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 1s ease;
+  z-index: 3;
+}
+
+/* The JavaScript creates memory-tile elements. */
+.memory-tile {
+  position: relative;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transform: scale(0.92);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: #080a0e;
+  transition: opacity 0.7s ease, transform 0.9s ease;
+}
+
+/* Show the complete mosaic only when the memory sequence starts. */
+.mosaic.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+.mosaic.show .memory-tile {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Make every memory photo fill its tile cleanly. */
+.memory-tile img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  filter: saturate(0.9) contrast(1.02);
+}
+
+/* Failed memory images remain hidden instead of showing broken icons. */
+.memory-tile.asset-missing {
+  opacity: 0 !important;
+}
+
 /* Remove the old sharp/heavenly secondary glow. */
 .physical-doorway.door-opening::after {
   display: none !important;
@@ -109,5 +164,13 @@
   .door-warm-light {
     width: 86vw !important;
     height: 81vh !important;
+  }
+
+  /* Keep the memory mosaic usable on narrow screens. */
+  .mosaic {
+    inset: 2vh 2vw;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-rows: repeat(17, minmax(0, 1fr));
+    gap: 4px;
   }
 }
