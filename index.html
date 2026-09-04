@@ -329,9 +329,46 @@
       await wait(1800);
       caption.classList.remove('show');
 
-      showScene(5);
-      await wait(900);
-      await teacher();
+     // Move into Section 06.
+showScene(5);
+
+// Get the transition elements.
+const transition =
+  document.querySelector('#teacherTransition');
+
+const lines =
+  transition.querySelectorAll('.teacher-transition-line');
+
+// Show the transition.
+transition.classList.add('show');
+
+await wait(600);
+
+// Show the first line.
+lines[0].classList.add('show');
+
+await wait(1200);
+
+// Show the second line.
+lines[1].classList.add('show');
+
+await wait(2200);
+
+// Fade the transition away.
+transition.classList.add('exit');
+
+await wait(900);
+
+// Clean up the transition.
+transition.classList.remove('show');
+transition.classList.remove('exit');
+
+lines.forEach(line => {
+  line.classList.remove('show');
+});
+
+// Now begin the teacher section.
+await teacher();
     };
   </script>
 
