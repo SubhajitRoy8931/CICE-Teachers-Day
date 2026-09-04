@@ -613,7 +613,7 @@ async function classroom() {
     await wait(900);
   }
 
-  /* -------------------- TIME RECORD -------------------- */
+  /* -------------------- PASSAGE OF YEARS -------------------- */
 
   const record = document.querySelector('#timeRecord');
   const year = document.querySelector('#timeYear');
@@ -621,6 +621,7 @@ async function classroom() {
 
   record.classList.add('show');
 
+  // Give the opening sentence time to settle before the years begin.
   await wait(1700);
 
   year.textContent = '2016';
@@ -643,9 +644,10 @@ async function classroom() {
 
   year.textContent = '2026';
 
+  // Hold the completed decade before revealing the story's next thought.
   await wait(1600);
 
-  message.textContent = 'Years passed.';
+  message.textContent = 'And along the way, lives were shaped.';
 
   await wait(2200);
 
@@ -668,18 +670,18 @@ async function people() {
 
   const captions = [
     'Different faces.',
-    'Different beginnings.'
+    'Different journeys.'
   ];
-
-  stage.innerHTML = '';
 
   intro.classList.add('show');
 
-  await wait(2800);
+  await wait(2600);
 
   intro.classList.remove('show');
 
-  await wait(700);
+  await wait(800);
+
+  stage.innerHTML = '';
 
   for (
     let i = 0;
@@ -697,22 +699,13 @@ async function people() {
     card.classList.add('show');
     caption.classList.add('show');
 
-    await wait(3600);
+    await wait(3800);
 
     card.classList.remove('show');
     caption.classList.remove('show');
 
-    await wait(800);
+    await wait(900);
   }
-
-  caption.textContent =
-    'And these were only a few of them.';
-
-  caption.classList.add('show');
-
-  await wait(1800);
-
-  caption.classList.remove('show');
 
   showScene(5);
   await teacher();
@@ -720,20 +713,21 @@ async function people() {
 
 
 /* =========================================================
-   06 — TEACHER
+   06 — THE TEACHER
    ========================================================= */
 
 async function teacher() {
 
-  const captions = [
-    'At the front of the room, a path begins.',
-    'Where questions meet a patient guide.',
-    'Where knowledge leaves the page and finds its hands.',
-    'Where even the difficult finds a way to become clear.'
-  ];
-
   const stage = document.querySelector('#teacherStage');
   const caption = document.querySelector('#teacherCaption');
+  const closing = document.querySelector('#teacherClosing');
+
+  const captions = [
+    'A teacher does more than teach.',
+    'He notices when we struggle.',
+    'He stays when the answer is difficult.',
+    'And he keeps asking us to try again.'
+  ];
 
   stage.innerHTML = '';
 
@@ -758,18 +752,14 @@ async function teacher() {
     card.classList.remove('show');
     caption.classList.remove('show');
 
-    await wait(850);
+    await wait(900);
   }
-
-  const closing = document.querySelector('#teacherClosing');
 
   closing.classList.add('show');
 
-  await wait(5000);
+  await wait(7000);
 
   closing.classList.remove('show');
-
-  await wait(800);
 
   showScene(6);
   await impact();
@@ -777,24 +767,21 @@ async function teacher() {
 
 
 /* =========================================================
-   07 — IMPACT
+   07 — THE IMPACT
    ========================================================= */
 
 async function impact() {
 
-  const captions = [
-    [
-      'And then, we begin to use what we learned.'
-    ],
-    [
-      'One step becomes a milestone.',
-      'A milestone becomes a new beginning.'
-    ],
-    []
-  ];
-
   const stage = document.querySelector('#impactStage');
   const caption = document.querySelector('#impactCaption');
+  const counterScreen = document.querySelector('#counterScreen');
+  const counter = document.querySelector('#studentCounter');
+
+  const captions = [
+    'A classroom became a community.',
+    'Learning became confidence.',
+    'And the journey kept growing.'
+  ];
 
   stage.innerHTML = '';
 
@@ -806,18 +793,15 @@ async function impact() {
     const card = makePhoto(
       stage,
       assets.impact[i],
-      captions[i].join(' ')
+      captions[i]
     );
 
-    caption.innerHTML = captions[i].join('<br>');
+    caption.textContent = captions[i];
 
     card.classList.add('show');
+    caption.classList.add('show');
 
-    if (captions[i].length > 0) {
-      caption.classList.add('show');
-    }
-
-    await wait(i === 2 ? 4200 : 3800);
+    await wait(4000);
 
     card.classList.remove('show');
     caption.classList.remove('show');
@@ -825,48 +809,18 @@ async function impact() {
     await wait(900);
   }
 
-  /* -------------------- STUDENT COUNTER -------------------- */
+  counterScreen.classList.add('show');
 
-  const screen = document.querySelector('#counterScreen');
-  const counter = document.querySelector('#studentCounter');
-
-  screen.classList.add('show');
-
-  const start = performance.now();
-  const duration = 6000;
-
-  // Count from 0 to 3000+ over six seconds.
-  while (performance.now() - start < duration) {
-    const progress =
-      (performance.now() - start) / duration;
-
-    let eased;
-
-    if (progress < 0.15) {
-      eased =
-        0.12 *
-        Math.pow(progress / 0.15, 1.5);
-    } else {
-      eased =
-        0.12 +
-        0.88 *
-        Math.pow(
-          (progress - 0.15) / 0.85,
-          1.7
-        );
-    }
-
-    counter.textContent =
-      Math.floor(3000 * eased).toLocaleString();
-
-    await wait(20);
+  for (let n = 0; n <= 1000; n += 25) {
+    counter.textContent = n;
+    await wait(28);
   }
 
-  counter.textContent = '3000+';
+  counter.textContent = '1000+';
 
-  await wait(2200);
+  await wait(3200);
 
-  screen.classList.remove('show');
+  counterScreen.classList.remove('show');
 
   showScene(7);
   await memory();
@@ -877,142 +831,6 @@ async function impact() {
    08 — FINAL MEMORY
    ========================================================= */
 
-// Final positions used by the photo mosaic.
-const memoryPositions = [
-  [2, 4, -3],
-  [21, 3, 2],
-  [41, 5, -2],
-  [62, 3, 3],
-  [80, 5, -2],
-
-  [10, 24, 2],
-  [31, 21, -3],
-  [52, 24, 2],
-  [73, 22, -2],
-  [88, 25, 3],
-
-  [3, 45, -2],
-  [23, 43, 2],
-  [44, 46, -3],
-  [65, 44, 2],
-  [84, 46, -2],
-
-  [12, 67, 3],
-  [34, 65, -2],
-  [55, 68, 2],
-  [76, 66, -3],
-  [91, 69, 2],
-
-  [3, 88, -2],
-  [25, 87, 3],
-  [48, 89, -2],
-  [70, 87, 2],
-  [89, 88, -3]
-];
-
-
-// Create one memory image.
-function createMemoryPhoto(name, index, mosaic) {
-
-  const img = document.createElement('img');
-  const position =
-    memoryPositions[index % memoryPositions.length];
-
-  img.className = 'mosaic-photo';
-  img.alt = 'CICE memory';
-
-  // Starting point for the flying animation.
-  img.style.setProperty(
-    '--sx',
-    `${50 + (index % 5) * 6}%`
-  );
-
-  img.style.setProperty(
-    '--sy',
-    `${45 + (index % 4) * 7}%`
-  );
-
-  // Final mosaic position.
-  img.style.setProperty(
-    '--x',
-    `${position[0]}%`
-  );
-
-  img.style.setProperty(
-    '--y',
-    `${position[1]}%`
-  );
-
-  img.style.setProperty(
-    '--rot',
-    `${position[2]}deg`
-  );
-
-  mosaic.appendChild(img);
-
-  return img;
-}
-
-
-// Load one memory image with a timeout.
-function loadMemoryPhoto(img, name) {
-
-  return new Promise(resolve => {
-    let finished = false;
-
-    const finish = success => {
-      if (finished) return;
-      finished = true;
-      clearTimeout(timeout);
-      resolve(success);
-    };
-
-    const timeout = setTimeout(() => {
-      img.classList.add('asset-missing');
-      finish(false);
-    }, 12000);
-
-    img.addEventListener('load', () => {
-      finish(true);
-    }, { once: true });
-
-    img.addEventListener('error', () => {
-      img.classList.add('asset-missing');
-      finish(false);
-    }, { once: true });
-
-    // Use the same encoded relative path as the rest of the site.
-    img.src = memoryPagePath(name);
-  });
-}
-
-
-// GitHub Pages path for a memory image.
-function memoryPagePath(name) {
-  return (
-    'assets/memory/' +
-    encodeURIComponent(name)
-  );
-}
-
-
-// Animate one loaded memory image into its position.
-async function revealMemoryPhoto(img, index) {
-
-  const delay = 180 + index * 220;
-
-  await wait(delay);
-
-  // Do not reveal an image that failed to load.
-  if (img.classList.contains('asset-missing')) {
-    return;
-  }
-
-  img.classList.add('show');
-}
-
-
-// Run the complete final memory section.
 async function memory() {
 
   const opening = document.querySelector('#memoryOpening');
@@ -1020,87 +838,60 @@ async function memory() {
   const poem = document.querySelector('#poem');
   const thanks = document.querySelector('#finalThanks');
 
-  // Reset the section.
+  opening.classList.add('show');
+
+  await wait(4500);
+
+  opening.classList.remove('show');
+
+  await wait(1200);
+
   mosaic.innerHTML = '';
-  poem.classList.remove('show');
-  thanks.classList.remove('show');
-  opening.classList.remove('hide');
 
-  /* -------------------- OPENING TEXT -------------------- */
+  assets.memory.forEach((name, index) => {
+    const tile = document.createElement('div');
+    const img = document.createElement('img');
 
-  await wait(3000);
+    tile.className = 'memory-tile';
 
-  opening.classList.add('hide');
+    img.src = imagePath(name);
+    img.alt = `CICE memory ${index + 1}`;
 
-  await wait(1300);
+    img.addEventListener('error', () => {
+      tile.classList.add('asset-missing');
+    });
 
-  /* -------------------- CREATE AND LOAD PHOTOS -------------------- */
-
-  const images = assets.memory.map((name, index) => {
-    const img = createMemoryPhoto(
-      name,
-      index,
-      mosaic
-    );
-
-    return {
-      img,
-      name,
-      index
-    };
+    tile.appendChild(img);
+    mosaic.appendChild(tile);
   });
 
-  // Load all files in parallel.
-  await Promise.all(
-    images.map(item =>
-      loadMemoryPhoto(
-        item.img,
-        item.name
-      )
-    )
-  );
+  mosaic.classList.add('show');
 
-  /* -------------------- BUILD THE MOSAIC -------------------- */
+  await wait(6500);
 
-  // Reveal the photos one by one.
-  await Promise.all(
-    images.map(item =>
-      revealMemoryPhoto(
-        item.img,
-        item.index
-      )
-    )
-  );
+  mosaic.classList.remove('show');
 
-  // Give the completed mosaic time to settle.
-  await wait(3200);
-
-  /* -------------------- POEM -------------------- */
+  await wait(1000);
 
   poem.classList.add('show');
 
-  await wait(5200);
+  await wait(8500);
 
   poem.classList.remove('show');
 
-  /* -------------------- FINAL THANK YOU -------------------- */
-
-  await wait(1600);
+  await wait(1000);
 
   thanks.classList.add('show');
 
-  await wait(5000);
+  await wait(8000);
 }
 
 
 /* =========================================================
-   START
+   START EXPERIENCE
    ========================================================= */
 
+// Start the experience once the page has loaded.
 window.addEventListener('load', () => {
-  // Start at the first scene.
-  showScene(0);
-
-  // Run the entire cinematic sequence.
   boot();
 });
