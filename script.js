@@ -538,8 +538,8 @@ async function teacher() {
 async function impact() {
   const captions = [
     ['And then, we begin to use what we learned.'],
-    ['One step becomes a milestone.', 'A milestone becomes a new beginning.'],
-    []
+    ['One step becomes a milestone.'],
+    ['A milestone becomes a new beginning.']
   ];
 
   const stage = document.querySelector('#impactStage');
