@@ -27,10 +27,7 @@ jobs:
           path = Path("index.html")
           text = path.read_text(encoding="utf-8")
 
-          old_css = re.compile(
-              r'    \.physical-door \{.*?    \.physical-lock\.unlocked::after \{.*?\n    \}',
-              re.S,
-          )
+          old_css = re.compile(r'    \.physical-door \{.*?    \.physical-lock\.unlocked::after \{.*?\n    \}', re.S)
 
           new_css = '''    /* Dark double sliding classroom doors. */
           .physical-door {
@@ -47,14 +44,13 @@ jobs:
             z-index: 3;
           }
 
-          /* The two solid panels create the center opening. */
+          /* Two solid panels meet at the center. */
           .sliding-door-panel {
             position: absolute;
             top: 0;
             width: 50%;
             height: 100%;
-            background:
-              linear-gradient(90deg, #08090a 0%, #17191b 18%, #25282b 50%, #151719 82%, #090a0b 100%);
+            background: linear-gradient(90deg, #08090a 0%, #17191b 18%, #25282b 50%, #151719 82%, #090a0b 100%);
             box-shadow: inset 0 0 35px #00000075;
             transition: transform 3.3s cubic-bezier(.2,.78,.15,1);
             will-change: transform;
@@ -70,7 +66,7 @@ jobs:
             border-left: 1px solid #00000090;
           }
 
-          /* Subtle recessed panels make the doors feel physical. */
+          /* Subtle recessed panels add physical depth. */
           .sliding-door-panel::before {
             content: "";
             position: absolute;
@@ -86,7 +82,7 @@ jobs:
             border: 1px solid #ffffff08;
           }
 
-          /* Each panel slides away from the center. */
+          /* The panels slide away from the center. */
           .physical-door.open .sliding-door-left {
             transform: translateX(-102%);
           }
@@ -95,7 +91,7 @@ jobs:
             transform: translateX(102%);
           }
 
-          /* Keep the existing lock, centered between the two panels. */
+          /* Existing lock stays centered until opening starts. */
           .physical-lock {
             position: absolute;
             left: 50%;
@@ -108,7 +104,7 @@ jobs:
             background: #202428;
             box-shadow: 0 7px 18px #00000070;
             z-index: 5;
-            transition: opacity .45s ease, transform .55s ease;
+            transition: opacity .45s ease;
           }
 
           .physical-door.open .physical-lock {
@@ -137,20 +133,24 @@ jobs:
           if count != 1:
               raise SystemExit("Door CSS block was not found")
 
-          old_html = '''          <div class="physical-door" id="physicalDoor">
-            <div class="door-panel-large"></div>
-            <div class="physical-lock" id="physicalLock"></div>
-          </div>'''
+          old_html = re.compile(
+              r'\s*<div class="physical-door" id="physicalDoor">\s*'
+              r'<div class="door-panel-large"></div>\s*'
+              r'<div class="physical-lock" id="physicalLock"></div>\s*'
+              r'</div>',
+              re.S,
+          )
 
-          new_html = '''          <div class="physical-door" id="physicalDoor">
+          new_html = '''
+          <div class="physical-door" id="physicalDoor">
             <div class="sliding-door-panel sliding-door-left"></div>
             <div class="sliding-door-panel sliding-door-right"></div>
             <div class="physical-lock" id="physicalLock"></div>
           </div>'''
 
-          if old_html not in text:
+          text, count = old_html.subn(new_html, text, count=1)
+          if count != 1:
               raise SystemExit("Door HTML block was not found")
-          text = text.replace(old_html, new_html, 1)
 
           path.write_text(text, encoding="utf-8")
           PY
@@ -178,6 +178,8 @@ jobs:
       - name: Remove temporary workflow
         if: always()
         run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git rm .github/workflows/redesign-door.yml
           git commit -m "Remove temporary door redesign workflow" || exit 0
           git push
