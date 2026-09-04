@@ -3,75 +3,40 @@ document.write('<script src="script-original.js"><\/script>');
 
 /* -------------------- SECTION 05 — PEOPLE -------------------- */
 
-/*
-  Override the inline Section 05 function after the page finishes parsing.
-  The closing sentence and its animation are intentionally removed.
-*/
-setTimeout(() => {
+window.people = async function people() {
+  const stage = document.querySelector('#peopleStage');
+  const caption = document.querySelector('#peopleCaption');
+  const captions = ['Different faces.', 'Different beginnings.'];
 
-  window.people = async function people() {
+  stage.innerHTML = '';
+  caption.classList.remove('show');
 
-    const stage =
-      document.querySelector('#peopleStage');
-
-    const caption =
-      document.querySelector('#peopleCaption');
-
-    const captions = [
-      'Different faces.',
-      'Different beginnings.'
-    ];
-
-    stage.innerHTML = '';
+  for (let i = 0; i < assets.people.length; i++) {
+    const card = makePhoto(stage, assets.people[i], captions[i]);
+    caption.textContent = captions[i];
+    card.classList.add('show');
+    caption.classList.add('show');
+    await wait(3600);
+    card.classList.remove('show');
     caption.classList.remove('show');
+    await wait(800);
+  }
 
-    /* Show each student image with its matching description. */
-    for (let i = 0; i < assets.people.length; i++) {
-
-      const card = makePhoto(
-        stage,
-        assets.people[i],
-        captions[i]
-      );
-
-      caption.textContent = captions[i];
-
-      card.classList.add('show');
-      caption.classList.add('show');
-
-      await wait(3600);
-
-      card.classList.remove('show');
-      caption.classList.remove('show');
-
-      await wait(800);
-    }
-
-    /* Move directly into Section 06. */
-    showScene(5);
-    await teacher();
-  };
-
-}, 0);
+  /* Move directly into Section 06. */
+  showScene(5);
+  await teacher();
+};
 
 
 /* -------------------- SECTION 06 — TEACHER -------------------- */
 
 window.teacher = async function teacher() {
+  const transition = document.querySelector('#teacherTransition');
+  const lines = transition.querySelectorAll('.teacher-transition-line');
+  const stage = document.querySelector('#teacherStage');
+  const caption = document.querySelector('#teacherCaption');
 
-  const transition =
-    document.querySelector('#teacherTransition');
-
-  const lines =
-    transition.querySelectorAll('.teacher-transition-line');
-
-  const stage =
-    document.querySelector('#teacherStage');
-
-  const caption =
-    document.querySelector('#teacherCaption');
-
-  /* Exact image order requested for Section 06. */
+  /* These four filenames control the Section 06 image order. */
   const images = [
     '21 — Sir teaching with projector(2).jpg',
     '18 — Sir addressing a class(2).jpg',
@@ -79,7 +44,7 @@ window.teacher = async function teacher() {
     '20 — Students practicing on computers.jpg'
   ];
 
-  /* Description matched to each image. */
+  /* Each caption matches the image at the same array position. */
   const captions = [
     'Someone who showed us where to begin.',
     'Someone who listened.',
@@ -90,21 +55,14 @@ window.teacher = async function teacher() {
   stage.innerHTML = '';
   caption.classList.remove('show');
 
-  /* Reveal the existing Section 05 → Section 06 transition. */
+  /* Reveal the Section 05 → Section 06 transition. */
   transition.classList.add('show');
-
   await wait(600);
-
   lines[0].classList.add('show');
-
   await wait(1200);
-
   lines[1].classList.add('show');
-
   await wait(2200);
-
   transition.classList.add('exit');
-
   await wait(900);
 
   transition.classList.remove('show');
@@ -114,38 +72,23 @@ window.teacher = async function teacher() {
     line.classList.remove('show');
   });
 
-  /* Show each teacher image with its matching description. */
+  /* Show each Section 06 image with its matching caption. */
   for (let i = 0; i < images.length; i++) {
-
-    const card = makePhoto(
-      stage,
-      images[i],
-      captions[i]
-    );
-
+    const card = makePhoto(stage, images[i], captions[i]);
     caption.textContent = captions[i];
-
     card.classList.add('show');
     caption.classList.add('show');
-
     await wait(3800);
-
     card.classList.remove('show');
     caption.classList.remove('show');
-
     await wait(850);
   }
 
-  /* Keep the existing closing and move to Section 07. */
-  const closing =
-    document.querySelector('#teacherClosing');
-
+  /* Continue to the existing Section 06 closing. */
+  const closing = document.querySelector('#teacherClosing');
   closing.classList.add('show');
-
   await wait(5000);
-
   closing.classList.remove('show');
-
   await wait(800);
 
   showScene(6);
