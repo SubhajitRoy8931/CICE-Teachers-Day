@@ -537,11 +537,11 @@ const memoryPrefix =
   'WhatsApp Image 2026-09-04 at 11.54.05 AM';
 
 
-// Build filenames from 1 through 50.
+// Build filenames from 1 through 50 inside the memory folder.
 assets.memory = Array.from(
   { length: 50 },
   (_, index) =>
-    `${memoryPrefix} (${index + 1}).jpeg`
+    `memory/${memoryPrefix} (${index + 1}).jpeg`
 );
 
 
