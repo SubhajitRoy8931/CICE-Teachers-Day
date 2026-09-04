@@ -11,7 +11,7 @@ on:
 
 # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
 
@@ -31,6 +31,172 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Apply impact counter sequence
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+
+          path = Path('script.js')
+          text = path.read_text(encoding='utf-8')
+
+          pattern = r"async function impact\(\) \{.*?\n\}\n\n/\* =========================================================\n   08 — FINAL MEMORY"
+
+          replacement = '''async function impact() {
+            const captions = [
+              ['And then, we begin to use what we learned.'],
+              ['One step becomes a milestone.'],
+              ['A milestone becomes a new beginning.']
+            ];
+
+            const stage = document.querySelector('#impactStage');
+            const caption = document.querySelector('#impactCaption');
+            stage.innerHTML = '';
+
+            for (let i = 0; i < assets.impact.length; i++) {
+              const card = makePhoto(
+                stage,
+                assets.impact[i],
+                captions[i].join(' ')
+              );
+
+              caption.innerHTML = captions[i].join('<br>');
+              card.classList.add('show');
+              if (captions[i].length > 0) caption.classList.add('show');
+
+              await wait(i === 2 ? 4200 : 3800);
+              card.classList.remove('show');
+              caption.classList.remove('show');
+              await wait(900);
+            }
+
+            const screen = document.querySelector('#counterScreen');
+            const counter = document.querySelector('#studentCounter');
+            const leadLines = [
+              document.querySelector('#impactYears'),
+              document.querySelector('#impactInstitution'),
+              document.querySelector('#impactTeacher')
+            ];
+            const studentsTaught = document.querySelector('#studentsTaught');
+
+            screen.classList.add('show');
+            studentsTaught.classList.remove('show');
+            leadLines.forEach(line => line.classList.remove('show'));
+
+            for (const line of leadLines) {
+              line.classList.add('show');
+              await wait(2000);
+            }
+
+            await wait(900);
+
+            const start = performance.now();
+            const duration = 6000;
+
+            while (performance.now() - start < duration) {
+              const progress = (performance.now() - start) / duration;
+              let eased;
+
+              if (progress < 0.15) {
+                eased = 0.12 * Math.pow(progress / 0.15, 1.5);
+              } else {
+                eased = 0.12 + 0.88 * Math.pow((progress - 0.15) / 0.85, 1.7);
+              }
+
+              counter.textContent = Math.max(1, Math.floor(3000 * eased)).toLocaleString();
+              await wait(20);
+            }
+
+            counter.textContent = '3000+';
+            await wait(1500);
+            studentsTaught.classList.add('show');
+            await wait(5000);
+
+            screen.classList.remove('show');
+            showScene(7);
+            await memory();
+          }
+
+/* =========================================================
+   08 — FINAL MEMORY'''
+
+          updated, count = re.subn(pattern, replacement, text, count=1, flags=re.S)
+          if count != 1:
+              raise SystemExit('Impact function pattern not found')
+          path.write_text(updated, encoding='utf-8')
+          PY
+
+      - name: Add impact labels
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          path = Path('index.html')
+          text = path.read_text(encoding='utf-8')
+          old = '<div class="counter-screen" id="counterScreen"><div class="counter" id="studentCounter">0</div></div>'
+          new = '<div class="counter-screen" id="counterScreen"><div class="counter-content"><div class="impact-lead"><div id="impactYears">Ten Years</div><div id="impactInstitution">One Institution</div><div id="impactTeacher">One Teacher</div></div><div class="counter" id="studentCounter">0</div><div id="studentsTaught" class="students-taught">Students Taught</div></div></div>'
+          if old not in text:
+              raise SystemExit('Counter markup not found')
+          path.write_text(text.replace(old, new, 1), encoding='utf-8')
+          PY
+
+      - name: Add impact styles
+        run: |
+          cat >> style.css <<'CSS'
+
+/* -------------------- IMPACT COUNTER SEQUENCE -------------------- */
+
+.counter-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: min(90vw, 900px);
+  text-align: center;
+}
+
+.impact-lead {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3rem;
+  margin-bottom: 2.2rem;
+}
+
+.impact-lead div,
+.students-taught {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.impact-lead div.show,
+.students-taught.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+.impact-lead div {
+  font-size: clamp(22px, 3vw, 38px);
+  line-height: 1.35;
+}
+
+.students-taught {
+  margin-top: 1rem;
+  font-size: clamp(22px, 3vw, 38px);
+  line-height: 1.35;
+}
+CSS
+
+      - name: Commit final changes and remove temporary workflow
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git rm .github/workflows/apply-impact-sequence.yml || true
+          git add script.js index.html style.css .github/workflows/static.yml
+          git diff --cached --quiet && exit 0
+          git commit -m 'Implement impact counter sequence'
+          git push
+
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Upload artifact
