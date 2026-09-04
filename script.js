@@ -503,16 +503,27 @@ async function teacher() {
   const closing = document.querySelector('#teacherClosing');
   const closingLines = [...closing.querySelectorAll('p')];
 
-  // Reveal each line cumulatively. Nothing disappears.
+  // Prepare lines so they can appear one at a time and stay visible.
+  closingLines.forEach(line => {
+    line.style.opacity = '0';
+    line.style.transform = 'translateY(14px)';
+    line.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
+  });
+
   closing.classList.add('show');
 
   for (let i = 0; i < closingLines.length; i++) {
     closingLines[i].classList.add('show');
-    await wait(i === 2 ? 1000 : 2500);
+    closingLines[i].style.opacity = '1';
+    closingLines[i].style.transform = 'none';
+
+    // "And eventually," gets a shorter one-second pause.
+    if (i === 3) await wait(1000);
+    // The complete message gets a five-second final hold.
+    else if (i === closingLines.length - 1) await wait(5000);
+    else await wait(2500);
   }
 
-  // Hold the complete message before moving on.
-  await wait(5000);
   closing.classList.remove('show');
   await wait(800);
 
@@ -637,14 +648,11 @@ async function memory() {
   await wait(3000);
   opening.classList.remove('show');
 
-  const loaded = [];
-
   for (let i = 0; i < assets.memory.length; i++) {
     const img = createMemoryPhoto(assets.memory[i], i, mosaic);
     const success = await loadMemoryPhoto(img, assets.memory[i]);
 
     if (success) {
-      loaded.push(img);
       img.classList.add('show');
     } else {
       img.remove();
