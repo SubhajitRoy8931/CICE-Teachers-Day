@@ -1,72 +1,66 @@
 /* Keep the original stylesheet intact and layer only the requested door fixes. */
 @import url("./style-original.css");
 
-/* The doorway matches the classroom photo-card footprint exactly. */
+/* The door uses the exact classroom section photo-area footprint. */
 .physical-door {
-  left: 7vw !important;
-  top: 7vh !important;
   width: 86vw !important;
   height: 81vh !important;
+  left: 50% !important;
+  top: 47.5% !important;
+  transform: translate(-50%, -50%) !important;
 }
 
-/* The classroom belongs only to the next section. */
+/* Keep the classroom image completely out of the door section. */
 .door-room {
   display: none !important;
-  box-shadow: none !important;
 }
 
-/* Simple bright light behind the opened doorway. */
+/* Simple bright glow in the same footprint as the classroom area. */
 .door-warm-light {
-  display: block !important;
-  position: absolute !important;
   left: 50% !important;
-  top: 50% !important;
-  width: 70% !important;
-  height: 82% !important;
-  transform: translate(-50%, -50%) scale(.72) !important;
+  top: 47.5% !important;
+  width: 86vw !important;
+  height: 81vh !important;
+  transform: translate(-50%, -50%) !important;
   background: radial-gradient(
     ellipse at center,
-    rgba(255,255,255,.98) 0%,
-    rgba(255,248,218,.72) 18%,
-    rgba(255,239,178,.34) 42%,
-    rgba(255,226,150,.12) 64%,
-    transparent 82%
+    rgba(255, 255, 255, 0.9) 0%,
+    rgba(235, 242, 255, 0.55) 24%,
+    rgba(120, 160, 255, 0.22) 48%,
+    transparent 72%
   ) !important;
   opacity: 0 !important;
-  filter: blur(18px) !important;
-  box-shadow: none !important;
+  filter: blur(22px) !important;
   animation: none !important;
-  transition: opacity .7s ease, transform 1s ease !important;
-  mix-blend-mode: screen !important;
-  z-index: 1 !important;
+  box-shadow: none !important;
+  transition: opacity 0.9s ease !important;
 }
 
-/* Let the light appear as the door begins opening. */
-.physical-doorway.door-opening .door-warm-light {
-  opacity: .88 !important;
-  transform: translate(-50%, -50%) scale(1) !important;
-}
-
-/* Keep the simple glow after the door has fully opened. */
+/* Show the glow once the door begins opening and keep it afterward. */
+.physical-doorway.door-opening .door-warm-light,
 .physical-doorway:has(.physical-door.open) .door-warm-light {
-  opacity: .88 !important;
-  transform: translate(-50%, -50%) scale(1) !important;
+  opacity: 0.82 !important;
 }
 
-/* Remove the old heavenly white-hot core. */
+/* Remove the old sharp/heavenly secondary glow. */
 .physical-doorway.door-opening::after {
   display: none !important;
 }
 
-/* Once the panels finish opening, the door itself fades away. */
+/* Keep the door opening centered without any enlargement. */
 .physical-door.open {
-  opacity: 0 !important;
-  pointer-events: none !important;
-  transition: opacity .65s ease !important;
+  transform: translate(-50%, -50%) !important;
 }
 
-/* Do not enlarge the hidden classroom element. */
-.door-room.reveal {
-  display: none !important;
-  transform: none !important;
+/* Prevent the old mobile door sizing from overriding the reference size. */
+@media (max-width: 600px) {
+  .physical-door {
+    width: 86vw !important;
+    height: 81vh !important;
+  }
+
+  .door-warm-light {
+    width: 86vw !important;
+    height: 81vh !important;
+  }
 }
