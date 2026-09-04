@@ -126,31 +126,71 @@
       filter: brightness(.88) saturate(.82);
     }
 
-    /* Only a soft heavenly glow is visible while the door opens. */
+    /* Extremely bright heavenly light during the door opening. */
     .door-warm-light {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: min(70vw, 900px);
+      height: min(100vh, 1050px);
+      transform: translate(-50%, -50%) scale(.55);
+      background:
+        radial-gradient(ellipse at center,
+          rgba(255,255,255,1) 0%,
+          rgba(255,253,235,1) 12%,
+          rgba(255,244,190,.98) 24%,
+          rgba(255,224,135,.88) 39%,
+          rgba(255,201,100,.58) 56%,
+          rgba(255,183,85,.28) 70%,
+          rgba(255,168,70,.08) 84%,
+          transparent 100%);
+      opacity: .65;
+      filter: blur(20px);
+      pointer-events: none;
+      transition: opacity 3.3s ease, transform 3.3s ease;
+      z-index: 4;
+      mix-blend-mode: screen;
+    }
+
+    /* The glow becomes overwhelming as the door opens. */
+    .physical-doorway.door-opening .door-warm-light {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1.18);
+      filter: blur(28px);
+    }
+
+    /* Add a second, sharper white-hot core to the light. */
+    .physical-doorway.door-opening::after {
+      content: "";
       position: absolute;
       left: 50%;
       top: 50%;
       width: min(48vw, 620px);
       height: min(82vh, 850px);
-      transform: translate(-50%, -50%) scale(.72);
-      background:
-        radial-gradient(ellipse at center,
-          rgba(255,248,220,.98) 0%,
-          rgba(255,232,170,.72) 18%,
-          rgba(255,208,125,.34) 42%,
-          rgba(255,190,100,.12) 64%,
-          transparent 78%);
-      opacity: .18;
-      filter: blur(24px);
+      transform: translate(-50%, -50%) scale(1.05);
+      border-radius: 50%;
+      background: radial-gradient(ellipse at center,
+        rgba(255,255,255,1) 0%,
+        rgba(255,252,225,.98) 24%,
+        rgba(255,232,158,.7) 48%,
+        rgba(255,210,115,.22) 68%,
+        transparent 82%);
+      filter: blur(12px);
+      opacity: 1;
       pointer-events: none;
-      transition: opacity 3s ease, transform 3.3s ease;
-      z-index: 2;
+      z-index: 4;
+      animation: heavenlyPulse 1.05s ease-in-out infinite alternate;
     }
 
-    .physical-door.open ~ .door-warm-light {
-      opacity: .92;
-      transform: translate(-50%, -50%) scale(1.05);
+    @keyframes heavenlyPulse {
+      from {
+        transform: translate(-50%, -50%) scale(.92);
+        filter: blur(16px);
+      }
+      to {
+        transform: translate(-50%, -50%) scale(1.16);
+        filter: blur(28px);
+      }
     }
 
     .physical-door {
@@ -472,6 +512,7 @@
       transition.classList.remove('show');
       access.classList.remove('hide');
       doorway.classList.remove('show');
+      doorway.classList.remove('door-opening');
       lock.classList.remove('unlocked');
       click.classList.remove('show');
       door.classList.remove('open');
@@ -536,9 +577,16 @@
       click.classList.add('show');
       await wait(800);
 
-      // Open the door while only the heavenly glow is visible.
+      // Start the extreme heavenly glow before the door opens.
+      doorway.classList.add('door-opening');
+      await wait(350);
+
+      // Open the door into the intense light.
       door.classList.add('open');
       await wait(3400);
+
+      // Stop the pulsing glow once the door is fully open.
+      doorway.classList.remove('door-opening');
 
       // The door is now fully open. Reveal the hidden classroom and bring it forward.
       room.classList.add('reveal');
