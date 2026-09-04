@@ -3,56 +3,56 @@ document.write('<script src="script-original.js"><\/script>');
 
 /* -------------------- SECTION 05 — PEOPLE -------------------- */
 
-window.people = async function people() {
+/*
+  Override the inline Section 05 function after the page finishes parsing.
+  The closing sentence and its animation are intentionally removed.
+*/
+setTimeout(() => {
 
-  const stage =
-    document.querySelector('#peopleStage');
+  window.people = async function people() {
 
-  const caption =
-    document.querySelector('#peopleCaption');
+    const stage =
+      document.querySelector('#peopleStage');
 
-  const captions = [
-    'Different faces.',
-    'Different beginnings.'
-  ];
+    const caption =
+      document.querySelector('#peopleCaption');
 
-  stage.innerHTML = '';
-  caption.classList.remove('show');
+    const captions = [
+      'Different faces.',
+      'Different beginnings.'
+    ];
 
-  /* Show each student image with its matching description. */
-  for (let i = 0; i < assets.people.length; i++) {
-
-    const card = makePhoto(
-      stage,
-      assets.people[i],
-      captions[i]
-    );
-
-    caption.textContent = captions[i];
-
-    card.classList.add('show');
-    caption.classList.add('show');
-
-    await wait(3600);
-
-    card.classList.remove('show');
+    stage.innerHTML = '';
     caption.classList.remove('show');
 
-    await wait(800);
-  }
+    /* Show each student image with its matching description. */
+    for (let i = 0; i < assets.people.length; i++) {
 
-  caption.textContent =
-    'And these were only a few of them.';
+      const card = makePhoto(
+        stage,
+        assets.people[i],
+        captions[i]
+      );
 
-  caption.classList.add('show');
+      caption.textContent = captions[i];
 
-  await wait(1800);
+      card.classList.add('show');
+      caption.classList.add('show');
 
-  caption.classList.remove('show');
+      await wait(3600);
 
-  showScene(5);
-  await teacher();
-};
+      card.classList.remove('show');
+      caption.classList.remove('show');
+
+      await wait(800);
+    }
+
+    /* Move directly into Section 06. */
+    showScene(5);
+    await teacher();
+  };
+
+}, 0);
 
 
 /* -------------------- SECTION 06 — TEACHER -------------------- */
@@ -90,7 +90,7 @@ window.teacher = async function teacher() {
   stage.innerHTML = '';
   caption.classList.remove('show');
 
-  /* Reveal the transition before the teacher images. */
+  /* Reveal the existing Section 05 → Section 06 transition. */
   transition.classList.add('show');
 
   await wait(600);
