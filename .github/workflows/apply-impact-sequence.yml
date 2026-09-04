@@ -1,0 +1,130 @@
+name: Apply impact sequence
+
+on:
+  push:
+    paths:
+      - '.github/workflows/apply-impact-sequence.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Update impact sequence
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+
+          path = Path('script.js')
+          text = path.read_text(encoding='utf-8')
+
+          pattern = r"async function impact\(\) \{.*?\n\}\n\n/\* =========================================================\n   08 — FINAL MEMORY"
+
+          replacement = '''async function impact() {
+            const captions = [
+              ['And then, we begin to use what we learned.'],
+              ['One step becomes a milestone.'],
+              ['A milestone becomes a new beginning.']
+            ];
+
+            const stage = document.querySelector('#impactStage');
+            const caption = document.querySelector('#impactCaption');
+            stage.innerHTML = '';
+
+            for (let i = 0; i < assets.impact.length; i++) {
+              const card = makePhoto(
+                stage,
+                assets.impact[i],
+                captions[i].join(' ')
+              );
+
+              caption.innerHTML = captions[i].join('<br>');
+              card.classList.add('show');
+              if (captions[i].length > 0) caption.classList.add('show');
+
+              await wait(i === 2 ? 4200 : 3800);
+              card.classList.remove('show');
+              caption.classList.remove('show');
+              await wait(900);
+            }
+
+            const screen = document.querySelector('#counterScreen');
+            const counter = document.querySelector('#studentCounter');
+            const leadLines = [
+              document.querySelector('#impactYears'),
+              document.querySelector('#impactInstitution'),
+              document.querySelector('#impactTeacher')
+            ];
+            const studentsTaught = document.querySelector('#studentsTaught');
+
+            screen.classList.add('show');
+            studentsTaught.classList.remove('show');
+            leadLines.forEach(line => line.classList.remove('show'));
+
+            for (const line of leadLines) {
+              line.classList.add('show');
+              await wait(2000);
+            }
+
+            await wait(900);
+
+            const start = performance.now();
+            const duration = 6000;
+
+            while (performance.now() - start < duration) {
+              const progress = (performance.now() - start) / duration;
+              let eased;
+
+              if (progress < 0.15) {
+                eased = 0.12 * Math.pow(progress / 0.15, 1.5);
+              } else {
+                eased = 0.12 + 0.88 * Math.pow((progress - 0.15) / 0.85, 1.7);
+              }
+
+              counter.textContent = Math.max(1, Math.floor(3000 * eased)).toLocaleString();
+              await wait(20);
+            }
+
+            counter.textContent = '3000+';
+            await wait(1500);
+            studentsTaught.classList.add('show');
+            await wait(5000);
+
+            screen.classList.remove('show');
+            showScene(7);
+            await memory();
+          }
+
+/* =========================================================
+   08 — FINAL MEMORY'''
+
+          updated, count = re.subn(pattern, replacement, text, count=1, flags=re.S)
+          if count != 1:
+              raise SystemExit('Impact function pattern not found')
+
+          path.write_text(updated, encoding='utf-8')
+          PY
+
+      - name: Commit and push
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add script.js
+          git diff --cached --quiet && exit 0
+          git commit -m 'Refine impact counter sequence'
+          git push
+
+      - name: Remove temporary workflow
+        if: always()
+        run: |
+          git rm .github/workflows/apply-impact-sequence.yml || true
+          git diff --cached --quiet || git commit -m 'Remove temporary impact workflow'
+          git push || true
