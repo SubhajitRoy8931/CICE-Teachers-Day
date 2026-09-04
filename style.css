@@ -723,6 +723,18 @@ body {
   font-size: 0.62em;
 }
 
+/* -------------------- DOOR REVEAL LAYER FIX -------------------- */
+
+/* Once the classroom image starts moving forward, it must sit above the door. */
+.door-room.reveal {
+  z-index: 10 !important;
+}
+
+/* The open door stays behind the advancing classroom image. */
+.physical-door.open {
+  z-index: 1 !important;
+}
+
 /* -------------------- RESPONSIVE -------------------- */
 
 @media (max-width: 900px) {
