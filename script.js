@@ -1,8 +1,69 @@
-/* Load the existing main script without changing its logic. */
+/* Load the original website logic first. */
 document.write('<script src="script-original.js"><\/script>');
 
-/* Replace only the Section 06 teacher sequence. */
+/* -------------------- SECTION 05 — PEOPLE -------------------- */
+
+window.people = async function people() {
+
+  const stage =
+    document.querySelector('#peopleStage');
+
+  const caption =
+    document.querySelector('#peopleCaption');
+
+  const captions = [
+    'Different faces.',
+    'Different beginnings.'
+  ];
+
+  stage.innerHTML = '';
+  caption.classList.remove('show');
+
+  /* Show each student image with its matching description. */
+  for (let i = 0; i < assets.people.length; i++) {
+
+    const card = makePhoto(
+      stage,
+      assets.people[i],
+      captions[i]
+    );
+
+    caption.textContent = captions[i];
+
+    card.classList.add('show');
+    caption.classList.add('show');
+
+    await wait(3600);
+
+    card.classList.remove('show');
+    caption.classList.remove('show');
+
+    await wait(800);
+  }
+
+  caption.textContent =
+    'And these were only a few of them.';
+
+  caption.classList.add('show');
+
+  await wait(1800);
+
+  caption.classList.remove('show');
+
+  showScene(5);
+  await teacher();
+};
+
+
+/* -------------------- SECTION 06 — TEACHER -------------------- */
+
 window.teacher = async function teacher() {
+
+  const transition =
+    document.querySelector('#teacherTransition');
+
+  const lines =
+    transition.querySelectorAll('.teacher-transition-line');
 
   const stage =
     document.querySelector('#teacherStage');
@@ -10,7 +71,7 @@ window.teacher = async function teacher() {
   const caption =
     document.querySelector('#teacherCaption');
 
-  /* Section 06 images in the requested order. */
+  /* Exact image order requested for Section 06. */
   const images = [
     '21 — Sir teaching with projector(2).jpg',
     '18 — Sir addressing a class(2).jpg',
@@ -18,7 +79,7 @@ window.teacher = async function teacher() {
     '20 — Students practicing on computers.jpg'
   ];
 
-  /* Caption for each teacher image. */
+  /* Description matched to each image. */
   const captions = [
     'Someone who showed us where to begin.',
     'Someone who listened.',
@@ -29,8 +90,33 @@ window.teacher = async function teacher() {
   stage.innerHTML = '';
   caption.classList.remove('show');
 
-  /* Show the four teacher images. */
+  /* Reveal the transition before the teacher images. */
+  transition.classList.add('show');
+
+  await wait(600);
+
+  lines[0].classList.add('show');
+
+  await wait(1200);
+
+  lines[1].classList.add('show');
+
+  await wait(2200);
+
+  transition.classList.add('exit');
+
+  await wait(900);
+
+  transition.classList.remove('show');
+  transition.classList.remove('exit');
+
+  lines.forEach(line => {
+    line.classList.remove('show');
+  });
+
+  /* Show each teacher image with its matching description. */
   for (let i = 0; i < images.length; i++) {
+
     const card = makePhoto(
       stage,
       images[i],
@@ -50,8 +136,9 @@ window.teacher = async function teacher() {
     await wait(850);
   }
 
-  /* Keep the existing Section 06 → Section 07 transition. */
-  const closing = document.querySelector('#teacherClosing');
+  /* Keep the existing closing and move to Section 07. */
+  const closing =
+    document.querySelector('#teacherClosing');
 
   closing.classList.add('show');
 
@@ -64,3 +151,52 @@ window.teacher = async function teacher() {
   showScene(6);
   await impact();
 };
+
+
+/* -------------------- TRANSITION STYLES -------------------- */
+
+const transitionStyle = document.createElement('style');
+
+transitionStyle.textContent = `
+.teacher-transition {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: .35rem;
+  background: #020307;
+  color: #f5f7fb;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity .9s ease;
+}
+
+.teacher-transition.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+.teacher-transition.exit {
+  opacity: 0;
+}
+
+.teacher-transition-line {
+  opacity: 0;
+  transform: translateY(14px);
+  font-size: clamp(23px, 3vw, 42px);
+  line-height: 1.45;
+  text-align: center;
+  transition: opacity .8s ease, transform .8s ease;
+}
+
+.teacher-transition-line.show {
+  opacity: 1;
+  transform: none;
+}
+`;
+
+document.head.appendChild(transitionStyle);
