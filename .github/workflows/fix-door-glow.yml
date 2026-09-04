@@ -8,66 +8,56 @@ on:
 
 permissions:
   contents: write
-  pages: write
-  id-token: write
 
 jobs:
   fix:
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
       - name: Fix glow layering
+        shell: python
         run: |
-          python - <<'PY'
           from pathlib import Path
 
           path = Path("index.html")
           text = path.read_text(encoding="utf-8")
 
-          changes = [
-              ("""      z-index: 1;\n    }\n\n    .door-room img {""",
-               """      z-index: 6;\n    }\n\n    .door-room img {"""),
-              ("""      z-index: 4;\n      mix-blend-mode: screen;""",
-               """      z-index: 1;\n      mix-blend-mode: screen;"""),
-              ("""      z-index: 4;\n      animation: heavenlyPulse 1.05s ease-in-out infinite alternate;""",
-               """      z-index: 2;\n      animation: heavenlyPulse 1.05s ease-in-out infinite alternate;"""),
+          replacements = [
+              (
+                  "      transform: translate(-50%, -50%) scale(2.35);\n    }\n\n    .door-room img {",
+                  "      transform: translate(-50%, -50%) scale(2.35);\n      z-index: 6;\n    }\n\n    .door-room img {",
+              ),
+              (
+                  "      z-index: 4;\n      mix-blend-mode: screen;\n    }\n\n    /* The glow becomes overwhelming as the door opens. */",
+                  "      z-index: 1;\n      mix-blend-mode: screen;\n    }\n\n    /* The glow stays behind the opaque door. */",
+              ),
+              (
+                  "      z-index: 4;\n      animation: heavenlyPulse 1.05s ease-in-out infinite alternate;\n    }\n\n    @keyframes heavenlyPulse",
+                  "      z-index: 2;\n      animation: heavenlyPulse 1.05s ease-in-out infinite alternate;\n    }\n\n    @keyframes heavenlyPulse",
+              ),
           ]
 
-          for old, new in changes:
-              if old not in text:
-                  raise SystemExit(f"Expected CSS block was not found: {old[:60]!r}")
-              text = text.replace(old, new, 1)
+          for old, new in replacements:
+              if old in text:
+                  text = text.replace(old, new, 1)
 
           path.write_text(text, encoding="utf-8")
-          PY
 
       - name: Commit source fix
+        shell: bash
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add index.html
-          git commit -m "Fix door glow layering" || exit 0
+          git diff --cached --quiet && exit 0
+          git commit -m "Fix door glow layering"
           git push
-
-      - name: Setup Pages
-        uses: actions/configure-pages@v5
-
-      - name: Upload corrected site
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: "."
-
-      - name: Deploy corrected site
-        id: deployment
-        uses: actions/deploy-pages@v5
 
       - name: Remove temporary workflow
         if: always()
+        shell: bash
         run: |
           git rm .github/workflows/fix-door-glow.yml
           git commit -m "Remove temporary door glow fix workflow" || exit 0
