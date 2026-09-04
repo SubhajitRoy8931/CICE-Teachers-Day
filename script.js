@@ -9,7 +9,7 @@
 // Get all scenes in their HTML order.
 const scenes = [...document.querySelectorAll('.scene')];
 
-// Pause the current animation.
+// Pause the current animation when a deliberate pause is needed.
 const wait = ms => new Promise(resolve => {
   setTimeout(resolve, ms);
 });
@@ -47,15 +47,17 @@ async function typeLine(text, className = '', speed = 120) {
 // Run the opening terminal sequence.
 async function boot() {
 
+  // Clear the terminal in case the section is replayed.
+  document.querySelector('#terminalText').innerHTML = '';
+
+  // Type each line continuously with no pauses between lines.
   await typeLine(
     'C:\\CICE> teachers_day.exe',
     'command',
     85
   );
 
-  await wait(1600);
-
-  // Blank line.
+  // Blank line between command and scan status.
   await typeLine('');
 
   await typeLine(
@@ -64,17 +66,13 @@ async function boot() {
     120
   );
 
-  await wait(2200);
-
   await typeLine(
     'Teacher detected.',
     'detected',
     120
   );
 
-  await wait(2800);
-
-  // Blank line.
+  // Blank line before the final status.
   await typeLine('');
 
   await typeLine(
@@ -83,20 +81,13 @@ async function boot() {
     120
   );
 
-  await wait(2300);
-
   await typeLine(
     'System ready.',
     'ready',
     125
   );
 
-  await wait(4000);
-
-  // Stop the blinking cursor.
-  document.querySelector('#cursor').style.display = 'none';
-
-  // Start the greeting.
+  // Move directly to the greeting when the final line is complete.
   showScene(1);
   await greeting();
 }
@@ -174,7 +165,6 @@ async function flyLetter(char, slot) {
     key.classList.remove('source-active');
   }, 180);
 
-
   // Read the keyboard and title positions.
   const source = key.getBoundingClientRect();
   const target = slot.getBoundingClientRect();
@@ -185,7 +175,6 @@ async function flyLetter(char, slot) {
   const tx = target.left + target.width / 2;
   const ty = target.top + target.height / 2;
 
-
   // Create the temporary flying letter.
   const letter = document.createElement('span');
 
@@ -195,7 +184,6 @@ async function flyLetter(char, slot) {
   letter.style.top = `${sy}px`;
 
   document.body.appendChild(letter);
-
 
   // Fly toward the final title position.
   letter.animate(
@@ -287,14 +275,12 @@ async function greeting() {
 
   await wait(800);
 
-
   // Move the keyboard away after the title settles.
   document
     .querySelector('#keyboard')
     .classList.add('hide');
 
   await wait(1600);
-
 
   // Reveal the message one line at a time.
   const lines = document.querySelectorAll(
@@ -407,12 +393,12 @@ function imagePath(name) {
 
 /* -------------------- MEMORY FILENAMES -------------------- */
 
-// All memory photos share this exact WhatsApp filename prefix.
+// All 50 memory photos share this exact filename prefix.
 const memoryPrefix =
   'WhatsApp Image 2026-09-04 at 11.54.05 AM';
 
 
-// Build the 50 filenames in numeric order.
+// Build filenames from 1 through 50.
 assets.memory = Array.from(
   { length: 50 },
   (_, index) =>
@@ -469,7 +455,6 @@ async function classroom() {
     i < assets.classroom.length;
     i++
   ) {
-
     const card = makePhoto(
       stage,
       assets.classroom[i],
@@ -488,7 +473,6 @@ async function classroom() {
 
     await wait(900);
   }
-
 
   /* -------------------- TIME RECORD -------------------- */
 
@@ -563,7 +547,6 @@ async function people() {
     i < assets.people.length;
     i++
   ) {
-
     const card = makePhoto(
       stage,
       assets.people[i],
@@ -620,7 +603,6 @@ async function teacher() {
     i < assets.teacher.length;
     i++
   ) {
-
     const card = makePhoto(
       stage,
       assets.teacher[i],
@@ -682,7 +664,6 @@ async function impact() {
     i < assets.impact.length;
     i++
   ) {
-
     const card = makePhoto(
       stage,
       assets.impact[i],
@@ -705,7 +686,6 @@ async function impact() {
     await wait(900);
   }
 
-
   /* -------------------- STUDENT COUNTER -------------------- */
 
   const screen = document.querySelector('#counterScreen');
@@ -718,7 +698,6 @@ async function impact() {
 
   // Count from 0 to 3000+ over six seconds.
   while (performance.now() - start < duration) {
-
     const progress =
       (performance.now() - start) / duration;
 
@@ -836,19 +815,12 @@ function createMemoryPhoto(name, index, mosaic) {
 }
 
 
-// Load one memory image from GitHub Pages.
+// Load one memory image with a timeout.
 function loadMemoryPhoto(img, name) {
 
   return new Promise(resolve => {
-
     let finished = false;
 
-    // Prevent a failed network request from stopping Section 8.
-    const timeout = setTimeout(() => {
-      finish(false);
-    }, 12000);
-
-    // Finish only once.
     const finish = success => {
       if (finished) return;
       finished = true;
@@ -856,20 +828,32 @@ function loadMemoryPhoto(img, name) {
       resolve(success);
     };
 
-    // Reveal only after the image really loads.
+    const timeout = setTimeout(() => {
+      img.classList.add('asset-missing');
+      finish(false);
+    }, 12000);
+
     img.addEventListener('load', () => {
       finish(true);
     }, { once: true });
 
-    // Hide an image that could not be loaded.
     img.addEventListener('error', () => {
       img.classList.add('asset-missing');
       finish(false);
     }, { once: true });
 
-    // Start the request using the encoded relative path.
-    img.src = `assets/memory/${encodeURIComponent(name)}`;
+    // Use the same encoded relative path as the rest of the site.
+    img.src = memoryPagePath(name);
   });
+}
+
+
+// GitHub Pages path for a memory image.
+function memoryPagePath(name) {
+  return (
+    'assets/memory/' +
+    encodeURIComponent(name)
+  );
 }
 
 
@@ -927,7 +911,7 @@ async function memory() {
     };
   });
 
-  // Load all 50 files in parallel.
+  // Load all files in parallel.
   await Promise.all(
     images.map(item =>
       loadMemoryPhoto(
