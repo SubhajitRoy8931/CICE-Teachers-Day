@@ -62,10 +62,7 @@
 
     <!-- 06 — THE TEACHER -->
     <section class="scene teacher" data-scene="teacher">
-      <div class="teacher-transition" id="teacherTransition">
-        <div class="teacher-transition-line">But behind every beginning,</div>
-        <div class="teacher-transition-line">there was someone.</div>
-      </div>
+      <div class="teacher-transition" id="teacherTransition"><div class="teacher-transition-line">But behind every beginning,</div><div class="teacher-transition-line">there was someone.</div></div>
       <div class="teacher-stage" id="teacherStage"></div><div class="scene-caption" id="teacherCaption"></div>
       <div class="teacher-closing" id="teacherClosing"><p>And somewhere between the questions and the answers,</p><p>we learned to find our own way.</p><div class="closing-gap"></div><p>Some lessons are taught.</p><p>Others become a part of who we are.</p></div>
     </section>
@@ -74,46 +71,28 @@
     <section class="scene impact" data-scene="impact"><div class="impact-stage" id="impactStage"></div><div class="scene-caption" id="impactCaption"></div><div class="counter-screen" id="counterScreen"><div class="counter" id="studentCounter">0</div></div></section>
 
     <!-- 08 — FINAL MEMORY -->
-    <section class="scene memory" data-scene="memory">
-      <div class="memory-opening" id="memoryOpening"><p>Some things are measured in numbers.</p><p>Some are remembered in moments.</p></div>
-      <div class="mosaic" id="mosaic"></div>
-      <div class="poem" id="poem"><p>You lit the spark, we learned to see,</p><p>You helped us find what we could be.</p><p>Though years may take us far away,</p><p>Your lessons walk with us each day.</p></div>
-      <div class="final-thanks" id="finalThanks"><div>Thank you, Sir.</div><div>Happy Teachers' Day, Sir.</div></div>
-    </section>
+    <section class="scene memory" data-scene="memory"><div class="memory-opening" id="memoryOpening"><p>Some things are measured in numbers.</p><p>Some are remembered in moments.</p></div><div class="mosaic" id="mosaic"></div><div class="poem" id="poem"><p>You lit the spark, we learned to see,</p><p>You helped us find what we could be.</p><p>Though years may take us far away,</p><p>Your lessons walk with us each day.</p></div><div class="final-thanks" id="finalThanks"><div>Thank you, Sir.</div><div>Happy Teachers' Day, Sir.</div></div></section>
   </main>
 
-  <!-- Cache-busted on every page load so the live site uses the current script. -->
-  <script>
-    const script = document.createElement('script');
-    script.src = 'script.js?v=' + Date.now();
-    document.body.appendChild(script);
-  </script>
+  <!-- Load the current script with a version tied to this fix. -->
+  <script src="script.js?v=cf48336"></script>
 
   <!-- Section 03 override. -->
   <script>
     window.archive = async function archive() {
-      const bar = document.querySelector('#archiveBar');
-      const percent = document.querySelector('#archivePercent');
-      const found = document.querySelector('#archiveFound');
-      const origin = document.querySelector('#originRecord');
-      const year = document.querySelector('.origin-year');
-      const line = document.querySelector('.origin-line');
+      const bar = document.querySelector('#archiveBar'); const percent = document.querySelector('#archivePercent'); const found = document.querySelector('#archiveFound'); const origin = document.querySelector('#originRecord'); const year = document.querySelector('.origin-year'); const line = document.querySelector('.origin-line');
       document.querySelector('#archiveStatus').textContent = 'Searching archives...';
       for (let n = 0; n <= 100; n += 2) { bar.style.width = `${n}%`; percent.textContent = `${n}%`; await wait(28); }
-      await wait(450); found.textContent = 'Archive found.'; await wait(900); year.textContent = ''; line.textContent = ''; origin.classList.add('show'); await wait(500);
-      year.textContent = '2'; await wait(450); year.textContent = '20'; await wait(450); year.textContent = '201'; await wait(450); year.textContent = '2016'; await wait(250);
-      line.textContent = 'This is when it all began.'; await wait(2500); showScene(3); await classroom();
+      await wait(450); found.textContent = 'Archive found.'; await wait(900); year.textContent = ''; line.textContent = ''; origin.classList.add('show'); await wait(500); year.textContent = '2'; await wait(450); year.textContent = '20'; await wait(450); year.textContent = '201'; await wait(450); year.textContent = '2016'; await wait(250); line.textContent = 'This is when it all began.'; await wait(2500); showScene(3); await classroom();
     };
   </script>
 
   <!-- Section 04 override. -->
   <script>
     window.classroom = async function classroom() {
-      const captions = ['A Classroom','A place to learn.','Then the room came alive.','Many questions. Many answers.','The lessons evolved.'];
-      const stage = document.querySelector('#classroomPhotos'); const caption = document.querySelector('#classroomCaption'); stage.innerHTML = '';
+      const captions = ['A Classroom','A place to learn.','Then the room came alive.','Many questions. Many answers.','The lessons evolved.']; const stage = document.querySelector('#classroomPhotos'); const caption = document.querySelector('#classroomCaption'); stage.innerHTML = '';
       for (let i = 0; i < assets.classroom.length; i++) { const card = makePhoto(stage, assets.classroom[i], captions[i]); caption.textContent = captions[i]; card.classList.add('show'); caption.classList.add('show'); await wait(3600); card.classList.remove('show'); caption.classList.remove('show'); await wait(900); }
-      const record = document.querySelector('#timeRecord'); const year = document.querySelector('#timeYear'); const topMessage = document.querySelector('#timeMessageTop'); const bottomMessage = document.querySelector('#timeMessageBottom');
-      record.classList.add('show'); topMessage.textContent = 'And then, the years began to pass.'; bottomMessage.textContent = ''; await wait(1700); year.textContent = '2016'; await wait(1000);
+      const record = document.querySelector('#timeRecord'); const year = document.querySelector('#timeYear'); const topMessage = document.querySelector('#timeMessageTop'); const bottomMessage = document.querySelector('#timeMessageBottom'); record.classList.add('show'); topMessage.textContent = 'And then, the years began to pass.'; bottomMessage.textContent = ''; await wait(1700); year.textContent = '2016'; await wait(1000);
       const start = performance.now(); while (performance.now() - start < 2000) { const progress = (performance.now() - start) / 2000; year.textContent = String(Math.round(2016 + 10 * progress)); await wait(20); }
       year.textContent = '2026'; await wait(700); bottomMessage.textContent = 'And along the way, lives were shaped.'; await wait(2200); record.classList.remove('show'); showScene(4); await people();
     };
@@ -122,8 +101,7 @@
   <!-- Section 05 ends directly after the student images. -->
   <script>
     window.people = async function people() {
-      const stage = document.querySelector('#peopleStage'); const caption = document.querySelector('#peopleCaption'); const captions = ['Different faces.','Different beginnings.'];
-      stage.innerHTML = ''; caption.classList.remove('show');
+      const stage = document.querySelector('#peopleStage'); const caption = document.querySelector('#peopleCaption'); const captions = ['Different faces.','Different beginnings.']; stage.innerHTML = ''; caption.classList.remove('show');
       for (let i = 0; i < assets.people.length; i++) { const card = makePhoto(stage, assets.people[i], captions[i]); caption.textContent = captions[i]; card.classList.add('show'); caption.classList.add('show'); await wait(3600); card.classList.remove('show'); caption.classList.remove('show'); await wait(800); }
       showScene(5); await teacher();
     };
