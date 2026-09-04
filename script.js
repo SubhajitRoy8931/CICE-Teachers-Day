@@ -1,17 +1,13 @@
 /* =========================================================
    CICE TEACHERS' DAY
-   Single authoritative website script.
+   Main website script
    ========================================================= */
 
 /* -------------------- BASIC HELPERS -------------------- */
 
-// Get all scenes in their HTML order.
 const scenes = [...document.querySelectorAll('.scene')];
-
-// Pause an animation for the requested time.
 const wait = ms => new Promise(resolve => setTimeout(resolve, ms));
 
-// Show one scene and hide the others.
 function showScene(index) {
   scenes.forEach((scene, i) => {
     scene.classList.toggle('active', i === index);
@@ -22,19 +18,18 @@ function showScene(index) {
    01 — SYSTEM BOOT
    ========================================================= */
 
-// Type one line into the terminal.
 async function typeLine(text, className = '', speed = 120) {
   const box = document.querySelector('#terminalText');
   const line = document.createElement('div');
   if (className) line.className = className;
   box.appendChild(line);
+
   for (const char of text) {
     line.textContent += char;
     await wait(speed);
   }
 }
 
-// Run the opening terminal sequence.
 async function boot() {
   document.querySelector('#terminalText').innerHTML = '';
 
@@ -61,7 +56,6 @@ async function boot() {
 
 const greetingLines = ['HAPPY', "TEACHERS'", 'DAY SIR'];
 
-// Build invisible destination slots for every title letter.
 function prepareTitle() {
   greetingLines.forEach((text, row) => {
     const line = document.querySelector(`#titleLine${row + 1}`);
@@ -80,12 +74,10 @@ function prepareTitle() {
   });
 }
 
-// Find the keyboard key for a character.
 function getKey(char) {
   return document.querySelector(`.key[data-key="${CSS.escape(char)}"]`);
 }
 
-// Fly one character from the keyboard into its title position.
 async function flyLetter(char, slot) {
   if (char === ' ') {
     slot.classList.add('landed');
@@ -145,7 +137,6 @@ async function flyLetter(char, slot) {
   letter.remove();
 }
 
-// Build one title line from left to right.
 async function buildTitleLine(row) {
   const line = document.querySelector(`#titleLine${row}`);
   for (const slot of [...line.children]) {
@@ -154,7 +145,6 @@ async function buildTitleLine(row) {
   }
 }
 
-// Run the restrained celebration effect.
 function startConfetti() {
   const canvas = document.createElement('canvas');
   const context = canvas.getContext('2d');
@@ -239,17 +229,16 @@ function startConfetti() {
   requestAnimationFrame(frame);
 }
 
-// Type the small transition prompt.
 async function typePrompt(text) {
   const box = document.querySelector('#morePrompt');
   box.textContent = '';
+
   for (const char of text) {
     box.textContent += char;
     await wait(65);
   }
 }
 
-// Run the greeting section.
 async function greeting() {
   prepareTitle();
   await wait(900);
@@ -295,7 +284,6 @@ const assets = {
     '16 — Medium student batch, newer classroom(1).jpg'
   ],
 
-  // IMPORTANT: this is the single authoritative Section 06 order.
   teacher: [
     '21 — Sir teaching with projector(2).jpg',
     '18 — Sir addressing a class(2).jpg',
@@ -312,19 +300,16 @@ const assets = {
   memory: []
 };
 
-// Build the normal asset path.
 function imagePath(name) {
   return `assets/${encodeURIComponent(name)}`;
 }
 
-// Build the 50 memory filenames.
 const memoryPrefix = 'WhatsApp Image 2026-09-04 at 11.54.05 AM';
 assets.memory = Array.from(
   { length: 50 },
   (_, index) => `${memoryPrefix} (${index + 1}).jpeg`
 );
 
-// Create one normal photo card.
 function makePhoto(stage, name, caption = '') {
   const card = document.createElement('div');
   const img = document.createElement('img');
@@ -489,7 +474,6 @@ async function teacher() {
   stage.innerHTML = '';
   caption.classList.remove('show');
 
-  // Section 05 → Section 06 transition.
   transition.classList.add('show');
   await wait(600);
   lines[0].classList.add('show');
@@ -503,7 +487,6 @@ async function teacher() {
   transition.classList.remove('exit');
   lines.forEach(line => line.classList.remove('show'));
 
-  // Display the four teacher-section images in the exact order above.
   for (let i = 0; i < assets.teacher.length; i++) {
     const card = makePhoto(stage, assets.teacher[i], captions[i]);
     caption.textContent = captions[i];
@@ -515,8 +498,20 @@ async function teacher() {
     await wait(850);
   }
 
+  /* -------------------- CLOSING REFLECTION -------------------- */
+
   const closing = document.querySelector('#teacherClosing');
+  const closingLines = [...closing.querySelectorAll('p')];
+
+  // Reveal each line cumulatively. Nothing disappears.
   closing.classList.add('show');
+
+  for (let i = 0; i < closingLines.length; i++) {
+    closingLines[i].classList.add('show');
+    await wait(i === 2 ? 1000 : 2500);
+  }
+
+  // Hold the complete message before moving on.
   await wait(5000);
   closing.classList.remove('show');
   await wait(800);
@@ -597,7 +592,6 @@ const memoryPositions = [
   [3, 88, -2], [25, 87, 3], [48, 89, -2], [70, 87, 2], [89, 88, -3]
 ];
 
-// Create one mosaic image.
 function createMemoryPhoto(name, index, mosaic) {
   const img = document.createElement('img');
   const position = memoryPositions[index % memoryPositions.length];
@@ -613,7 +607,6 @@ function createMemoryPhoto(name, index, mosaic) {
   return img;
 }
 
-// Load one memory image and resolve whether it succeeded.
 function loadMemoryPhoto(img, name) {
   return new Promise(resolve => {
     let finished = false;
@@ -621,75 +614,58 @@ function loadMemoryPhoto(img, name) {
     const finish = success => {
       if (finished) return;
       finished = true;
-      clearTimeout(timeout);
       resolve(success);
     };
 
-    const timeout = setTimeout(() => {
-      img.classList.add('asset-missing');
-      finish(false);
-    }, 12000);
-
-    img.addEventListener('load', () => finish(true), { once: true });
-    img.addEventListener('error', () => {
-      img.classList.add('asset-missing');
-      finish(false);
-    }, { once: true });
-
-    img.src = `assets/memory/${encodeURIComponent(name)}`;
+    img.onload = () => finish(true);
+    img.onerror = () => finish(false);
+    img.src = imagePath(name);
   });
 }
 
-// Animate one loaded memory image into position.
-async function revealMemoryPhoto(img, index) {
-  await wait(180 + index * 220);
-  if (!img.classList.contains('asset-missing')) img.classList.add('show');
-}
-
-// Run the final memory sequence.
 async function memory() {
   const opening = document.querySelector('#memoryOpening');
   const mosaic = document.querySelector('#mosaic');
   const poem = document.querySelector('#poem');
-  const thanks = document.querySelector('#finalThanks');
+  const finalThanks = document.querySelector('#finalThanks');
 
   mosaic.innerHTML = '';
   poem.classList.remove('show');
-  thanks.classList.remove('show');
-  opening.classList.remove('hide');
+  finalThanks.classList.remove('show');
 
+  opening.classList.add('show');
   await wait(3000);
-  opening.classList.add('hide');
-  await wait(1300);
+  opening.classList.remove('show');
 
-  const images = assets.memory.map((name, index) => ({
-    img: createMemoryPhoto(name, index, mosaic),
-    name,
-    index
-  }));
+  const loaded = [];
 
-  await Promise.all(
-    images.map(item => loadMemoryPhoto(item.img, item.name))
-  );
+  for (let i = 0; i < assets.memory.length; i++) {
+    const img = createMemoryPhoto(assets.memory[i], i, mosaic);
+    const success = await loadMemoryPhoto(img, assets.memory[i]);
 
-  await Promise.all(
-    images.map(item => revealMemoryPhoto(item.img, item.index))
-  );
+    if (success) {
+      loaded.push(img);
+      img.classList.add('show');
+    } else {
+      img.remove();
+    }
 
-  await wait(3200);
+    await wait(100);
+  }
+
+  await wait(2500);
   poem.classList.add('show');
-  await wait(5200);
+  await wait(6500);
   poem.classList.remove('show');
-  await wait(1600);
-  thanks.classList.add('show');
-  await wait(5000);
+  await wait(1000);
+
+  finalThanks.classList.add('show');
 }
 
 /* =========================================================
-   START
+   START EXPERIENCE
    ========================================================= */
 
 window.addEventListener('load', () => {
-  showScene(0);
   boot();
 });
