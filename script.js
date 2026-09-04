@@ -831,6 +831,142 @@ async function impact() {
    08 — FINAL MEMORY
    ========================================================= */
 
+// Final positions used by the photo mosaic.
+const memoryPositions = [
+  [2, 4, -3],
+  [21, 3, 2],
+  [41, 5, -2],
+  [62, 3, 3],
+  [80, 5, -2],
+
+  [10, 24, 2],
+  [31, 21, -3],
+  [52, 24, 2],
+  [73, 22, -2],
+  [88, 25, 3],
+
+  [3, 45, -2],
+  [23, 43, 2],
+  [44, 46, -3],
+  [65, 44, 2],
+  [84, 46, -2],
+
+  [12, 67, 3],
+  [34, 65, -2],
+  [55, 68, 2],
+  [76, 66, -3],
+  [91, 69, 2],
+
+  [3, 88, -2],
+  [25, 87, 3],
+  [48, 89, -2],
+  [70, 87, 2],
+  [89, 88, -3]
+];
+
+
+// Create one memory image.
+function createMemoryPhoto(name, index, mosaic) {
+
+  const img = document.createElement('img');
+  const position =
+    memoryPositions[index % memoryPositions.length];
+
+  img.className = 'mosaic-photo';
+  img.alt = 'CICE memory';
+
+  // Starting point for the flying animation.
+  img.style.setProperty(
+    '--sx',
+    `${50 + (index % 5) * 6}%`
+  );
+
+  img.style.setProperty(
+    '--sy',
+    `${45 + (index % 4) * 7}%`
+  );
+
+  // Final mosaic position.
+  img.style.setProperty(
+    '--x',
+    `${position[0]}%`
+  );
+
+  img.style.setProperty(
+    '--y',
+    `${position[1]}%`
+  );
+
+  img.style.setProperty(
+    '--rot',
+    `${position[2]}deg`
+  );
+
+  mosaic.appendChild(img);
+
+  return img;
+}
+
+
+// Load one memory image with a timeout.
+function loadMemoryPhoto(img, name) {
+
+  return new Promise(resolve => {
+    let finished = false;
+
+    const finish = success => {
+      if (finished) return;
+      finished = true;
+      clearTimeout(timeout);
+      resolve(success);
+    };
+
+    const timeout = setTimeout(() => {
+      img.classList.add('asset-missing');
+      finish(false);
+    }, 12000);
+
+    img.addEventListener('load', () => {
+      finish(true);
+    }, { once: true });
+
+    img.addEventListener('error', () => {
+      img.classList.add('asset-missing');
+      finish(false);
+    }, { once: true });
+
+    // Use the same encoded relative path as the rest of the site.
+    img.src = memoryPagePath(name);
+  });
+}
+
+
+// GitHub Pages path for a memory image.
+function memoryPagePath(name) {
+  return (
+    'assets/memory/' +
+    encodeURIComponent(name)
+  );
+}
+
+
+// Animate one loaded memory image into its position.
+async function revealMemoryPhoto(img, index) {
+
+  const delay = 180 + index * 220;
+
+  await wait(delay);
+
+  // Do not reveal an image that failed to load.
+  if (img.classList.contains('asset-missing')) {
+    return;
+  }
+
+  img.classList.add('show');
+}
+
+
+// Run the complete final memory section.
 async function memory() {
 
   const opening = document.querySelector('#memoryOpening');
@@ -838,60 +974,87 @@ async function memory() {
   const poem = document.querySelector('#poem');
   const thanks = document.querySelector('#finalThanks');
 
-  opening.classList.add('show');
-
-  await wait(4500);
-
-  opening.classList.remove('show');
-
-  await wait(1200);
-
+  // Reset the section.
   mosaic.innerHTML = '';
+  poem.classList.remove('show');
+  thanks.classList.remove('show');
+  opening.classList.remove('hide');
 
-  assets.memory.forEach((name, index) => {
-    const tile = document.createElement('div');
-    const img = document.createElement('img');
+  /* -------------------- OPENING TEXT -------------------- */
 
-    tile.className = 'memory-tile';
+  await wait(3000);
 
-    img.src = imagePath(name);
-    img.alt = `CICE memory ${index + 1}`;
+  opening.classList.add('hide');
 
-    img.addEventListener('error', () => {
-      tile.classList.add('asset-missing');
-    });
+  await wait(1300);
 
-    tile.appendChild(img);
-    mosaic.appendChild(tile);
+  /* -------------------- CREATE AND LOAD PHOTOS -------------------- */
+
+  const images = assets.memory.map((name, index) => {
+    const img = createMemoryPhoto(
+      name,
+      index,
+      mosaic
+    );
+
+    return {
+      img,
+      name,
+      index
+    };
   });
 
-  mosaic.classList.add('show');
+  // Load all files in parallel.
+  await Promise.all(
+    images.map(item =>
+      loadMemoryPhoto(
+        item.img,
+        item.name
+      )
+    )
+  );
 
-  await wait(6500);
+  /* -------------------- BUILD THE MOSAIC -------------------- */
 
-  mosaic.classList.remove('show');
+  // Reveal the photos one by one.
+  await Promise.all(
+    images.map(item =>
+      revealMemoryPhoto(
+        item.img,
+        item.index
+      )
+    )
+  );
 
-  await wait(1000);
+  // Give the completed mosaic time to settle.
+  await wait(3200);
+
+  /* -------------------- POEM -------------------- */
 
   poem.classList.add('show');
 
-  await wait(8500);
+  await wait(5200);
 
   poem.classList.remove('show');
 
-  await wait(1000);
+  /* -------------------- FINAL THANK YOU -------------------- */
+
+  await wait(1600);
 
   thanks.classList.add('show');
 
-  await wait(8000);
+  await wait(5000);
 }
 
 
 /* =========================================================
-   START EXPERIENCE
+   START
    ========================================================= */
 
-// Start the experience once the page has loaded.
 window.addEventListener('load', () => {
+  // Start at the first scene.
+  showScene(0);
+
+  // Run the entire cinematic sequence.
   boot();
 });
