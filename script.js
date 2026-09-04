@@ -304,7 +304,7 @@ async function greeting() {
 
   for (const line of lines) {
     line.classList.add('show');
-    await wait(900);
+    await wait(2000);
   }
 
   await wait(10000);
