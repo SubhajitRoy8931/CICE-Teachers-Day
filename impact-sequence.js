@@ -125,5 +125,22 @@ async function impact() {
 
   screen.classList.remove('show');
   showScene(7);
+
+  /* Section 08 fixes: use the real memory folder and hide the opening text after its hold. */
+  assets.memory = assets.memory.map(name => `memory/${name}`);
+
+  const memoryStyle = document.createElement('style');
+  memoryStyle.textContent = `
+    #memoryOpening:not(.show) {
+      opacity: 0;
+      visibility: hidden;
+    }
+    #memoryOpening.show {
+      opacity: 1;
+      visibility: visible;
+    }
+  `;
+  document.head.appendChild(memoryStyle);
+
   await memory();
 }
