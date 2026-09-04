@@ -9,59 +9,630 @@
 
   <!-- Door transition styling. -->
   <style>
-    .door-transition { position:absolute; inset:0; z-index:20; display:grid; place-items:center; overflow:hidden; background:#020307; opacity:0; visibility:hidden; transition:opacity 1.2s ease; }
-    .door-transition.show { opacity:1; visibility:visible; }
-    .door-access { position:absolute; inset:0; z-index:5; display:grid; place-items:center; text-align:center; font-family:Consolas,"Courier New",monospace; transition:opacity 1s ease; }
-    .door-access.hide { opacity:0; pointer-events:none; }
-    .door-access-title { margin-bottom:26px; color:#8fa8c5; font-size:clamp(11px,1.2vw,15px); letter-spacing:.22em; }
-    .door-access-label { color:#dbe5f0; font-size:clamp(13px,1.5vw,18px); letter-spacing:.08em; }
-    .door-code { display:flex; justify-content:center; gap:12px; margin-top:22px; }
-    .door-code span { width:50px; height:58px; display:grid; place-items:center; border-bottom:1px solid #b8cce055; color:#f4f7fa; font-size:30px; }
-    .door-access-status { min-height:24px; margin-top:28px; color:#69d17a; font-size:13px; letter-spacing:.13em; }
-    .physical-doorway { position:absolute; inset:0; opacity:0; transition:opacity 1.2s ease; }
-    .physical-doorway.show { opacity:1; }
-    .door-room { position:absolute; left:50%; top:50%; width:min(44vw,570px); height:min(78vh,790px); transform:translate(-50%,-50%) scale(.88); transform-origin:center center; overflow:hidden; background:#090a0c; opacity:0; visibility:hidden; pointer-events:none; box-shadow:0 0 100px 25px #d5ad7040; transition:opacity 1.2s ease,transform 2.2s cubic-bezier(.18,.78,.16,1); z-index:1; }
-    .door-room.reveal { opacity:1; visibility:visible; transform:translate(-50%,-50%) scale(2.35); z-index:6; }
-    .door-room img { width:100%; height:100%; display:block; object-fit:cover; filter:brightness(.88) saturate(.82); }
-    .door-warm-light { position:absolute; left:50%; top:50%; width:min(70vw,900px); height:min(100vh,1050px); transform:translate(-50%,-50%) scale(.55); background:radial-gradient(ellipse at center,rgba(255,255,255,1) 0%,rgba(255,253,235,1) 12%,rgba(255,244,190,.98) 24%,rgba(255,224,135,.88) 39%,rgba(255,201,100,.58) 56%,rgba(255,183,85,.28) 70%,rgba(255,168,70,.08) 84%,transparent 100%); opacity:.65; filter:blur(20px); pointer-events:none; transition:opacity 3.3s ease,transform 3.3s ease; z-index:1; mix-blend-mode:screen; }
-    .physical-doorway.door-opening .door-warm-light { opacity:1; transform:translate(-50%,-50%) scale(1.18); filter:blur(28px); }
-    .physical-doorway.door-opening::after { content:""; position:absolute; left:50%; top:50%; width:min(48vw,620px); height:min(82vh,850px); transform:translate(-50%,-50%) scale(1.05); border-radius:50%; background:radial-gradient(ellipse at center,rgba(255,255,255,1) 0%,rgba(255,252,225,.98) 24%,rgba(255,232,158,.7) 48%,rgba(255,210,115,.22) 68%,transparent 82%); filter:blur(12px); opacity:1; pointer-events:none; z-index:2; animation:heavenlyPulse 1.05s ease-in-out infinite alternate; }
-    @keyframes heavenlyPulse { from{transform:translate(-50%,-50%) scale(.92);filter:blur(16px)} to{transform:translate(-50%,-50%) scale(1.16);filter:blur(28px)} }
-    .physical-door { position:absolute; left:50%; top:50%; width:min(44vw,570px); height:min(78vh,790px); transform:translate(-50%,-50%); border:1px solid #ffffff18; background:#111316; box-shadow:0 35px 90px #000000b8; overflow:hidden; z-index:3; }
-    .sliding-door-panel { position:absolute; top:0; width:50%; height:100%; background:linear-gradient(90deg,#08090a 0%,#17191b 18%,#25282b 50%,#151719 82%,#090a0b 100%); box-shadow:inset 0 0 35px #00000075; transition:transform 3.3s cubic-bezier(.2,.78,.15,1); will-change:transform; }
-    .sliding-door-left { left:0; border-right:1px solid #00000090; }
-    .sliding-door-right { right:0; border-left:1px solid #00000090; }
-    .sliding-door-panel::before { content:""; position:absolute; inset:8% 12%; border:1px solid #ffffff10; box-shadow:inset 0 0 28px #00000055; }
-    .sliding-door-panel::after { content:""; position:absolute; inset:14% 20%; border:1px solid #ffffff08; }
-    .physical-door.open .sliding-door-left { transform:translateX(-102%); }
-    .physical-door.open .sliding-door-right { transform:translateX(102%); }
-    .physical-lock { position:absolute; left:50%; top:51%; width:58px; height:58px; transform:translate(-50%,-50%); border:2px solid #9ea7ae; border-radius:50%; background:#202428; box-shadow:0 7px 18px #00000070; z-index:5; transition:opacity .45s ease; }
-    .physical-door.open .physical-lock { opacity:0; pointer-events:none; }
-    .physical-lock::after { content:""; position:absolute; left:50%; top:50%; width:5px; height:26px; border-radius:5px; background:#c0c7cc; transform:translate(-50%,-50%); transition:transform .55s ease; }
-    .physical-lock.unlocked::after { transform:translate(-50%,-50%) rotate(90deg); }
-    .door-click { position:absolute; left:50%; bottom:7vh; transform:translateX(-50%); color:#d8e1ea; font:12px Consolas,"Courier New",monospace; letter-spacing:.16em; opacity:0; transition:opacity .8s ease; }
-    .door-click.show { opacity:1; }
-    @media (max-width:600px) { .door-room,.physical-door{width:68vw;} .physical-lock{width:45px;height:45px;} }
+    .door-transition {
+      position: absolute;
+      inset: 0;
+      z-index: 20;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      background: #020307;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 1.2s ease;
+    }
+
+    .door-transition.show {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .door-access {
+      position: absolute;
+      inset: 0;
+      z-index: 5;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      font-family: Consolas, "Courier New", monospace;
+      transition: opacity 1s ease;
+    }
+
+    .door-access.hide {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .door-access-title {
+      margin-bottom: 26px;
+      color: #8fa8c5;
+      font-size: clamp(11px, 1.2vw, 15px);
+      letter-spacing: .22em;
+    }
+
+    .door-access-label {
+      color: #dbe5f0;
+      font-size: clamp(13px, 1.5vw, 18px);
+      letter-spacing: .08em;
+    }
+
+    .door-code {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin-top: 22px;
+    }
+
+    .door-code span {
+      width: 50px;
+      height: 58px;
+      display: grid;
+      place-items: center;
+      border-bottom: 1px solid #b8cce055;
+      color: #f4f7fa;
+      font-size: 30px;
+    }
+
+    .door-access-status {
+      min-height: 24px;
+      margin-top: 28px;
+      color: #69d17a;
+      font-size: 13px;
+      letter-spacing: .13em;
+    }
+
+    .physical-doorway {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      transition: opacity 1.2s ease;
+    }
+
+    .physical-doorway.show {
+      opacity: 1;
+    }
+
+    /* Keep the classroom completely hidden until the door is fully open. */
+    .door-room {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: min(44vw, 570px);
+      height: min(78vh, 790px);
+      transform: translate(-50%, -50%) scale(.88);
+      transform-origin: center center;
+      overflow: hidden;
+      background: #090a0c;
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      box-shadow: 0 0 100px 25px #d5ad7040;
+      transition: opacity 1.2s ease, transform 2.2s cubic-bezier(.18,.78,.16,1);
+      z-index: 1;
+    }
+
+    /* Bring the classroom forward only after the door is fully open. */
+    .door-room.reveal {
+      opacity: 1;
+      visibility: visible;
+      transform: translate(-50%, -50%) scale(2.35);
+      z-index: 6;
+    }
+
+    .door-room img {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+      filter: brightness(.88) saturate(.82);
+    }
+
+    /* Extremely bright heavenly light during the door opening. */
+    .door-warm-light {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: min(70vw, 900px);
+      height: min(100vh, 1050px);
+      transform: translate(-50%, -50%) scale(.55);
+      background:
+        radial-gradient(ellipse at center,
+          rgba(255,255,255,1) 0%,
+          rgba(255,253,235,1) 12%,
+          rgba(255,244,190,.98) 24%,
+          rgba(255,224,135,.88) 39%,
+          rgba(255,201,100,.58) 56%,
+          rgba(255,183,85,.28) 70%,
+          rgba(255,168,70,.08) 84%,
+          transparent 100%);
+      opacity: .65;
+      filter: blur(20px);
+      pointer-events: none;
+      transition: opacity 3.3s ease, transform 3.3s ease;
+      z-index: 1;
+      mix-blend-mode: screen;
+    }
+
+    /* The glow stays behind the opaque door. */
+    .physical-doorway.door-opening .door-warm-light {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1.18);
+      filter: blur(28px);
+    }
+
+    /* Add a second, sharper white-hot core to the light. */
+    .physical-doorway.door-opening::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: min(48vw, 620px);
+      height: min(82vh, 850px);
+      transform: translate(-50%, -50%) scale(1.05);
+      border-radius: 50%;
+      background: radial-gradient(ellipse at center,
+        rgba(255,255,255,1) 0%,
+        rgba(255,252,225,.98) 24%,
+        rgba(255,232,158,.7) 48%,
+        rgba(255,210,115,.22) 68%,
+        transparent 82%);
+      filter: blur(12px);
+      opacity: 1;
+      pointer-events: none;
+      z-index: 2;
+      animation: heavenlyPulse 1.05s ease-in-out infinite alternate;
+    }
+
+    @keyframes heavenlyPulse {
+      from {
+        transform: translate(-50%, -50%) scale(.92);
+        filter: blur(16px);
+      }
+      to {
+        transform: translate(-50%, -50%) scale(1.16);
+        filter: blur(28px);
+      }
+    }
+
+    /* Dark double sliding classroom doors. */
+.physical-door {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: min(44vw, 570px);
+  height: min(78vh, 790px);
+  transform: translate(-50%, -50%);
+  border: 1px solid #ffffff18;
+  background: #111316;
+  box-shadow: 0 35px 90px #000000b8;
+  overflow: hidden;
+  z-index: 3;
+}
+
+/* Two solid panels meet at the center. */
+.sliding-door-panel {
+  position: absolute;
+  top: 0;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(90deg, #08090a 0%, #17191b 18%, #25282b 50%, #151719 82%, #090a0b 100%);
+  box-shadow: inset 0 0 35px #00000075;
+  transition: transform 3.3s cubic-bezier(.2,.78,.15,1);
+  will-change: transform;
+}
+
+.sliding-door-left {
+  left: 0;
+  border-right: 1px solid #00000090;
+}
+
+.sliding-door-right {
+  right: 0;
+  border-left: 1px solid #00000090;
+}
+
+/* Subtle recessed panels add physical depth. */
+.sliding-door-panel::before {
+  content: "";
+  position: absolute;
+  inset: 8% 12%;
+  border: 1px solid #ffffff10;
+  box-shadow: inset 0 0 28px #00000055;
+}
+
+.sliding-door-panel::after {
+  content: "";
+  position: absolute;
+  inset: 14% 20%;
+  border: 1px solid #ffffff08;
+}
+
+/* The panels slide away from the center. */
+.physical-door.open .sliding-door-left {
+  transform: translateX(-102%);
+}
+
+.physical-door.open .sliding-door-right {
+  transform: translateX(102%);
+}
+
+/* Existing lock stays centered until opening starts. */
+.physical-lock {
+  position: absolute;
+  left: 50%;
+  top: 51%;
+  width: 58px;
+  height: 58px;
+  transform: translate(-50%, -50%);
+  border: 2px solid #9ea7ae;
+  border-radius: 50%;
+  background: #202428;
+  box-shadow: 0 7px 18px #00000070;
+  z-index: 5;
+  transition: opacity .45s ease;
+}
+
+.physical-door.open .physical-lock {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.physical-lock::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 5px;
+  height: 26px;
+  border-radius: 5px;
+  background: #c0c7cc;
+  transform: translate(-50%, -50%);
+  transition: transform .55s ease;
+}
+
+.physical-lock.unlocked::after {
+  transform: translate(-50%, -50%) rotate(90deg);
+}
+
+    .door-click {
+      position: absolute;
+      left: 50%;
+      bottom: 7vh;
+      transform: translateX(-50%);
+      color: #d8e1ea;
+      font: 12px Consolas, "Courier New", monospace;
+      letter-spacing: .16em;
+      opacity: 0;
+      transition: opacity .8s ease;
+    }
+
+    .door-click.show {
+      opacity: 1;
+    }
+
+    @media (max-width: 600px) {
+      .door-room,
+      .physical-door {
+        width: 68vw;
+      }
+
+      .physical-lock {
+        width: 45px;
+        height: 45px;
+      }
+    }
   </style>
 </head>
 <body>
   <main id="experience">
-    <!-- Existing scene markup remains unchanged. -->
-    <section class="scene boot active" data-scene="boot"><div class="background-glow"></div><div class="terminal-window"><div class="terminal-header"><div class="window-buttons"><span></span><span></span><span></span></div><div class="terminal-name">CICE TERMINAL</div><div class="system-name">SYSTEM 01</div></div><div class="terminal-screen"><div id="terminalText"></div></div><div class="terminal-footer"><span>CICE</span><span>SECURE TERMINAL</span></div></div></section>
-    <section class="scene greeting" data-scene="greeting"><div id="keyboard" class="keyboard" aria-label="QWERTY keyboard"></div><div class="greeting-title" id="greetingTitle"><div class="title-line" id="titleLine1"></div><div class="title-line" id="titleLine2"></div><div class="title-line" id="titleLine3"></div></div><div class="greeting-copy"><p>Years may pass and lessons may become memories,</p><p>But the guidance behind them stays with us.</p><p>Thank You, Sir, for your patience, your encouragement,</p><p>And for teaching us to never be afraid of trying again.</p></div><div id="morePrompt" class="more-prompt"></div></section>
-    <section class="scene archive" data-scene="archive"><div class="archive-card" id="archiveCard"><div id="archiveStatus" class="mono"></div><div class="archive-progress"><span id="archiveBar"></span></div><div id="archivePercent" class="mono muted">0%</div><div id="archiveFound" class="archive-found mono"></div><div id="originRecord" class="origin-record"><div class="eyebrow">ORIGIN RECORD</div><div class="origin-year">2016</div><div class="origin-line">This is when it all began.</div></div></div><div class="door-transition" id="doorTransition"><div class="door-access" id="doorAccess"><div><div class="door-access-title">CICE ARCHIVE</div><div class="door-access-label">AUTHENTICATING ACCESS CODE</div><div class="door-code"><span id="doorCode1"></span><span id="doorCode2"></span><span id="doorCode3"></span><span id="doorCode4"></span></div><div class="door-access-status" id="doorAccessStatus"></div></div></div><div class="physical-doorway" id="physicalDoorway"><div class="door-warm-light"></div><div class="door-room" id="doorRoom"><img src="assets/02%20%E2%80%94%20Empty%20old%20classroom%20with%20laptop.jpg" alt="The old CICE classroom"></div><div class="physical-door" id="physicalDoor"><div class="sliding-door-panel sliding-door-left"></div><div class="sliding-door-panel sliding-door-right"></div><div class="physical-lock" id="physicalLock"></div></div><div class="door-click" id="doorClick">LOCK RELEASED</div></div></div></section>
-    <section class="scene classroom" data-scene="classroom"><div class="photo-stage" id="classroomPhotos"></div><div class="scene-caption" id="classroomCaption"></div><div class="time-record" id="timeRecord"><div class="eyebrow">TIME RECORD</div><div id="timeYear" class="time-year">2016</div><div id="timeMessage" class="time-message"></div></div></section>
-    <section class="scene people" data-scene="people"><div class="people-intro"><p>But a classroom is never just a room.</p><p>It is the people who fill it.</p></div><div class="people-stage" id="peopleStage"></div><div class="scene-caption" id="peopleCaption"></div></section>
-    <section class="scene teacher" data-scene="teacher"><div class="teacher-stage" id="teacherStage"></div><div class="scene-caption" id="teacherCaption"></div><div class="teacher-closing" id="teacherClosing"><p>And somewhere between the questions and the answers,</p><p>we learned to find our own way.</p><div class="closing-gap"></div><p>Some lessons are taught.</p><p>Others become a part of who we are.</p></div></section>
-    <section class="scene impact" data-scene="impact"><div class="impact-stage" id="impactStage"></div><div class="scene-caption" id="impactCaption"></div><div class="counter-screen" id="counterScreen"><div class="counter" id="studentCounter">0</div></div></section>
-    <section class="scene memory" data-scene="memory"><div class="memory-opening" id="memoryOpening"><p>Some things are measured in numbers.</p><p>Some are remembered in moments.</p></div><div class="mosaic" id="mosaic"></div><div class="poem" id="poem"><p>You lit the spark, we learned to see,</p><p>You helped us find what we could be.</p><p>Though years may take us far away,</p><p>Your lessons walk with us each day.</p></div><div class="final-thanks" id="finalThanks"><div>Thank you, Sir.</div><div>Happy Teachers' Day, Sir.</div></div></section>
+
+    <!-- 01 — SYSTEM BOOT -->
+    <section class="scene boot active" data-scene="boot">
+      <div class="background-glow"></div>
+      <div class="terminal-window">
+        <div class="terminal-header">
+          <div class="window-buttons">
+            <span></span><span></span><span></span>
+          </div>
+          <div class="terminal-name">CICE TERMINAL</div>
+          <div class="system-name">SYSTEM 01</div>
+        </div>
+        <div class="terminal-screen">
+          <div id="terminalText"></div>
+        </div>
+        <div class="terminal-footer">
+          <span>CICE</span><span>SECURE TERMINAL</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 02 — THE GREETING -->
+    <section class="scene greeting" data-scene="greeting">
+      <div id="keyboard" class="keyboard" aria-label="QWERTY keyboard">
+        <div class="key-row">
+          <span class="key utility">Esc</span>
+          <span class="key" data-key="1">1</span><span class="key" data-key="2">2</span>
+          <span class="key" data-key="3">3</span><span class="key" data-key="4">4</span>
+          <span class="key" data-key="5">5</span><span class="key" data-key="6">6</span>
+          <span class="key" data-key="7">7</span><span class="key" data-key="8">8</span>
+          <span class="key" data-key="9">9</span><span class="key" data-key="0">0</span>
+          <span class="key">-</span><span class="key">=</span><span class="key wide">Backspace</span>
+        </div>
+        <div class="key-row">
+          <span class="key wide-small">Tab</span>
+          <span class="key" data-key="Q">Q</span><span class="key" data-key="W">W</span>
+          <span class="key" data-key="E">E</span><span class="key" data-key="R">R</span>
+          <span class="key" data-key="T">T</span><span class="key" data-key="Y">Y</span>
+          <span class="key" data-key="U">U</span><span class="key" data-key="I">I</span>
+          <span class="key" data-key="O">O</span><span class="key" data-key="P">P</span>
+          <span class="key">[</span><span class="key">]</span><span class="key">\</span>
+        </div>
+        <div class="key-row">
+          <span class="key wide-small">Caps</span>
+          <span class="key" data-key="A">A</span><span class="key" data-key="S">S</span>
+          <span class="key" data-key="D">D</span><span class="key" data-key="F">F</span>
+          <span class="key" data-key="G">G</span><span class="key" data-key="H">H</span>
+          <span class="key" data-key="J">J</span><span class="key" data-key="K">K</span>
+          <span class="key" data-key="L">L</span><span class="key">;</span>
+          <span class="key" data-key="'">'</span><span class="key wide-small">Enter</span>
+        </div>
+        <div class="key-row">
+          <span class="key wide">Shift</span>
+          <span class="key" data-key="Z">Z</span><span class="key" data-key="X">X</span>
+          <span class="key" data-key="C">C</span><span class="key" data-key="V">V</span>
+          <span class="key" data-key="B">B</span><span class="key" data-key="N">N</span>
+          <span class="key" data-key="M">M</span><span class="key">,</span>
+          <span class="key">.</span><span class="key">/</span><span class="key wide">Shift</span>
+        </div>
+        <div class="key-row bottom-row">
+          <span class="key utility">Ctrl</span><span class="key utility">Win</span>
+          <span class="key utility">Alt</span><span class="key space-key">Space</span>
+          <span class="key utility">Alt</span><span class="key utility">Menu</span><span class="key utility">Ctrl</span>
+        </div>
+      </div>
+
+      <div class="greeting-title" id="greetingTitle">
+        <div class="title-line" id="titleLine1"></div>
+        <div class="title-line" id="titleLine2"></div>
+        <div class="title-line" id="titleLine3"></div>
+      </div>
+      <div class="greeting-copy">
+        <p>Years may pass and lessons may become memories,</p>
+        <p>But the guidance behind them stays with us.</p>
+        <p>Thank You, Sir, for your patience, your encouragement,</p>
+        <p>And for teaching us to never be afraid of trying again.</p>
+      </div>
+      <div id="morePrompt" class="more-prompt"></div>
+    </section>
+
+    <!-- 03 — FOUNDING ARCHIVE -->
+    <section class="scene archive" data-scene="archive">
+      <div class="archive-card" id="archiveCard">
+        <div id="archiveStatus" class="mono"></div>
+        <div class="archive-progress"><span id="archiveBar"></span></div>
+        <div id="archivePercent" class="mono muted">0%</div>
+        <div id="archiveFound" class="archive-found mono"></div>
+        <div id="originRecord" class="origin-record">
+          <div class="eyebrow">ORIGIN RECORD</div>
+          <div class="origin-year">2016</div>
+          <div class="origin-line">This is when it all began.</div>
+        </div>
+      </div>
+
+      <!-- Automatic password and physical door transition. -->
+      <div class="door-transition" id="doorTransition">
+        <div class="door-access" id="doorAccess">
+          <div>
+            <div class="door-access-title">CICE ARCHIVE</div>
+            <div class="door-access-label">AUTHENTICATING ACCESS CODE</div>
+            <div class="door-code">
+              <span id="doorCode1"></span><span id="doorCode2"></span>
+              <span id="doorCode3"></span><span id="doorCode4"></span>
+            </div>
+            <div class="door-access-status" id="doorAccessStatus"></div>
+          </div>
+        </div>
+
+        <div class="physical-doorway" id="physicalDoorway">
+          <div class="door-warm-light"></div>
+          <div class="door-room" id="doorRoom">
+            <img
+              src="assets/02%20%E2%80%94%20Empty%20old%20classroom%20with%20laptop.jpg"
+              alt="The old CICE classroom"
+            >
+          </div>
+<div class="physical-door" id="physicalDoor">
+  <div class="sliding-door-panel sliding-door-left"></div>
+  <div class="sliding-door-panel sliding-door-right"></div>
+  <div class="physical-lock" id="physicalLock"></div>
+</div>
+          <div class="door-click" id="doorClick">LOCK RELEASED</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 04 — THE CLASSROOM -->
+    <section class="scene classroom" data-scene="classroom">
+      <div class="photo-stage" id="classroomPhotos"></div>
+      <div class="scene-caption" id="classroomCaption"></div>
+      <div class="time-record" id="timeRecord">
+        <div class="eyebrow">TIME RECORD</div>
+        <div id="timeYear" class="time-year">2016</div>
+        <div id="timeMessage" class="time-message"></div>
+      </div>
+    </section>
+
+    <!-- 05 — THE PEOPLE -->
+    <section class="scene people" data-scene="people">
+      <div class="people-intro">
+        <p>But a classroom is never just a room.</p>
+        <p>It is the people who fill it.</p>
+      </div>
+      <div class="people-stage" id="peopleStage"></div>
+      <div class="scene-caption" id="peopleCaption"></div>
+    </section>
+
+    <!-- 06 — THE TEACHER -->
+    <section class="scene teacher" data-scene="teacher">
+      <div class="teacher-stage" id="teacherStage"></div>
+      <div class="scene-caption" id="teacherCaption"></div>
+      <div class="teacher-closing" id="teacherClosing">
+        <p>And somewhere between the questions and the answers,</p>
+        <p>we learned to find our own way.</p>
+        <div class="closing-gap"></div>
+        <p>Some lessons are taught.</p>
+        <p>Others become a part of who we are.</p>
+      </div>
+    </section>
+
+    <!-- 07 — THE IMPACT -->
+    <section class="scene impact" data-scene="impact">
+      <div class="impact-stage" id="impactStage"></div>
+      <div class="scene-caption" id="impactCaption"></div>
+      <div class="counter-screen" id="counterScreen">
+        <div class="counter" id="studentCounter">0</div>
+      </div>
+    </section>
+
+    <!-- 08 — FINAL MEMORY -->
+    <section class="scene memory" data-scene="memory">
+      <div class="memory-opening" id="memoryOpening">
+        <p>Some things are measured in numbers.</p>
+        <p>Some are remembered in moments.</p>
+      </div>
+      <div class="mosaic" id="mosaic"></div>
+      <div class="poem" id="poem">
+        <p>You lit the spark, we learned to see,</p>
+        <p>You helped us find what we could be.</p>
+        <p>Though years may take us far away,</p>
+        <p>Your lessons walk with us each day.</p>
+      </div>
+      <div class="final-thanks" id="finalThanks">
+        <div>Thank you, Sir.</div>
+        <div>Happy Teachers' Day, Sir.</div>
+      </div>
+    </section>
   </main>
+
+  <!-- Existing website animation script. -->
   <script src="script.js"></script>
+
+  <!-- Replace only the archive-to-classroom transition. -->
   <script>
-    async function archive(){
-      const status=document.querySelector('#archiveStatus');const bar=document.querySelector('#archiveBar');const percent=document.querySelector('#archivePercent');const found=document.querySelector('#archiveFound');const origin=document.querySelector('#originRecord');const year=origin.querySelector('.origin-year');const originLine=origin.querySelector('.origin-line');const card=document.querySelector('#archiveCard');const transition=document.querySelector('#doorTransition');const access=document.querySelector('#doorAccess');const accessStatus=document.querySelector('#doorAccessStatus');const doorway=document.querySelector('#physicalDoorway');const lock=document.querySelector('#physicalLock');const click=document.querySelector('#doorClick');const door=document.querySelector('#physicalDoor');const room=document.querySelector('#doorRoom');
-      status.textContent='Searching founding archives...';bar.style.width='0%';percent.textContent='0%';found.textContent='';year.textContent='';originLine.style.opacity='0';originLine.style.transition='opacity .8s ease';origin.classList.remove('show');transition.classList.remove('show');access.classList.remove('hide');doorway.classList.remove('show');doorway.classList.remove('door-opening');lock.classList.remove('unlocked');click.classList.remove('show');door.classList.remove('open');room.classList.remove('reveal');
-      for(let n=0;n<=100;n+=2){bar.style.width=`${n}%`;percent.textContent=`${n}%`;await wait(28);}await wait(450);found.textContent='Archive found.';await wait(900);origin.classList.add('show');await wait(500);const yearParts=['2','20','201','2016'];for(const part of yearParts){year.textContent=part;await wait(650);}await wait(250);originLine.style.opacity='1';await wait(800);await wait(3200);card.style.transition='opacity 1s ease';card.style.opacity='0';await wait(900);transition.classList.add('show');const letters=['C','I','C','E'];for(let i=0;i<letters.length;i++){await wait(650);document.querySelector(`#doorCode${i+1}`).textContent=letters[i];}await wait(700);accessStatus.textContent='ACCESS GRANTED';await wait(1100);access.classList.add('hide');doorway.classList.add('show');await wait(900);lock.classList.add('unlocked');click.classList.add('show');await wait(800);doorway.classList.add('door-opening');await wait(350);door.classList.add('open');await wait(3400);doorway.classList.remove('door-opening');room.classList.add('reveal');await wait(1800);showScene(3);await classroom();
+    // Run the new automatic archive transition.
+    async function archive() {
+      const status = document.querySelector('#archiveStatus');
+      const bar = document.querySelector('#archiveBar');
+      const percent = document.querySelector('#archivePercent');
+      const found = document.querySelector('#archiveFound');
+      const origin = document.querySelector('#originRecord');
+      const year = origin.querySelector('.origin-year');
+      const originLine = origin.querySelector('.origin-line');
+      const card = document.querySelector('#archiveCard');
+      const transition = document.querySelector('#doorTransition');
+      const access = document.querySelector('#doorAccess');
+      const accessStatus = document.querySelector('#doorAccessStatus');
+      const doorway = document.querySelector('#physicalDoorway');
+      const lock = document.querySelector('#physicalLock');
+      const click = document.querySelector('#doorClick');
+      const door = document.querySelector('#physicalDoor');
+      const room = document.querySelector('#doorRoom');
+
+      // Reset the archive state.
+      status.textContent = 'Searching founding archives...';
+      bar.style.width = '0%';
+      percent.textContent = '0%';
+      found.textContent = '';
+      year.textContent = '';
+      originLine.style.opacity = '0';
+      originLine.style.transition = 'opacity .8s ease';
+      origin.classList.remove('show');
+      transition.classList.remove('show');
+      access.classList.remove('hide');
+      doorway.classList.remove('show');
+      doorway.classList.remove('door-opening');
+      lock.classList.remove('unlocked');
+      click.classList.remove('show');
+      door.classList.remove('open');
+      room.classList.remove('reveal');
+
+      // Keep the original 0–100 archive scan.
+      for (let n = 0; n <= 100; n += 2) {
+        bar.style.width = `${n}%`;
+        percent.textContent = `${n}%`;
+        await wait(28);
+      }
+
+      await wait(450);
+      found.textContent = 'Archive found.';
+      await wait(900);
+
+      // Reveal the origin record first, but keep the year empty.
+      origin.classList.add('show');
+      await wait(500);
+
+      // Build the year exactly as: 2 → 20 → 201 → 2016.
+      const yearParts = ['2', '20', '201', '2016'];
+
+      for (const part of yearParts) {
+        year.textContent = part;
+        await wait(650);
+      }
+
+      // Reveal the sentence only after 2016 is fully visible.
+      await wait(250);
+      originLine.style.opacity = '1';
+      await wait(800);
+
+      // Hold the completed founding record before the door sequence.
+      await wait(3200);
+
+      // Leave the archive world and enter the access sequence.
+      card.style.transition = 'opacity 1s ease';
+      card.style.opacity = '0';
+      await wait(900);
+      transition.classList.add('show');
+
+      // Type CICE automatically. No click and no Enter key.
+      const letters = ['C', 'I', 'C', 'E'];
+
+      for (let i = 0; i < letters.length; i++) {
+        await wait(650);
+        document.querySelector(`#doorCode${i + 1}`).textContent = letters[i];
+      }
+
+      await wait(700);
+      accessStatus.textContent = 'ACCESS GRANTED';
+      await wait(1100);
+
+      // The digital interface gives way to a physical doorway.
+      access.classList.add('hide');
+      doorway.classList.add('show');
+      await wait(900);
+
+      // Unlock the physical lock.
+      lock.classList.add('unlocked');
+      click.classList.add('show');
+      await wait(800);
+
+      // Start the extreme heavenly glow before the door opens.
+      doorway.classList.add('door-opening');
+      await wait(350);
+
+      // Open the door into the intense light.
+      door.classList.add('open');
+      await wait(3400);
+
+      // Stop the pulsing glow once the door is fully open.
+      doorway.classList.remove('door-opening');
+
+      // The door is now fully open. Reveal the hidden classroom and bring it forward.
+      room.classList.add('reveal');
+      await wait(1800);
+
+      // Continue with the existing cinematic classroom sequence.
+      showScene(3);
+      await classroom();
     }
   </script>
 </body>
