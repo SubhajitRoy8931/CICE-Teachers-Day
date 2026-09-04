@@ -3,6 +3,21 @@
    Keeps the existing counter and changes only its presentation.
    --------------------------------------------------------- */
 
+/* Give every photographic frame a little more breathing room. */
+const photoSizeStyle = document.createElement('style');
+photoSizeStyle.textContent = `
+  .photo-card {
+    inset: 9vh 9vw 14vh;
+  }
+
+  @media (max-width: 700px) {
+    .photo-card {
+      inset: 10vh 5vw 17vh;
+    }
+  }
+`;
+document.head.appendChild(photoSizeStyle);
+
 async function impact() {
   const captions = [
     ['And then, we begin to use what we learned.'],
