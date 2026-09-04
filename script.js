@@ -3,12 +3,13 @@
    Main website script
    ========================================================= */
 
+
 /* -------------------- BASIC HELPERS -------------------- */
 
 // Get all scenes in their HTML order.
 const scenes = [...document.querySelectorAll('.scene')];
 
-// Pause the current animation.
+// Pause the current animation when a deliberate pause is needed.
 const wait = ms => new Promise(resolve => {
   setTimeout(resolve, ms);
 });
@@ -20,12 +21,13 @@ function showScene(index) {
   });
 }
 
+
 /* =========================================================
    01 — SYSTEM BOOT
    ========================================================= */
 
 // Type text one character at a time.
-async function typeLine(text, className = '', speed = 150) {
+async function typeLine(text, className = '', speed = 120) {
   const box = document.querySelector('#terminalText');
   const line = document.createElement('div');
 
@@ -41,6 +43,7 @@ async function typeLine(text, className = '', speed = 150) {
   }
 }
 
+
 // Run the opening terminal sequence.
 async function boot() {
 
@@ -54,6 +57,9 @@ async function boot() {
     105
   );
 
+  // Give the completed command a one-second pause.
+  await wait(1000);
+
   // Blank line between command and scan status.
   await typeLine('');
 
@@ -63,11 +69,17 @@ async function boot() {
     150
   );
 
+  // Give the completed scan line a one-second pause.
+  await wait(1000);
+
   await typeLine(
     'Teacher detected.',
     'detected',
     150
   );
+
+  // Give the detection result a one-second pause.
+  await wait(1000);
 
   // Blank line before the final status.
   await typeLine('');
@@ -78,16 +90,23 @@ async function boot() {
     150
   );
 
+  // Let the surprise message breathe for two seconds.
+  await wait(2000);
+
   await typeLine(
     'System ready.',
     'ready',
     155
   );
 
+  // Hold the final ready state for two seconds.
+  await wait(2000);
+
   // Move directly to the greeting when the final line is complete.
   showScene(1);
   await greeting();
 }
+
 
 /* =========================================================
    02 — GREETING
@@ -99,6 +118,7 @@ const greetingLines = [
   "TEACHERS'",
   'DAY SIR'
 ];
+
 
 // Create invisible destination slots for every letter.
 function prepareTitle() {
@@ -127,12 +147,14 @@ function prepareTitle() {
   });
 }
 
+
 // Find the keyboard key belonging to a letter.
 function getKey(char) {
   return document.querySelector(
     `.key[data-key="${CSS.escape(char)}"]`
   );
 }
+
 
 // Animate one letter from its keyboard key to its title slot.
 async function flyLetter(char, slot) {
@@ -216,6 +238,7 @@ async function flyLetter(char, slot) {
   letter.remove();
 }
 
+
 // Build one title line from left to right.
 async function buildTitleLine(row) {
   const line = document.querySelector(
@@ -234,6 +257,7 @@ async function buildTitleLine(row) {
   }
 }
 
+
 // Type the small transition prompt.
 async function typePrompt(text) {
   const box = document.querySelector('#morePrompt');
@@ -245,6 +269,7 @@ async function typePrompt(text) {
     await wait(65);
   }
 }
+
 
 // Run the complete greeting section.
 async function greeting() {
@@ -294,6 +319,7 @@ async function greeting() {
   await archive();
 }
 
+
 /* =========================================================
    03 — FOUNDING ARCHIVE
    ========================================================= */
@@ -329,6 +355,7 @@ async function archive() {
   showScene(3);
   await classroom();
 }
+
 
 /* =========================================================
    PHOTO ASSETS
@@ -370,6 +397,7 @@ const assets = {
   memory: []
 };
 
+
 /* -------------------- IMAGE PATHS -------------------- */
 
 // Path for normal section images.
@@ -377,11 +405,13 @@ function imagePath(name) {
   return `assets/${encodeURIComponent(name)}`;
 }
 
+
 /* -------------------- MEMORY FILENAMES -------------------- */
 
 // All 50 memory photos share this exact filename prefix.
 const memoryPrefix =
   'WhatsApp Image 2026-09-04 at 11.54.05 AM';
+
 
 // Build filenames from 1 through 50.
 assets.memory = Array.from(
@@ -389,6 +419,7 @@ assets.memory = Array.from(
   (_, index) =>
     `${memoryPrefix} (${index + 1}).jpeg`
 );
+
 
 /* -------------------- NORMAL PHOTO CREATION -------------------- */
 
@@ -413,6 +444,7 @@ function makePhoto(stage, name, caption = '') {
 
   return card;
 }
+
 
 /* =========================================================
    04 — CLASSROOM
@@ -499,6 +531,7 @@ async function classroom() {
   await people();
 }
 
+
 /* =========================================================
    05 — PEOPLE
    ========================================================= */
@@ -561,6 +594,7 @@ async function people() {
   await teacher();
 }
 
+
 /* =========================================================
    06 — TEACHER
    ========================================================= */
@@ -616,6 +650,7 @@ async function teacher() {
   showScene(6);
   await impact();
 }
+
 
 /* =========================================================
    07 — IMPACT
@@ -713,6 +748,7 @@ async function impact() {
   await memory();
 }
 
+
 /* =========================================================
    08 — FINAL MEMORY
    ========================================================= */
@@ -749,6 +785,7 @@ const memoryPositions = [
   [70, 87, 2],
   [89, 88, -3]
 ];
+
 
 // Create one memory image.
 function createMemoryPhoto(name, index, mosaic) {
@@ -792,6 +829,7 @@ function createMemoryPhoto(name, index, mosaic) {
   return img;
 }
 
+
 // Load one memory image with a timeout.
 function loadMemoryPhoto(img, name) {
 
@@ -824,6 +862,7 @@ function loadMemoryPhoto(img, name) {
   });
 }
 
+
 // GitHub Pages path for a memory image.
 function memoryPagePath(name) {
   return (
@@ -831,6 +870,7 @@ function memoryPagePath(name) {
     encodeURIComponent(name)
   );
 }
+
 
 // Animate one loaded memory image into its position.
 async function revealMemoryPhoto(img, index) {
@@ -846,6 +886,7 @@ async function revealMemoryPhoto(img, index) {
 
   img.classList.add('show');
 }
+
 
 // Run the complete final memory section.
 async function memory() {
@@ -926,6 +967,7 @@ async function memory() {
 
   await wait(5000);
 }
+
 
 /* =========================================================
    START
