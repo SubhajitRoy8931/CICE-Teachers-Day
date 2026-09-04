@@ -302,13 +302,9 @@ async function greeting() {
     '.greeting-copy p'
   );
 
-  for (let i = 0; i < lines.length; i++) {
-    lines[i].classList.add('show');
-
-    // Keep the two-second gap only between lines.
-    if (i < lines.length - 1) {
-      await wait(2000);
-    }
+  for (const line of lines) {
+    line.classList.add('show');
+    await wait(2000);
   }
 
   // Wait seven seconds after the final line appears.
