@@ -395,11 +395,12 @@ body { font-family: Inter, "Segoe UI", Arial, sans-serif; }
   inset: 0;
 }
 
+/* Keep every photograph comfortably inside the viewport. */
 .photo-card {
   position: absolute;
-  inset: 7vh 7vw 12vh;
+  inset: 14vh 10vw 20vh;
   opacity: 0;
-  transform: scale(1.035);
+  transform: scale(1.025);
   transition: opacity 1.15s ease, transform 1.4s ease;
 }
 
@@ -650,7 +651,7 @@ body { font-family: Inter, "Segoe UI", Arial, sans-serif; }
   .key.utility { font-size: 8px; }
   .greeting-title { top: 5vh; }
   .greeting-copy { top: 39vh; width: 92vw; }
-  .photo-card { inset: 9vh 3vw 16vh; }
+  .photo-card { inset: 12vh 5vw 20vh; }
   .scene-caption { bottom: 6vh; width: 94vw; }
   .time-message { font-size: 17px; }
   .teacher-closing { width: 94vw; }
