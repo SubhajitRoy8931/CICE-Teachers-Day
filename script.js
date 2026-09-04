@@ -258,6 +258,125 @@ async function buildTitleLine(row) {
 }
 
 
+// Create and animate a restrained confetti fall.
+function startConfetti() {
+
+  // Create the canvas only when the celebration begins.
+  const canvas = document.createElement('canvas');
+  const context = canvas.getContext('2d');
+
+  canvas.id = 'greetingConfetti';
+  canvas.style.position = 'fixed';
+  canvas.style.inset = '0';
+  canvas.style.width = '100%';
+  canvas.style.height = '100%';
+  canvas.style.pointerEvents = 'none';
+  canvas.style.zIndex = '50';
+
+  document.body.appendChild(canvas);
+
+  // Match the canvas to the current viewport.
+  const resize = () => {
+    const ratio = window.devicePixelRatio || 1;
+
+    canvas.width = window.innerWidth * ratio;
+    canvas.height = window.innerHeight * ratio;
+    context.setTransform(
+      ratio,
+      0,
+      0,
+      ratio,
+      0,
+      0
+    );
+  };
+
+  resize();
+  window.addEventListener('resize', resize);
+
+  // Keep the amount modest so it stays celebratory, not distracting.
+  const pieces = Array.from(
+    { length: 90 },
+    () => ({
+      x: Math.random() * window.innerWidth,
+      y: -20 - Math.random() * window.innerHeight,
+      width: 5 + Math.random() * 5,
+      height: 7 + Math.random() * 8,
+      speed: 2.2 + Math.random() * 2.4,
+      drift: -0.7 + Math.random() * 1.4,
+      rotation: Math.random() * Math.PI,
+      rotationSpeed: -0.08 + Math.random() * 0.16,
+      phase: Math.random() * Math.PI * 2
+    })
+  );
+
+  const start = performance.now();
+  const duration = 6500;
+
+  // Use varied celebratory colors without any external library.
+  const colors = [
+    '#f7d774',
+    '#8fd3ff',
+    '#f29bb2',
+    '#b8e986',
+    '#d8b4fe',
+    '#ffffff'
+  ];
+
+  function frame(now) {
+
+    const elapsed = now - start;
+
+    context.clearRect(
+      0,
+      0,
+      window.innerWidth,
+      window.innerHeight
+    );
+
+    pieces.forEach((piece, index) => {
+      const sway =
+        Math.sin(elapsed * 0.002 + piece.phase) * 0.7;
+
+      piece.y += piece.speed;
+      piece.x += piece.drift + sway;
+      piece.rotation += piece.rotationSpeed;
+
+      // Recycle pieces that leave the bottom while the effect is active.
+      if (piece.y > window.innerHeight + 20) {
+        piece.y = -20;
+        piece.x = Math.random() * window.innerWidth;
+      }
+
+      context.save();
+      context.translate(piece.x, piece.y);
+      context.rotate(piece.rotation);
+      context.globalAlpha = Math.max(
+        0,
+        1 - Math.max(0, elapsed - 5000) / 1500
+      );
+      context.fillStyle = colors[index % colors.length];
+      context.fillRect(
+        -piece.width / 2,
+        -piece.height / 2,
+        piece.width,
+        piece.height
+      );
+      context.restore();
+    });
+
+    if (elapsed < duration) {
+      requestAnimationFrame(frame);
+    } else {
+      window.removeEventListener('resize', resize);
+      canvas.remove();
+    }
+  }
+
+  requestAnimationFrame(frame);
+}
+
+
 // Type the small transition prompt.
 async function typePrompt(text) {
   const box = document.querySelector('#morePrompt');
@@ -295,6 +414,10 @@ async function greeting() {
     .querySelector('#keyboard')
     .classList.add('hide');
 
+  // Start the confetti immediately after the keyboard disappears.
+  startConfetti();
+
+  // Let the celebration begin before revealing the message.
   await wait(1600);
 
   // Reveal the message one line at a time.
