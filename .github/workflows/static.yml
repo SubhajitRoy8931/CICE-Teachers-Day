@@ -11,7 +11,7 @@ on:
 
 # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
-  contents: write
+  contents: read
   pages: write
   id-token: write
 
@@ -31,51 +31,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
-      - name: Apply only the requested door changes
-        if: github.event.head_commit.message != 'fix: remove door glow and restore classroom size'
-        shell: python
-        run: |
-          from pathlib import Path
-          import re
-
-          p = Path('index.html')
-          s = p.read_text(encoding='utf-8')
-
-          # Remove the classroom enlargement and its glow.
-          s = s.replace('box-shadow: 0 0 100px 25px #d5ad7040;\n', '')
-          s = s.replace('transform: translate(-50%, -50%) scale(2.35);',
-                        'transform: translate(-50%, -50%) scale(1);')
-
-          # Remove the warm-light element completely.
-          s = s.replace('          <div class="door-warm-light"></div>\n', '')
-
-          # Remove the dedicated heavenly-glow CSS blocks.
-          s = re.sub(
-              r'\n    /\* Extremely bright heavenly light during the door opening\. \*/.*?\n    @keyframes heavenlyPulse \{.*?\n    \}\n',
-              '\n', s, flags=re.S)
-
-          # Remove the now-unneeded glow timing from the archive transition.
-          s = s.replace(
-              "      // Start the extreme heavenly glow before the door opens.\n"
-              "      doorway.classList.add('door-opening');\n"
-              "      await wait(350);\n\n", '')
-          s = s.replace(
-              "      // Stop the pulsing glow once the door is fully open.\n"
-              "      doorway.classList.remove('door-opening');\n\n", '')
-
-          p.write_text(s, encoding='utf-8')
-
-      - name: Commit the requested door fix
-        if: github.event.head_commit.message != 'fix: remove door glow and restore classroom size'
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git rm -f .github/workflows/one-time-door-fix.yml 2>/dev/null || true
-          git add index.html
-          git commit -m "fix: remove door glow and restore classroom size"
-          git push origin HEAD:main
-
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Upload artifact
