@@ -37,7 +37,6 @@
       </div>
     </section>
 
-
     <!-- 02 — THE GREETING -->
     <section class="scene greeting" data-scene="greeting">
       <div
@@ -137,7 +136,6 @@
       <div id="morePrompt" class="more-prompt"></div>
     </section>
 
-
     <!-- 03 — FOUNDING ARCHIVE -->
     <section class="scene archive" data-scene="archive">
       <div class="archive-card">
@@ -156,18 +154,17 @@
       </div>
     </section>
 
-
     <!-- 04 — THE CLASSROOM -->
     <section class="scene classroom" data-scene="classroom">
       <div class="photo-stage" id="classroomPhotos"></div>
       <div class="scene-caption" id="classroomCaption"></div>
 
       <div class="time-record" id="timeRecord">
-        <div id="timeMessage" class="time-message"></div>
+        <div id="timeMessageTop" class="time-message time-message-top"></div>
         <div id="timeYear" class="time-year">2016</div>
+        <div id="timeMessageBottom" class="time-message time-message-bottom"></div>
       </div>
     </section>
-
 
     <!-- 05 — THE PEOPLE -->
     <section class="scene people" data-scene="people">
@@ -179,7 +176,6 @@
       <div class="people-stage" id="peopleStage"></div>
       <div class="scene-caption" id="peopleCaption"></div>
     </section>
-
 
     <!-- 06 — THE TEACHER -->
     <section class="scene teacher" data-scene="teacher">
@@ -197,7 +193,6 @@
       </div>
     </section>
 
-
     <!-- 07 — THE IMPACT -->
     <section class="scene impact" data-scene="impact">
       <div class="impact-stage" id="impactStage"></div>
@@ -207,7 +202,6 @@
         <div class="counter" id="studentCounter">0</div>
       </div>
     </section>
-
 
     <!-- 08 — FINAL MEMORY -->
     <section class="scene memory" data-scene="memory">
@@ -333,13 +327,15 @@
 
       const record = document.querySelector('#timeRecord');
       const year = document.querySelector('#timeYear');
-      const message = document.querySelector('#timeMessage');
+      const topMessage = document.querySelector('#timeMessageTop');
+      const bottomMessage = document.querySelector('#timeMessageBottom');
 
       record.classList.add('show');
 
-      // The sentence appears above the year before the transition begins.
-      message.textContent =
+      // Keep the first sentence above the year throughout the transition.
+      topMessage.textContent =
         'And then, the years began to pass.';
+      bottomMessage.textContent = '';
 
       await wait(1700);
 
@@ -363,10 +359,10 @@
 
       year.textContent = '2026';
 
-      // Let 2026 settle before revealing the closing thought.
+      // Reveal the second sentence beneath 2026 only after the transition.
       await wait(700);
 
-      message.textContent =
+      bottomMessage.textContent =
         'And along the way, lives were shaped.';
 
       await wait(2200);
@@ -377,5 +373,24 @@
       await people();
     };
   </script>
+
+  <!-- Keep the two time-passage lines on opposite sides of the year. -->
+  <style>
+    .time-record {
+      display: grid;
+      grid-template-rows: auto auto auto;
+      align-content: center;
+      justify-items: center;
+      gap: 0;
+    }
+
+    .time-message-top {
+      margin: 0 0 8px;
+    }
+
+    .time-message-bottom {
+      margin: 8px 0 0;
+    }
+  </style>
 </body>
 </html>
