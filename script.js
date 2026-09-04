@@ -6,16 +6,15 @@
 
 /* -------------------- BASIC HELPERS -------------------- */
 
-// Get every scene in the correct order.
+// Get all scenes in their HTML order.
 const scenes = [...document.querySelectorAll('.scene')];
 
-// Pause the animation for a given time.
+// Pause the current animation.
 const wait = ms => new Promise(resolve => {
   setTimeout(resolve, ms);
 });
 
-
-// Show only one scene at a time.
+// Show one scene and hide the others.
 function showScene(index) {
   scenes.forEach((scene, i) => {
     scene.classList.toggle('active', i === index);
@@ -27,9 +26,9 @@ function showScene(index) {
    01 — SYSTEM BOOT
    ========================================================= */
 
+// Type text one character at a time.
 async function typeLine(text, className = '', speed = 120) {
   const box = document.querySelector('#terminalText');
-
   const line = document.createElement('div');
 
   if (className) {
@@ -38,7 +37,6 @@ async function typeLine(text, className = '', speed = 120) {
 
   box.appendChild(line);
 
-  // Type one character at a time.
   for (const char of text) {
     line.textContent += char;
     await wait(speed);
@@ -46,9 +44,9 @@ async function typeLine(text, className = '', speed = 120) {
 }
 
 
+// Run the opening terminal sequence.
 async function boot() {
 
-  // Type the command.
   await typeLine(
     'C:\\CICE> teachers_day.exe',
     'command',
@@ -60,7 +58,6 @@ async function boot() {
   // Blank line.
   await typeLine('');
 
-  // Scan the system.
   await typeLine(
     'Scanning...',
     'boot-line',
@@ -69,7 +66,6 @@ async function boot() {
 
   await wait(2200);
 
-  // Detect the teacher.
   await typeLine(
     'Teacher detected.',
     'detected',
@@ -81,7 +77,6 @@ async function boot() {
   // Blank line.
   await typeLine('');
 
-  // Prepare the surprise.
   await typeLine(
     'Preparing surprise...',
     'boot-line',
@@ -90,7 +85,6 @@ async function boot() {
 
   await wait(2300);
 
-  // Final boot message.
   await typeLine(
     'System ready.',
     'ready',
@@ -99,12 +93,11 @@ async function boot() {
 
   await wait(4000);
 
-  // Remove the terminal cursor.
+  // Stop the blinking cursor.
   document.querySelector('#cursor').style.display = 'none';
 
-  // Move to Section 2.
+  // Start the greeting.
   showScene(1);
-
   await greeting();
 }
 
@@ -113,7 +106,7 @@ async function boot() {
    02 — GREETING
    ========================================================= */
 
-// Main greeting.
+// Words used by the keyboard animation.
 const greetingLines = [
   'HAPPY',
   "TEACHERS'",
@@ -121,11 +114,10 @@ const greetingLines = [
 ];
 
 
-// Prepare empty letter positions.
+// Create invisible destination slots for every letter.
 function prepareTitle() {
 
   greetingLines.forEach((text, row) => {
-
     const line = document.querySelector(
       `#titleLine${row + 1}`
     );
@@ -133,14 +125,11 @@ function prepareTitle() {
     line.innerHTML = '';
 
     [...text].forEach(char => {
-
       const slot = document.createElement('span');
 
       slot.className = 'title-slot';
-
       slot.dataset.character = char;
 
-      // Keep spaces empty.
       if (char === ' ') {
         slot.classList.add('space');
       } else {
@@ -153,19 +142,18 @@ function prepareTitle() {
 }
 
 
-// Find the matching keyboard key.
+// Find the keyboard key belonging to a letter.
 function getKey(char) {
-
   return document.querySelector(
     `.key[data-key="${CSS.escape(char)}"]`
   );
 }
 
 
-// Move one letter from the keyboard to its title position.
+// Animate one letter from its keyboard key to its title slot.
 async function flyLetter(char, slot) {
 
-  // Spaces do not need animation.
+  // Spaces do not need a flying animation.
   if (char === ' ') {
     slot.classList.add('landed');
     return;
@@ -173,13 +161,13 @@ async function flyLetter(char, slot) {
 
   const key = getKey(char);
 
-  // Safety fallback.
+  // Safety fallback if a key is missing.
   if (!key) {
     slot.classList.add('landed');
     return;
   }
 
-  // Press the physical keyboard key.
+  // Press the source key.
   key.classList.add('source-active');
 
   setTimeout(() => {
@@ -187,58 +175,48 @@ async function flyLetter(char, slot) {
   }, 180);
 
 
-  // Get the keyboard position.
+  // Read the keyboard and title positions.
   const source = key.getBoundingClientRect();
-
-  // Get the destination position.
   const target = slot.getBoundingClientRect();
 
-
-  // Keyboard center.
   const sx = source.left + source.width / 2;
   const sy = source.top + source.height / 2;
 
-  // Title center.
   const tx = target.left + target.width / 2;
   const ty = target.top + target.height / 2;
 
 
-  // Create the flying letter.
+  // Create the temporary flying letter.
   const letter = document.createElement('span');
 
   letter.className = 'flying-letter';
-
   letter.textContent = char;
-
   letter.style.left = `${sx}px`;
   letter.style.top = `${sy}px`;
 
   document.body.appendChild(letter);
 
 
-  // Animate the letter.
+  // Fly toward the final title position.
   letter.animate(
     [
       {
         left: `${sx}px`,
         top: `${sy}px`,
         opacity: 0,
-        transform:
-          'translate(-50%,-50%) scale(.55)'
+        transform: 'translate(-50%,-50%) scale(.55)'
       },
       {
         left: `${sx + (tx - sx) * .72}px`,
         top: `${sy + (ty - sy) * .72}px`,
         opacity: 1,
-        transform:
-          'translate(-50%,-50%) scale(1.08)'
+        transform: 'translate(-50%,-50%) scale(1.08)'
       },
       {
         left: `${tx}px`,
         top: `${ty}px`,
         opacity: 1,
-        transform:
-          'translate(-50%,-50%) scale(1)'
+        transform: 'translate(-50%,-50%) scale(1)'
       }
     ],
     {
@@ -248,20 +226,18 @@ async function flyLetter(char, slot) {
     }
   );
 
-
   await wait(920);
 
-  // Make the actual title letter visible.
+  // Reveal the real title letter.
   slot.classList.add('landed');
 
-  // Remove temporary flying letter.
+  // Remove the temporary letter.
   letter.remove();
 }
 
 
-// Build one complete title line.
+// Build one title line from left to right.
 async function buildTitleLine(row) {
-
   const line = document.querySelector(
     `#titleLine${row}`
   );
@@ -269,7 +245,6 @@ async function buildTitleLine(row) {
   const slots = [...line.children];
 
   for (const slot of slots) {
-
     await flyLetter(
       slot.dataset.character,
       slot
@@ -280,9 +255,8 @@ async function buildTitleLine(row) {
 }
 
 
-// Type the small prompt at the bottom.
+// Type the small transition prompt.
 async function typePrompt(text) {
-
   const box = document.querySelector('#morePrompt');
 
   box.textContent = '';
@@ -294,14 +268,13 @@ async function typePrompt(text) {
 }
 
 
+// Run the complete greeting section.
 async function greeting() {
 
-  // Prepare the title.
   prepareTitle();
 
   await wait(900);
 
-  // Build each line separately.
   await buildTitleLine(1);
 
   await wait(250);
@@ -315,7 +288,7 @@ async function greeting() {
   await wait(800);
 
 
-  // Move the keyboard away.
+  // Move the keyboard away after the title settles.
   document
     .querySelector('#keyboard')
     .classList.add('hide');
@@ -323,34 +296,25 @@ async function greeting() {
   await wait(1600);
 
 
-  // Reveal the greeting message line by line.
+  // Reveal the message one line at a time.
   const lines = document.querySelectorAll(
     '.greeting-copy p'
   );
 
   for (const line of lines) {
-
     line.classList.add('show');
-
     await wait(900);
   }
 
-
-  // Let the message breathe.
   await wait(10000);
 
-
-  // Show the next-scene prompt.
   await typePrompt(
     'There is something more →'
   );
 
   await wait(1800);
 
-
-  // Move to Section 3.
   showScene(2);
-
   await archive();
 }
 
@@ -361,60 +325,36 @@ async function greeting() {
 
 async function archive() {
 
-  const bar = document.querySelector(
-    '#archiveBar'
-  );
-
-  const percent = document.querySelector(
-    '#archivePercent'
-  );
-
-  const found = document.querySelector(
-    '#archiveFound'
-  );
-
-  const origin = document.querySelector(
-    '#originRecord'
-  );
+  const bar = document.querySelector('#archiveBar');
+  const percent = document.querySelector('#archivePercent');
+  const found = document.querySelector('#archiveFound');
+  const origin = document.querySelector('#originRecord');
 
 
-  // Initial archive message.
-  document.querySelector(
-    '#archiveStatus'
-  ).textContent =
+  document.querySelector('#archiveStatus').textContent =
     'Searching founding archives...';
 
 
-  // Animate 0 → 100.
+  // Animate the archive scan from 0 to 100 percent.
   for (let n = 0; n <= 100; n += 2) {
-
     bar.style.width = `${n}%`;
-
     percent.textContent = `${n}%`;
-
     await wait(28);
   }
 
-
   await wait(450);
 
-
-  // Archive found.
-  found.textContent =
-    'Archive found.';
+  found.textContent = 'Archive found.';
 
   await wait(900);
 
-
-  // Show the origin record.
   origin.classList.add('show');
 
   await wait(3200);
 
 
-  // Move to Section 4.
+  // Continue to the classroom.
   showScene(3);
-
   await classroom();
 }
 
@@ -434,13 +374,11 @@ const assets = {
     '06 — Sir teaching with projector in old classroom(2).jpg'
   ],
 
-
   // Section 5.
   people: [
     '14 — Student batch, mixed group(1).jpg',
     '16 — Medium student batch, newer classroom(1).jpg'
   ],
-
 
   // Section 6.
   teacher: [
@@ -450,7 +388,6 @@ const assets = {
     '21 — Sir teaching with projector(2).jpg'
   ],
 
-
   // Section 7.
   impact: [
     '31 — Large classroom actively working(1).jpg',
@@ -458,11 +395,8 @@ const assets = {
     '32 — Large certificate group with Sir(1).jpg'
   ],
 
-
-  // Section 8 fallback images.
-  //
-  // These are used only if GitHub image discovery
-  // is temporarily unavailable.
+  // Section 8 fallback list.
+  // GitHub normally discovers all memory files automatically.
   memory: [
     '#CICE_Computer_Institute_Halakura✅ Picnic 2023.✅To Lal Jhamela Basti(WB).✅ Beautiful moments th.webp',
     '01 — Teacher teaching in old classroom(2).jpg',
@@ -477,76 +411,70 @@ const assets = {
 };
 
 
-/* -------------------- NORMAL IMAGE PATH -------------------- */
+/* -------------------- IMAGE PATHS -------------------- */
 
+// Path for normal section images.
 function imagePath(name) {
-
   return `assets/${encodeURIComponent(name)}`;
 }
 
 
-/* -------------------- MEMORY IMAGE PATH -------------------- */
-
-// GitHub repository.
+// GitHub repository used for memory discovery.
 const memoryRepo =
   'SubhajitRoy8931/CICE-Teachers-Day';
 
-// GitHub branch.
 const memoryBranch = 'main';
 
 
-// Direct raw GitHub image URL.
-function memoryImagePath(name) {
-
-  const encodedName =
-    encodeURIComponent(name);
-
+// Direct raw GitHub path for memory images.
+function memoryRawPath(name) {
   return (
     'https://raw.githubusercontent.com/' +
     `${memoryRepo}/` +
     `${memoryBranch}/` +
     'assets/memory/' +
-    encodedName
+    encodeURIComponent(name)
   );
 }
 
 
-/* -------------------- MEMORY FILE DISCOVERY -------------------- */
-
-// GitHub API URL for the memory folder.
-function memoryApiPath() {
-
+// GitHub Pages path used only as a fallback.
+function memoryPagePath(name) {
   return (
-    'https://api.github.com/repos/' +
-    `${memoryRepo}/contents/assets/memory` +
-    `?ref=${memoryBranch}`
+    'assets/memory/' +
+    encodeURIComponent(name)
   );
 }
 
 
-// Find every image currently inside
-// assets/memory/ on GitHub.
+/* -------------------- MEMORY DISCOVERY -------------------- */
+
+// Ask GitHub for every file in assets/memory/.
 async function discoverMemoryImages() {
 
+  const apiUrl =
+    `https://api.github.com/repos/${memoryRepo}` +
+    `/contents/assets/memory?ref=${memoryBranch}`;
+
   try {
+    const response = await fetch(apiUrl, {
+      cache: 'no-store'
+    });
 
-    const response = await fetch(
-      memoryApiPath()
-    );
-
-
-    // Stop if GitHub does not respond successfully.
     if (!response.ok) {
       throw new Error(
-        'Memory folder could not be read.'
+        `GitHub returned ${response.status}.`
       );
     }
 
-
     const files = await response.json();
 
+    if (!Array.isArray(files)) {
+      throw new Error(
+        'GitHub returned an unexpected folder response.'
+      );
+    }
 
-    // Only keep actual image files.
     const images = files
       .filter(file => file.type === 'file')
       .filter(file =>
@@ -554,57 +482,42 @@ async function discoverMemoryImages() {
       )
       .map(file => file.name);
 
-
-    // Use discovered images when available.
     if (images.length > 0) {
       assets.memory = images;
     }
 
-  } catch (error) {
+    console.info(
+      `Memory images found: ${assets.memory.length}`
+    );
 
-    // Keep the fallback list.
+  } catch (error) {
     console.warn(
-      'Using fallback memory images.',
+      'Memory discovery failed. Using fallback images.',
       error
     );
   }
 }
 
 
-/* -------------------- PHOTO CREATION -------------------- */
+/* -------------------- NORMAL PHOTO CREATION -------------------- */
 
-// Create a normal photo card.
-function makePhoto(
-  stage,
-  name,
-  caption = ''
-) {
+// Create a photo card for Sections 4–7.
+function makePhoto(stage, name, caption = '') {
 
   const card = document.createElement('div');
-
   const img = document.createElement('img');
-
 
   card.className = 'photo-card';
 
   img.src = imagePath(name);
+  img.alt = caption || 'CICE memory';
 
-  img.alt =
-    caption || 'CICE memory';
-
-
-  // Mark missing images without breaking
-  // the rest of the presentation.
+  // Hide a genuinely missing normal asset.
   img.addEventListener('error', () => {
-
-    card.classList.add(
-      'asset-missing'
-    );
+    card.classList.add('asset-missing');
   });
 
-
   card.appendChild(img);
-
   stage.appendChild(card);
 
   return card;
@@ -625,20 +538,11 @@ async function classroom() {
     'The lessons evolved.'
   ];
 
-
-  const stage = document.querySelector(
-    '#classroomPhotos'
-  );
-
-  const caption = document.querySelector(
-    '#classroomCaption'
-  );
-
+  const stage = document.querySelector('#classroomPhotos');
+  const caption = document.querySelector('#classroomCaption');
 
   stage.innerHTML = '';
 
-
-  // Show each classroom image.
   for (
     let i = 0;
     i < assets.classroom.length;
@@ -651,23 +555,15 @@ async function classroom() {
       captions[i]
     );
 
-
-    caption.textContent =
-      captions[i];
-
+    caption.textContent = captions[i];
 
     card.classList.add('show');
-
     caption.classList.add('show');
-
 
     await wait(3600);
 
-
     card.classList.remove('show');
-
     caption.classList.remove('show');
-
 
     await wait(900);
   }
@@ -675,70 +571,43 @@ async function classroom() {
 
   /* -------------------- TIME RECORD -------------------- */
 
-  const record = document.querySelector(
-    '#timeRecord'
-  );
-
-  const year = document.querySelector(
-    '#timeYear'
-  );
-
-  const message = document.querySelector(
-    '#timeMessage'
-  );
-
+  const record = document.querySelector('#timeRecord');
+  const year = document.querySelector('#timeYear');
+  const message = document.querySelector('#timeMessage');
 
   record.classList.add('show');
 
   await wait(1700);
 
-
-  // Starting year.
   year.textContent = '2016';
 
   await wait(1600);
 
-
-  // Animate 2016 → 2026.
+  // Move from 2016 to 2026 in exactly two seconds.
   const start = performance.now();
 
-  while (
-    performance.now() - start < 2000
-  ) {
-
+  while (performance.now() - start < 2000) {
     const progress =
       (performance.now() - start) / 2000;
 
-
     year.textContent = String(
-      Math.round(
-        2016 + 10 * progress
-      )
+      Math.round(2016 + 10 * progress)
     );
-
 
     await wait(20);
   }
 
-
-  // Final year.
   year.textContent = '2026';
 
   await wait(1600);
 
-
-  message.textContent =
-    'Years passed.';
+  message.textContent = 'Years passed.';
 
   await wait(2200);
 
-
   record.classList.remove('show');
 
-
-  // Move to Section 5.
   showScene(4);
-
   await people();
 }
 
@@ -749,29 +618,17 @@ async function classroom() {
 
 async function people() {
 
-  const intro = document.querySelector(
-    '.people-intro'
-  );
-
-  const stage = document.querySelector(
-    '#peopleStage'
-  );
-
-  const caption = document.querySelector(
-    '#peopleCaption'
-  );
-
+  const intro = document.querySelector('.people-intro');
+  const stage = document.querySelector('#peopleStage');
+  const caption = document.querySelector('#peopleCaption');
 
   const captions = [
     'Different faces.',
     'Different beginnings.'
   ];
 
-
   stage.innerHTML = '';
 
-
-  // Opening thought.
   intro.classList.add('show');
 
   await wait(2800);
@@ -780,8 +637,6 @@ async function people() {
 
   await wait(700);
 
-
-  // Show the students.
   for (
     let i = 0;
     i < assets.people.length;
@@ -794,29 +649,19 @@ async function people() {
       captions[i]
     );
 
-
-    caption.textContent =
-      captions[i];
-
+    caption.textContent = captions[i];
 
     card.classList.add('show');
-
     caption.classList.add('show');
-
 
     await wait(3600);
 
-
     card.classList.remove('show');
-
     caption.classList.remove('show');
-
 
     await wait(800);
   }
 
-
-  // Bridge to the teacher section.
   caption.textContent =
     'And these were only a few of them.';
 
@@ -826,10 +671,7 @@ async function people() {
 
   caption.classList.remove('show');
 
-
-  // Move to Section 6.
   showScene(5);
-
   await teacher();
 }
 
@@ -847,20 +689,11 @@ async function teacher() {
     'Where even the difficult finds a way to become clear.'
   ];
 
-
-  const stage = document.querySelector(
-    '#teacherStage'
-  );
-
-  const caption = document.querySelector(
-    '#teacherCaption'
-  );
-
+  const stage = document.querySelector('#teacherStage');
+  const caption = document.querySelector('#teacherCaption');
 
   stage.innerHTML = '';
 
-
-  // Show each teacher image.
   for (
     let i = 0;
     i < assets.teacher.length;
@@ -873,34 +706,20 @@ async function teacher() {
       captions[i]
     );
 
-
-    caption.textContent =
-      captions[i];
-
+    caption.textContent = captions[i];
 
     card.classList.add('show');
-
     caption.classList.add('show');
-
 
     await wait(3800);
 
-
     card.classList.remove('show');
-
     caption.classList.remove('show');
-
 
     await wait(850);
   }
 
-
-  /* -------------------- CLOSING -------------------- */
-
-  const closing = document.querySelector(
-    '#teacherClosing'
-  );
-
+  const closing = document.querySelector('#teacherClosing');
 
   closing.classList.add('show');
 
@@ -910,10 +729,7 @@ async function teacher() {
 
   await wait(800);
 
-
-  // Move to Section 7.
   showScene(6);
-
   await impact();
 }
 
@@ -925,33 +741,21 @@ async function teacher() {
 async function impact() {
 
   const captions = [
-
     [
       'And then, we begin to use what we learned.'
     ],
-
     [
       'One step becomes a milestone.',
       'A milestone becomes a new beginning.'
     ],
-
     []
   ];
 
-
-  const stage = document.querySelector(
-    '#impactStage'
-  );
-
-  const caption = document.querySelector(
-    '#impactCaption'
-  );
-
+  const stage = document.querySelector('#impactStage');
+  const caption = document.querySelector('#impactCaption');
 
   stage.innerHTML = '';
 
-
-  // Show the impact images.
   for (
     let i = 0;
     i < assets.impact.length;
@@ -964,31 +768,18 @@ async function impact() {
       captions[i].join(' ')
     );
 
-
-    // Add caption lines.
-    caption.innerHTML =
-      captions[i].join('<br>');
-
+    caption.innerHTML = captions[i].join('<br>');
 
     card.classList.add('show');
-
 
     if (captions[i].length > 0) {
       caption.classList.add('show');
     }
 
-
-    // Give the final image slightly
-    // more time on screen.
-    await wait(
-      i === 2 ? 4200 : 3800
-    );
-
+    await wait(i === 2 ? 4200 : 3800);
 
     card.classList.remove('show');
-
     caption.classList.remove('show');
-
 
     await wait(900);
   }
@@ -996,84 +787,49 @@ async function impact() {
 
   /* -------------------- STUDENT COUNTER -------------------- */
 
-  const screen = document.querySelector(
-    '#counterScreen'
-  );
-
-  const counter = document.querySelector(
-    '#studentCounter'
-  );
-
+  const screen = document.querySelector('#counterScreen');
+  const counter = document.querySelector('#studentCounter');
 
   screen.classList.add('show');
 
-
   const start = performance.now();
-
   const duration = 6000;
 
-
-  // Animate the counter for exactly 6 seconds.
-  while (
-    performance.now() - start < duration
-  ) {
+  // Count from 0 to 3000+ over six seconds.
+  while (performance.now() - start < duration) {
 
     const progress =
-      (performance.now() - start) /
-      duration;
-
+      (performance.now() - start) / duration;
 
     let eased;
 
-
-    // Gentle beginning.
-    if (progress < .15) {
-
+    if (progress < 0.15) {
       eased =
-        .12 *
-        Math.pow(
-          progress / .15,
-          1.5
-        );
-
+        0.12 *
+        Math.pow(progress / 0.15, 1.5);
     } else {
-
-      // Faster middle.
-      // Gentle ending.
       eased =
-        .12 +
-        .88 *
+        0.12 +
+        0.88 *
         Math.pow(
-          (progress - .15) / .85,
+          (progress - 0.15) / 0.85,
           1.7
         );
     }
 
-
     counter.textContent =
-      Math.floor(
-        3000 * eased
-      ).toLocaleString();
-
+      Math.floor(3000 * eased).toLocaleString();
 
     await wait(20);
   }
 
-
-  // Final number.
-  counter.textContent =
-    '3000+';
-
+  counter.textContent = '3000+';
 
   await wait(2200);
 
-
   screen.classList.remove('show');
 
-
-  // Move to Section 8.
   showScene(7);
-
   await memory();
 }
 
@@ -1082,16 +838,8 @@ async function impact() {
    08 — FINAL MEMORY
    ========================================================= */
 
-
-/* -------------------- MOSAIC POSITIONS -------------------- */
-
-// These positions spread the photographs
-// across the entire screen.
-//
-// More than 25 images simply reuse these
-// positions with different rotations.
+// Final positions used by the photo mosaic.
 const memoryPositions = [
-
   [2, 4, -3],
   [21, 3, 2],
   [41, 5, -2],
@@ -1124,39 +872,18 @@ const memoryPositions = [
 ];
 
 
-/* -------------------- CREATE MEMORY PHOTO -------------------- */
+// Create one memory image.
+function createMemoryPhoto(name, index, mosaic) {
 
-function createMemoryPhoto(
-  name,
-  index,
-  mosaic
-) {
+  const img = document.createElement('img');
+  const position =
+    memoryPositions[index % memoryPositions.length];
 
-  const img =
-    document.createElement('img');
-
-
-  const pos =
-    memoryPositions[
-      index % memoryPositions.length
-    ];
+  img.className = 'mosaic-photo';
+  img.alt = 'CICE memory';
 
 
-  img.className =
-    'mosaic-photo';
-
-
-  // Use the direct GitHub raw path.
-  img.src =
-    memoryImagePath(name);
-
-
-  img.alt =
-    'CICE memory';
-
-
-  // Starting position for the
-  // flying-in animation.
+  // Starting point for the flying animation.
   img.style.setProperty(
     '--sx',
     `${50 + (index % 5) * 6}%`
@@ -1171,107 +898,108 @@ function createMemoryPhoto(
   // Final mosaic position.
   img.style.setProperty(
     '--x',
-    `${pos[0]}%`
+    `${position[0]}%`
   );
 
   img.style.setProperty(
     '--y',
-    `${pos[1]}%`
+    `${position[1]}%`
   );
 
   img.style.setProperty(
     '--rot',
-    `${pos[2]}deg`
+    `${position[2]}deg`
   );
-
-
-  // Only reveal the photo after
-  // the browser confirms that it loaded.
-  img.addEventListener(
-    'load',
-    () => {
-
-      setTimeout(() => {
-
-        img.classList.add('show');
-
-      }, 180 + index * 220);
-    },
-    { once: true }
-  );
-
-
-  // If the raw URL fails, try the
-  // normal GitHub Pages path once.
-  img.addEventListener(
-    'error',
-    () => {
-
-      if (!img.dataset.fallback) {
-
-        img.dataset.fallback = 'true';
-
-        img.src = imagePath(
-          `memory/${name}`
-        );
-
-        return;
-      }
-
-
-      // Completely hide a genuinely
-      // missing image.
-      img.classList.add(
-        'asset-missing'
-      );
-    },
-    { once: false }
-  );
-
 
   mosaic.appendChild(img);
+
+  return img;
 }
 
 
-/* -------------------- FINAL MEMORY -------------------- */
+// Load one memory image reliably.
+// Raw GitHub is tried first because it handles
+// unusual filenames very reliably.
+function loadMemoryPhoto(img, name) {
 
+  return new Promise(resolve => {
+
+    let finished = false;
+
+    // Finish only once.
+    const finish = success => {
+      if (finished) return;
+      finished = true;
+      resolve(success);
+    };
+
+
+    // Reveal the image only after it really loads.
+    img.addEventListener('load', () => {
+      finish(true);
+    }, { once: true });
+
+
+    // If raw GitHub fails, try GitHub Pages once.
+    img.addEventListener('error', () => {
+
+      if (img.dataset.fallback !== 'used') {
+        img.dataset.fallback = 'used';
+        img.src = memoryPagePath(name);
+        return;
+      }
+
+      img.classList.add('asset-missing');
+      finish(false);
+
+    }, { once: false });
+
+
+    // Start the first request.
+    img.src = memoryRawPath(name);
+  });
+}
+
+
+// Animate one loaded memory image into its position.
+async function revealMemoryPhoto(img, index) {
+
+  const delay = 180 + index * 220;
+
+  await wait(delay);
+
+  // Do not reveal an image that failed both URLs.
+  if (img.classList.contains('asset-missing')) {
+    return;
+  }
+
+  img.classList.add('show');
+}
+
+
+// Run the complete final memory section.
 async function memory() {
 
-  const opening = document.querySelector(
-    '#memoryOpening'
-  );
-
-  const mosaic = document.querySelector(
-    '#mosaic'
-  );
-
-  const poem = document.querySelector(
-    '#poem'
-  );
-
-  const thanks = document.querySelector(
-    '#finalThanks'
-  );
+  const opening = document.querySelector('#memoryOpening');
+  const mosaic = document.querySelector('#mosaic');
+  const poem = document.querySelector('#poem');
+  const thanks = document.querySelector('#finalThanks');
 
 
   // Reset the section.
   mosaic.innerHTML = '';
-
   poem.classList.remove('show');
-
   thanks.classList.remove('show');
-
   opening.classList.remove('hide');
 
 
-  /* -------------------- DISCOVER IMAGES -------------------- */
+  /* -------------------- FIND ALL MEMORY IMAGES -------------------- */
 
-  // Ask GitHub which images actually
-  // exist inside assets/memory/.
+  // This replaces the old hard-coded nine-image limitation.
   await discoverMemoryImages();
 
 
-  /* -------------------- OPENING -------------------- */
+  /* -------------------- OPENING TEXT -------------------- */
 
   await wait(3000);
 
@@ -1280,36 +1008,49 @@ async function memory() {
   await wait(1300);
 
 
-  /* -------------------- PHOTO MOSAIC -------------------- */
+  /* -------------------- CREATE AND LOAD PHOTOS -------------------- */
 
-  // Add every discovered memory photo.
-  assets.memory.forEach(
-    (name, index) => {
+  const images = assets.memory.map((name, index) => {
+    const img = createMemoryPhoto(
+      name,
+      index,
+      mosaic
+    );
 
-      createMemoryPhoto(
-        name,
-        index,
-        mosaic
-      );
-    }
+    return {
+      img,
+      name,
+      index
+    };
+  });
+
+
+  // Load all files in parallel.
+  await Promise.all(
+    images.map(item =>
+      loadMemoryPhoto(
+        item.img,
+        item.name
+      )
+    )
   );
 
 
-  /*
-    Each image starts 220ms after the
-    previous image.
+  /* -------------------- BUILD THE MOSAIC -------------------- */
 
-    We wait long enough for the complete
-    sequence to build before showing
-    the poem.
-  */
-  const photoTime =
-    180 +
-    assets.memory.length * 220 +
-    3200;
+  // Reveal the photos one by one.
+  await Promise.all(
+    images.map(item =>
+      revealMemoryPhoto(
+        item.img,
+        item.index
+      )
+    )
+  );
 
 
-  await wait(photoTime);
+  // Give the completed mosaic time to settle.
+  await wait(3200);
 
 
   /* -------------------- POEM -------------------- */
@@ -1332,17 +1073,13 @@ async function memory() {
 
 
 /* =========================================================
-   START WEBSITE
+   START
    ========================================================= */
 
-window.addEventListener(
-  'load',
-  () => {
+window.addEventListener('load', () => {
+  // Start at the first scene.
+  showScene(0);
 
-    // Always start at Section 1.
-    showScene(0);
-
-    // Start the complete experience.
-    boot();
-  }
-);
+  // Run the entire cinematic sequence.
+  boot();
+});
