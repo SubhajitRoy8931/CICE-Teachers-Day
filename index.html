@@ -41,6 +41,17 @@
       51%, 100% { border-color: transparent; }
     }
 
+    /* Keep the Memory opening hidden until JavaScript starts it. */
+    .memory-opening {
+      opacity: 0;
+      visibility: hidden;
+    }
+
+    .memory-opening.show {
+      opacity: 1;
+      visibility: visible;
+    }
+
     @media (max-width: 700px) {
       .creator-credit {
         bottom: 5vh;
