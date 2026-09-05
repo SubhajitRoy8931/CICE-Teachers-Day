@@ -1,6 +1,6 @@
 /* ---------------------------------------------------------
    Impact sequence override
-   Keeps the existing counter and changes only its presentation.
+   Keeps the existing counter and restores the memory mosaic.
    --------------------------------------------------------- */
 
 /* Give every photographic frame a little more breathing room. */
@@ -150,6 +150,7 @@ async function impact() {
       opacity: 0;
       visibility: hidden;
     }
+
     #memoryOpening.show {
       opacity: 1;
       visibility: visible;
@@ -162,7 +163,7 @@ async function impact() {
 
 /* ---------------------------------------------------------
    Sections 08–10 closing sequence
-   Keeps the final words clear of the photo mosaic.
+   Restores the intended memory mosaic build.
    --------------------------------------------------------- */
 
 async function memory() {
@@ -175,21 +176,28 @@ async function memory() {
   await wait(3000);
   opening.classList.remove('show');
 
-  for (let i = 0; i < assets.memory.length; i++) {
-    const img = createMemoryPhoto(assets.memory[i], i, mosaic);
-    const success = await loadMemoryPhoto(img, assets.memory[i]);
+  /* Create every photo immediately so the mosaic can build as a whole. */
+  const images = assets.memory.map((name, index) => {
+    const img = createMemoryPhoto(name, index, mosaic);
+    return { img, name, index };
+  });
 
-    if (success) {
-      img.classList.add('show');
-    } else {
-      img.remove();
-    }
+  /* Load all 50 images in parallel instead of one at a time. */
+  await Promise.all(
+    images.map(item =>
+      loadMemoryPhoto(item.img, item.name)
+    )
+  );
 
-    await wait(100);
-  }
+  /* Reveal the loaded photos in the original staggered mosaic rhythm. */
+  await Promise.all(
+    images.map(item =>
+      revealMemoryPhoto(item.img, item.index)
+    )
+  );
 
-  /* Let the completed memory mosaic breathe before moving on. */
-  await wait(2500);
+  /* Let the completed mosaic breathe before moving to the poem. */
+  await wait(3200);
 
   showScene(8);
   await poetry();
