@@ -45,11 +45,14 @@
     .memory-opening {
       opacity: 0;
       visibility: hidden;
+      transition: opacity 1.2s ease;
     }
 
+    /* Reveal the parent instantly so child lines animate cleanly. */
     .memory-opening.show {
       opacity: 1;
       visibility: visible;
+      transition: none;
     }
 
     @media (max-width: 700px) {
