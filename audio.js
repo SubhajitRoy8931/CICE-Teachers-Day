@@ -13,10 +13,10 @@ backgroundMusic.loop = true;
 backgroundMusic.volume = 0.42;
 backgroundMusic.setAttribute('aria-hidden', 'true');
 
-// Track whether the user has unlocked audio playback.
+// Track whether the browser has allowed audio playback.
 let musicStarted = false;
 
-// Start or resume the music after a user gesture.
+// Start music from the same user interaction that unlocks audio.
 const startBackgroundMusic = () => {
   if (musicStarted) {
     return;
@@ -25,23 +25,36 @@ const startBackgroundMusic = () => {
   backgroundMusic.play()
     .then(() => {
       musicStarted = true;
+      removeAudioUnlockListeners();
     })
     .catch(() => {
-      // The browser may still block playback.
+      // Keep listening until the browser allows playback.
     });
 };
 
-// Unlock audio with the first real interaction.
+// Remove the temporary unlock listeners after playback starts.
+const removeAudioUnlockListeners = () => {
+  window.removeEventListener(
+    'pointerdown',
+    startBackgroundMusic
+  );
+
+  window.removeEventListener(
+    'keydown',
+    startBackgroundMusic
+  );
+};
+
+// pointerdown works consistently on laptop and mobile browsers.
 window.addEventListener(
-  'click',
-  startBackgroundMusic,
-  { once: true }
+  'pointerdown',
+  startBackgroundMusic
 );
 
+// A keyboard action can also unlock audio on supported browsers.
 window.addEventListener(
-  'touchend',
-  startBackgroundMusic,
-  { once: true, passive: true }
+  'keydown',
+  startBackgroundMusic
 );
 
 // Pause music when the website is no longer visible.
@@ -59,5 +72,9 @@ document.addEventListener(
   }
 );
 
-// Try autoplay on browsers that permit it.
-startBackgroundMusic();
+/*
+   Audible autoplay is blocked by modern browsers unless
+   the visitor has interacted with the page.
+   There is no reliable JavaScript bypass for that policy.
+   The first natural interaction now starts the music.
+*/
