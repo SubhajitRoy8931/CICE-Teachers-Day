@@ -279,7 +279,7 @@ async function greeting() {
     await wait(2000);
   }
 
-  await wait(7000);
+  await wait(5000);
   await typePrompt('There is something more →');
   await wait(1800);
 
