@@ -64,11 +64,12 @@
   </style>
 </head>
 <body>
-  <!-- The experience and music both begin from this single click. -->
+  <!-- Full-screen cinematic start gate. -->
   <div id="startGate" class="start-gate">
     <div class="start-gate-content">
       <div class="start-gate-brand">CICE</div>
-      <div class="start-gate-title">Teachers' Day</div>
+      <div class="start-gate-title">Teachers' Day 2026</div>
+      <div class="start-gate-line"></div>
       <button id="startExperience" class="start-gate-button">
         Click to start
       </button>
@@ -89,11 +90,7 @@
     <section class="scene final-closing" data-scene="final-closing"><div class="final-message" id="finalMessage"><div>Thank you, Sir</div><div>Happy Teachers' Day</div></div><div class="creator-credit">Created by Subhajit Roy</div></section>
   </main>
 
-  <!-- All website logic now lives in one JavaScript file. -->
-  <script src="script.js?v=start-gate-1"></script>
-  <!-- Override only the Memory opening sequence. -->
-  <script src="memory-fix.js?v=1"></script>
-  <!-- Background music and the mute/unmute control. -->
-  <script src="audio.js?v=start-gate-1"></script>
+  <!-- The start gate controls when the experience scripts begin. -->
+  <script src="startup.js?v=3"></script>
 </body>
 </html>
