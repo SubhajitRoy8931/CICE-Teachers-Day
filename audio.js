@@ -13,18 +13,35 @@ backgroundMusic.loop = true;
 backgroundMusic.volume = 0.42;
 backgroundMusic.setAttribute('aria-hidden', 'true');
 
-// Start after the first user interaction.
+// Start music from one user gesture.
+let musicStarted = false;
+
 const startBackgroundMusic = () => {
-  backgroundMusic.play().catch(() => {});
+  if (musicStarted) {
+    return;
+  }
+
+  backgroundMusic.play()
+    .then(() => {
+      musicStarted = true;
+    })
+    .catch(() => {
+      // Mobile browsers may still block playback.
+    });
 };
 
-['pointerdown', 'keydown', 'touchstart'].forEach(eventName => {
-  window.addEventListener(
-    eventName,
-    startBackgroundMusic,
-    { once: true, passive: true }
-  );
-});
+// Use a real user gesture for mobile browsers.
+window.addEventListener(
+  'click',
+  startBackgroundMusic,
+  { once: true }
+);
 
-// Try immediately as well; browsers may allow it.
+window.addEventListener(
+  'touchend',
+  startBackgroundMusic,
+  { once: true, passive: true }
+);
+
+// Try autoplay too; desktop browsers may allow it.
 startBackgroundMusic();
