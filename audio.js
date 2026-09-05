@@ -13,9 +13,10 @@ backgroundMusic.loop = true;
 backgroundMusic.volume = 0.42;
 backgroundMusic.setAttribute('aria-hidden', 'true');
 
-// Start music from one user gesture.
+// Track whether the user has unlocked audio playback.
 let musicStarted = false;
 
+// Start or resume the music after a user gesture.
 const startBackgroundMusic = () => {
   if (musicStarted) {
     return;
@@ -26,11 +27,11 @@ const startBackgroundMusic = () => {
       musicStarted = true;
     })
     .catch(() => {
-      // Mobile browsers may still block playback.
+      // The browser may still block playback.
     });
 };
 
-// Use a real user gesture for mobile browsers.
+// Unlock audio with the first real interaction.
 window.addEventListener(
   'click',
   startBackgroundMusic,
@@ -43,5 +44,20 @@ window.addEventListener(
   { once: true, passive: true }
 );
 
-// Try autoplay too; desktop browsers may allow it.
+// Pause music when the website is no longer visible.
+document.addEventListener(
+  'visibilitychange',
+  () => {
+    if (document.hidden) {
+      backgroundMusic.pause();
+      return;
+    }
+
+    if (musicStarted) {
+      backgroundMusic.play().catch(() => {});
+    }
+  }
+);
+
+// Try autoplay on browsers that permit it.
 startBackgroundMusic();
