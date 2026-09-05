@@ -438,7 +438,7 @@ async function classroom() {
   const bottomMessage = document.querySelector('#timeMessageBottom');
 
   record.classList.add('show');
-  topMessage.textContent = 'And then, the years began to pass.';
+  topMessage.textContent = 'And then, the years began to pass';
   bottomMessage.textContent = '';
   await wait(1700);
 
