@@ -64,6 +64,17 @@
   </style>
 </head>
 <body>
+  <!-- The experience and music both begin from this single click. -->
+  <div id="startGate" class="start-gate">
+    <div class="start-gate-content">
+      <div class="start-gate-brand">CICE</div>
+      <div class="start-gate-title">Teachers' Day</div>
+      <button id="startExperience" class="start-gate-button">
+        Click to start
+      </button>
+    </div>
+  </div>
+
   <!-- Full-screen cinematic sequence. -->
   <main id="experience">
     <section class="scene boot active" data-scene="boot"><div class="background-glow"></div><div class="terminal-window"><div class="terminal-header"><div class="window-buttons"><span></span><span></span><span></span></div><div class="terminal-name">CICE TERMINAL</div><div class="system-name">SYSTEM 01</div></div><div class="terminal-screen"><div id="terminalText"></div></div><div class="terminal-footer"><span>CICE</span><span>SECURE TERMINAL</span></div></div></section>
@@ -79,10 +90,10 @@
   </main>
 
   <!-- All website logic now lives in one JavaScript file. -->
-  <script src="script.js?v=consolidated-1"></script>
+  <script src="script.js?v=start-gate-1"></script>
   <!-- Override only the Memory opening sequence. -->
   <script src="memory-fix.js?v=1"></script>
-  <!-- Background music is stored directly in the GitHub repository. -->
-  <script src="audio.js?v=1"></script>
+  <!-- Background music and the mute/unmute control. -->
+  <script src="audio.js?v=start-gate-1"></script>
 </body>
 </html>
