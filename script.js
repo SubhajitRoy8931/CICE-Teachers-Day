@@ -34,11 +34,7 @@ async function typeLine(text, className = '', speed = 120) {
 async function boot() {
   document.querySelector('#terminalText').innerHTML = '';
 
-  await typeLine(
-    'C:\\CICE> teachers_day.exe',
-    'command',
-    105
-  );
+  await typeLine('C:\\CICE> teachers_day.exe', 'command', 105);
   await wait(1000);
   await typeLine('');
   await typeLine('Scanning...', 'boot-line', 150);
@@ -46,11 +42,7 @@ async function boot() {
   await typeLine('Teacher detected.', 'detected', 150);
   await wait(1000);
   await typeLine('');
-  await typeLine(
-    'Preparing surprise...',
-    'boot-line',
-    150
-  );
+  await typeLine('Preparing surprise...', 'boot-line', 150);
   await wait(2000);
   await typeLine('System ready.', 'ready', 155);
   await wait(2000);
@@ -63,18 +55,11 @@ async function boot() {
    02 — GREETING
    ========================================================= */
 
-const greetingLines = [
-  'HAPPY',
-  "TEACHERS'",
-  'DAY SIR'
-];
+const greetingLines = ['HAPPY', "TEACHERS'", 'DAY SIR'];
 
 function prepareTitle() {
   greetingLines.forEach((text, row) => {
-    const line = document.querySelector(
-      `#titleLine${row + 1}`
-    );
-
+    const line = document.querySelector(`#titleLine${row + 1}`);
     line.innerHTML = '';
 
     [...text].forEach(char => {
@@ -82,11 +67,8 @@ function prepareTitle() {
       slot.className = 'title-slot';
       slot.dataset.character = char;
 
-      if (char === ' ') {
-        slot.classList.add('space');
-      } else {
-        slot.textContent = char;
-      }
+      if (char === ' ') slot.classList.add('space');
+      else slot.textContent = char;
 
       line.appendChild(slot);
     });
@@ -106,7 +88,6 @@ async function flyLetter(char, slot) {
   }
 
   const key = getKey(char);
-
   if (!key) {
     slot.classList.add('landed');
     return;
@@ -136,22 +117,19 @@ async function flyLetter(char, slot) {
       left: `${sx}px`,
       top: `${sy}px`,
       opacity: 0,
-      transform:
-        'translate(-50%,-50%) scale(.55)'
+      transform: 'translate(-50%,-50%) scale(.55)'
     },
     {
       left: `${sx + (tx - sx) * .72}px`,
       top: `${sy + (ty - sy) * .72}px`,
       opacity: 1,
-      transform:
-        'translate(-50%,-50%) scale(1.08)'
+      transform: 'translate(-50%,-50%) scale(1.08)'
     },
     {
       left: `${tx}px`,
       top: `${ty}px`,
       opacity: 1,
-      transform:
-        'translate(-50%,-50%) scale(1)'
+      transform: 'translate(-50%,-50%) scale(1)'
     }
   ], {
     duration: 900,
@@ -165,15 +143,10 @@ async function flyLetter(char, slot) {
 }
 
 async function buildTitleLine(row) {
-  const line = document.querySelector(
-    `#titleLine${row}`
-  );
+  const line = document.querySelector(`#titleLine${row}`);
 
   for (const slot of [...line.children]) {
-    await flyLetter(
-      slot.dataset.character,
-      slot
-    );
+    await flyLetter(slot.dataset.character, slot);
     await wait(80);
   }
 }
@@ -195,14 +168,7 @@ function startConfetti() {
     const ratio = window.devicePixelRatio || 1;
     canvas.width = window.innerWidth * ratio;
     canvas.height = window.innerHeight * ratio;
-    context.setTransform(
-      ratio,
-      0,
-      0,
-      ratio,
-      0,
-      0
-    );
+    context.setTransform(ratio, 0, 0, ratio, 0, 0);
   };
 
   resize();
@@ -262,9 +228,7 @@ function startConfetti() {
       context.translate(piece.x, piece.y);
       context.rotate(piece.rotation);
       context.globalAlpha = 1;
-      context.fillStyle = colors[
-        index % colors.length
-      ];
+      context.fillStyle = colors[index % colors.length];
       context.fillRect(
         -piece.width / 2,
         -piece.height / 2,
@@ -277,10 +241,7 @@ function startConfetti() {
     if (elapsed < duration) {
       requestAnimationFrame(frame);
     } else {
-      window.removeEventListener(
-        'resize',
-        resize
-      );
+      window.removeEventListener('resize', resize);
       canvas.remove();
     }
   }
@@ -308,24 +269,18 @@ async function greeting() {
   await buildTitleLine(3);
   await wait(800);
 
-  document.querySelector('#keyboard')
-    .classList.add('hide');
+  document.querySelector('#keyboard').classList.add('hide');
 
-  /* Let confetti run before showing the copy. */
   startConfetti();
   await wait(3000);
 
-  for (const line of document.querySelectorAll(
-    '.greeting-copy p'
-  )) {
+  for (const line of document.querySelectorAll('.greeting-copy p')) {
     line.classList.add('show');
     await wait(2000);
   }
 
   await wait(7000);
-  await typePrompt(
-    'There is something more →'
-  );
+  await typePrompt('There is something more →');
   await wait(1800);
 
   showScene(2);
@@ -375,8 +330,7 @@ const memoryPrefix =
 
 assets.memory = Array.from(
   { length: 50 },
-  (_, index) =>
-    `${memoryPrefix} (${index + 1}).jpeg`
+  (_, index) => `${memoryPrefix} (${index + 1}).jpeg`
 );
 
 function makePhoto(stage, name, caption = '') {
@@ -435,8 +389,7 @@ async function archive() {
   year.textContent = '2016';
   await wait(250);
 
-  line.textContent =
-    'This is when it all began.';
+  line.textContent = 'This is when it all began.';
   await wait(2500);
 
   showScene(3);
@@ -456,12 +409,8 @@ async function classroom() {
     'The lessons evolved.'
   ];
 
-  const stage = document.querySelector(
-    '#classroomPhotos'
-  );
-  const caption = document.querySelector(
-    '#classroomCaption'
-  );
+  const stage = document.querySelector('#classroomPhotos');
+  const caption = document.querySelector('#classroomCaption');
 
   stage.innerHTML = '';
 
@@ -483,20 +432,13 @@ async function classroom() {
     await wait(900);
   }
 
-  const record = document.querySelector(
-    '#timeRecord'
-  );
+  const record = document.querySelector('#timeRecord');
   const year = document.querySelector('#timeYear');
-  const topMessage = document.querySelector(
-    '#timeMessageTop'
-  );
-  const bottomMessage = document.querySelector(
-    '#timeMessageBottom'
-  );
+  const topMessage = document.querySelector('#timeMessageTop');
+  const bottomMessage = document.querySelector('#timeMessageBottom');
 
   record.classList.add('show');
-  topMessage.textContent =
-    'And then, the years began to pass.';
+  topMessage.textContent = 'And then, the years began to pass.';
   bottomMessage.textContent = '';
   await wait(1700);
 
@@ -506,8 +448,7 @@ async function classroom() {
   const start = performance.now();
 
   while (performance.now() - start < 2000) {
-    const progress =
-      (performance.now() - start) / 2000;
+    const progress = (performance.now() - start) / 2000;
 
     year.textContent = String(
       Math.round(2016 + 10 * progress)
@@ -518,9 +459,10 @@ async function classroom() {
 
   year.textContent = '2026';
   await wait(700);
-  bottomMessage.textContent =
-    'And along the way, lives were shaped.';
-  await wait(2200);
+  bottomMessage.textContent = 'And along the way, lives were shaped.';
+
+  /* Keep this time-record scene visible one second longer. */
+  await wait(3200);
 
   record.classList.remove('show');
   showScene(4);
@@ -532,12 +474,8 @@ async function classroom() {
    ========================================================= */
 
 async function people() {
-  const stage = document.querySelector(
-    '#peopleStage'
-  );
-  const caption = document.querySelector(
-    '#peopleCaption'
-  );
+  const stage = document.querySelector('#peopleStage');
+  const caption = document.querySelector('#peopleCaption');
   const captions = [
     'Different faces.',
     'Different beginnings.'
@@ -573,18 +511,10 @@ async function people() {
    ========================================================= */
 
 async function teacher() {
-  const transition = document.querySelector(
-    '#teacherTransition'
-  );
-  const lines = transition.querySelectorAll(
-    '.teacher-transition-line'
-  );
-  const stage = document.querySelector(
-    '#teacherStage'
-  );
-  const caption = document.querySelector(
-    '#teacherCaption'
-  );
+  const transition = document.querySelector('#teacherTransition');
+  const lines = transition.querySelectorAll('.teacher-transition-line');
+  const stage = document.querySelector('#teacherStage');
+  const caption = document.querySelector('#teacherCaption');
 
   const captions = [
     'Someone who showed us where to begin.',
@@ -631,12 +561,8 @@ async function teacher() {
 
   /* -------------------- CLOSING REFLECTION -------------------- */
 
-  const closing = document.querySelector(
-    '#teacherClosing'
-  );
-  const closingLines = [
-    ...closing.querySelectorAll('p')
-  ];
+  const closing = document.querySelector('#teacherClosing');
+  const closingLines = [...closing.querySelectorAll('p')];
 
   closingLines.forEach(line => {
     line.style.opacity = '0';
@@ -688,10 +614,7 @@ photoSizeStyle.textContent = `
 document.head.appendChild(photoSizeStyle);
 
 /* Memory mosaic styling belongs here now. */
-const memoryMosaicStyle = document.createElement(
-  'style'
-);
-
+const memoryMosaicStyle = document.createElement('style');
 memoryMosaicStyle.textContent = `
   #mosaic {
     position: absolute;
@@ -738,7 +661,6 @@ memoryMosaicStyle.textContent = `
     }
   }
 `;
-
 document.head.appendChild(memoryMosaicStyle);
 
 function createMemoryPhoto(name, index, mosaic) {
@@ -749,20 +671,11 @@ function createMemoryPhoto(name, index, mosaic) {
   img.className = 'mosaic-photo';
   img.alt = `CICE memory ${index + 1}`;
 
-  img.style.setProperty(
-    '--x',
-    `${column * 10 + 5}%`
-  );
-  img.style.setProperty(
-    '--y',
-    `${row * 20 + 10}%`
-  );
+  img.style.setProperty('--x', `${column * 10 + 5}%`);
+  img.style.setProperty('--y', `${row * 20 + 10}%`);
   img.style.setProperty('--w', '11vw');
   img.style.setProperty('--h', '22vh');
-  img.style.setProperty(
-    '--rot',
-    `${-2 + Math.random() * 4}deg`
-  );
+  img.style.setProperty('--rot', `${-2 + Math.random() * 4}deg`);
 
   img.addEventListener('error', () => {
     img.classList.add('asset-missing');
@@ -776,16 +689,8 @@ function loadMemoryPhoto(img, name) {
   return new Promise(resolve => {
     const finish = () => resolve();
 
-    img.addEventListener(
-      'load',
-      finish,
-      { once: true }
-    );
-    img.addEventListener(
-      'error',
-      finish,
-      { once: true }
-    );
+    img.addEventListener('load', finish, { once: true });
+    img.addEventListener('error', finish, { once: true });
 
     img.src = `assets/memory/${encodeURIComponent(name)}`;
   });
@@ -806,12 +711,8 @@ async function impact() {
     ['A milestone becomes a new beginning.']
   ];
 
-  const stage = document.querySelector(
-    '#impactStage'
-  );
-  const caption = document.querySelector(
-    '#impactCaption'
-  );
+  const stage = document.querySelector('#impactStage');
+  const caption = document.querySelector('#impactCaption');
 
   stage.innerHTML = '';
 
@@ -833,12 +734,8 @@ async function impact() {
     await wait(900);
   }
 
-  const screen = document.querySelector(
-    '#counterScreen'
-  );
-  const counter = document.querySelector(
-    '#studentCounter'
-  );
+  const screen = document.querySelector('#counterScreen');
+  const counter = document.querySelector('#studentCounter');
 
   /* Build the final counter without changing HTML. */
   const content = document.createElement('div');
@@ -862,8 +759,7 @@ async function impact() {
   lead.style.marginBottom = '2.2rem';
 
   [years, institution, teacherLine].forEach(line => {
-    line.style.fontSize =
-      'clamp(22px, 3vw, 38px)';
+    line.style.fontSize = 'clamp(22px, 3vw, 38px)';
     line.style.lineHeight = '1.35';
     line.style.opacity = '0';
     line.style.visibility = 'hidden';
@@ -871,8 +767,7 @@ async function impact() {
 
   taught.textContent = 'Students Taught';
   taught.style.marginTop = '1rem';
-  taught.style.fontSize =
-    'clamp(22px, 3vw, 38px)';
+  taught.style.fontSize = 'clamp(22px, 3vw, 38px)';
   taught.style.lineHeight = '1.35';
   taught.style.opacity = '0';
   taught.style.visibility = 'hidden';
@@ -881,11 +776,7 @@ async function impact() {
   institution.textContent = 'One Institution';
   teacherLine.textContent = 'One Teacher';
 
-  lead.append(
-    years,
-    institution,
-    teacherLine
-  );
+  lead.append(years, institution, teacherLine);
   content.append(lead, counter, taught);
   screen.replaceChildren(content);
 
@@ -907,15 +798,11 @@ async function impact() {
   const duration = 6000;
 
   while (performance.now() - start < duration) {
-    const progress =
-      (performance.now() - start) / duration;
+    const progress = (performance.now() - start) / duration;
     let eased;
 
     if (progress < 0.15) {
-      eased = 0.12 * Math.pow(
-        progress / 0.15,
-        1.5
-      );
+      eased = 0.12 * Math.pow(progress / 0.15, 1.5);
     } else {
       eased =
         0.12 +
@@ -967,9 +854,7 @@ async function impact() {
    ========================================================= */
 
 async function memory() {
-  const opening = document.querySelector(
-    '#memoryOpening'
-  );
+  const opening = document.querySelector('#memoryOpening');
   const mosaic = document.querySelector('#mosaic');
 
   mosaic.innerHTML = '';
@@ -981,11 +866,7 @@ async function memory() {
   /* Create all 50 frames before loading them. */
   const images = assets.memory.map(
     (name, index) => ({
-      img: createMemoryPhoto(
-        name,
-        index,
-        mosaic
-      ),
+      img: createMemoryPhoto(name, index, mosaic),
       name,
       index
     })
@@ -994,20 +875,14 @@ async function memory() {
   /* Load every real file in assets/memory/. */
   await Promise.all(
     images.map(item =>
-      loadMemoryPhoto(
-        item.img,
-        item.name
-      )
+      loadMemoryPhoto(item.img, item.name)
     )
   );
 
   /* Reveal loaded photos in sequence. */
   await Promise.all(
     images.map(item =>
-      revealMemoryPhoto(
-        item.img,
-        item.index
-      )
+      revealMemoryPhoto(item.img, item.index)
     )
   );
 
@@ -1023,9 +898,7 @@ async function memory() {
 
 async function poetry() {
   const lines = [
-    ...document.querySelectorAll(
-      '#poeticLines p'
-    )
+    ...document.querySelectorAll('#poeticLines p')
   ];
 
   lines.forEach(line => {
@@ -1049,9 +922,7 @@ async function poetry() {
 
 async function finalMessage() {
   const lines = [
-    ...document.querySelectorAll(
-      '#finalMessage div'
-    )
+    ...document.querySelectorAll('#finalMessage div')
   ];
 
   lines.forEach(line => {
