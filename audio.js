@@ -1,6 +1,6 @@
 /* =========================================================
    CICE TEACHERS' DAY
-   Background music from the GitHub repository.
+   Background music and sound control
    ========================================================= */
 
 const backgroundMusic = new Audio(
@@ -55,11 +55,6 @@ const createAudioControl = () => {
     button.style.fontSize = '17px';
   }
 
-  // Prevent the global audio-unlock listener from firing first.
-  button.addEventListener('pointerdown', event => {
-    event.stopPropagation();
-  });
-
   // Toggle mute without restarting the music.
   button.addEventListener('click', async () => {
     if (!musicStarted) {
@@ -102,7 +97,7 @@ const updateAudioControl = () => {
   );
 };
 
-// Start music from the same user interaction that unlocks audio.
+// Start music from the Start Experience click.
 const startBackgroundMusic = () => {
   if (musicStarted) {
     return Promise.resolve(true);
@@ -111,43 +106,16 @@ const startBackgroundMusic = () => {
   return backgroundMusic.play()
     .then(() => {
       musicStarted = true;
-      removeAudioUnlockListeners();
       updateAudioControl();
       return true;
     })
     .catch(() => {
-      // Keep listening until the browser allows playback.
       return false;
     });
 };
 
-// Make the starter available to other website scripts if needed.
+// Make the starter available to the main website script.
 window.startBackgroundMusic = startBackgroundMusic;
-
-// Remove the temporary unlock listeners after playback starts.
-const removeAudioUnlockListeners = () => {
-  window.removeEventListener(
-    'pointerdown',
-    startBackgroundMusic
-  );
-
-  window.removeEventListener(
-    'keydown',
-    startBackgroundMusic
-  );
-};
-
-// pointerdown works consistently on laptop and mobile browsers.
-window.addEventListener(
-  'pointerdown',
-  startBackgroundMusic
-);
-
-// A keyboard action can also unlock audio on supported browsers.
-window.addEventListener(
-  'keydown',
-  startBackgroundMusic
-);
 
 // Pause music when the website is no longer visible.
 document.addEventListener(
@@ -170,10 +138,3 @@ if (document.readyState === 'loading') {
 } else {
   createAudioControl();
 }
-
-/*
-   Audible autoplay is blocked by modern browsers unless
-   the visitor has interacted with the page.
-   There is no reliable JavaScript bypass for that policy.
-   The first natural interaction now starts the music.
-*/
