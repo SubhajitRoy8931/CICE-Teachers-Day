@@ -21,6 +21,7 @@ function showScene(index) {
 async function typeLine(text, className = '', speed = 120) {
   const box = document.querySelector('#terminalText');
   const line = document.createElement('div');
+
   if (className) line.className = className;
   box.appendChild(line);
 
@@ -33,7 +34,11 @@ async function typeLine(text, className = '', speed = 120) {
 async function boot() {
   document.querySelector('#terminalText').innerHTML = '';
 
-  await typeLine('C:\\CICE> teachers_day.exe', 'command', 105);
+  await typeLine(
+    'C:\\CICE> teachers_day.exe',
+    'command',
+    105
+  );
   await wait(1000);
   await typeLine('');
   await typeLine('Scanning...', 'boot-line', 150);
@@ -41,7 +46,11 @@ async function boot() {
   await typeLine('Teacher detected.', 'detected', 150);
   await wait(1000);
   await typeLine('');
-  await typeLine('Preparing surprise...', 'boot-line', 150);
+  await typeLine(
+    'Preparing surprise...',
+    'boot-line',
+    150
+  );
   await wait(2000);
   await typeLine('System ready.', 'ready', 155);
   await wait(2000);
@@ -54,11 +63,18 @@ async function boot() {
    02 — GREETING
    ========================================================= */
 
-const greetingLines = ['HAPPY', "TEACHERS'", 'DAY SIR'];
+const greetingLines = [
+  'HAPPY',
+  "TEACHERS'",
+  'DAY SIR'
+];
 
 function prepareTitle() {
   greetingLines.forEach((text, row) => {
-    const line = document.querySelector(`#titleLine${row + 1}`);
+    const line = document.querySelector(
+      `#titleLine${row + 1}`
+    );
+
     line.innerHTML = '';
 
     [...text].forEach(char => {
@@ -66,8 +82,11 @@ function prepareTitle() {
       slot.className = 'title-slot';
       slot.dataset.character = char;
 
-      if (char === ' ') slot.classList.add('space');
-      else slot.textContent = char;
+      if (char === ' ') {
+        slot.classList.add('space');
+      } else {
+        slot.textContent = char;
+      }
 
       line.appendChild(slot);
     });
@@ -75,7 +94,9 @@ function prepareTitle() {
 }
 
 function getKey(char) {
-  return document.querySelector(`.key[data-key="${CSS.escape(char)}"]`);
+  return document.querySelector(
+    `.key[data-key="${CSS.escape(char)}"]`
+  );
 }
 
 async function flyLetter(char, slot) {
@@ -85,13 +106,16 @@ async function flyLetter(char, slot) {
   }
 
   const key = getKey(char);
+
   if (!key) {
     slot.classList.add('landed');
     return;
   }
 
   key.classList.add('source-active');
-  setTimeout(() => key.classList.remove('source-active'), 180);
+  setTimeout(() => {
+    key.classList.remove('source-active');
+  }, 180);
 
   const source = key.getBoundingClientRect();
   const target = slot.getBoundingClientRect();
@@ -112,19 +136,22 @@ async function flyLetter(char, slot) {
       left: `${sx}px`,
       top: `${sy}px`,
       opacity: 0,
-      transform: 'translate(-50%,-50%) scale(.55)'
+      transform:
+        'translate(-50%,-50%) scale(.55)'
     },
     {
       left: `${sx + (tx - sx) * .72}px`,
       top: `${sy + (ty - sy) * .72}px`,
       opacity: 1,
-      transform: 'translate(-50%,-50%) scale(1.08)'
+      transform:
+        'translate(-50%,-50%) scale(1.08)'
     },
     {
       left: `${tx}px`,
       top: `${ty}px`,
       opacity: 1,
-      transform: 'translate(-50%,-50%) scale(1)'
+      transform:
+        'translate(-50%,-50%) scale(1)'
     }
   ], {
     duration: 900,
@@ -138,9 +165,15 @@ async function flyLetter(char, slot) {
 }
 
 async function buildTitleLine(row) {
-  const line = document.querySelector(`#titleLine${row}`);
+  const line = document.querySelector(
+    `#titleLine${row}`
+  );
+
   for (const slot of [...line.children]) {
-    await flyLetter(slot.dataset.character, slot);
+    await flyLetter(
+      slot.dataset.character,
+      slot
+    );
     await wait(80);
   }
 }
@@ -162,37 +195,60 @@ function startConfetti() {
     const ratio = window.devicePixelRatio || 1;
     canvas.width = window.innerWidth * ratio;
     canvas.height = window.innerHeight * ratio;
-    context.setTransform(ratio, 0, 0, ratio, 0, 0);
+    context.setTransform(
+      ratio,
+      0,
+      0,
+      ratio,
+      0,
+      0
+    );
   };
 
   resize();
   window.addEventListener('resize', resize);
 
-  const pieces = Array.from({ length: 90 }, () => ({
-    x: Math.random() * window.innerWidth,
-    y: -20 - Math.random() * window.innerHeight,
-    width: 5 + Math.random() * 5,
-    height: 7 + Math.random() * 8,
-    speed: 2.2 + Math.random() * 2.4,
-    drift: -0.7 + Math.random() * 1.4,
-    rotation: Math.random() * Math.PI,
-    rotationSpeed: -0.08 + Math.random() * 0.16,
-    phase: Math.random() * Math.PI * 2
-  }));
+  const pieces = Array.from(
+    { length: 90 },
+    () => ({
+      x: Math.random() * window.innerWidth,
+      y: -20 - Math.random() * window.innerHeight,
+      width: 5 + Math.random() * 5,
+      height: 7 + Math.random() * 8,
+      speed: 2.2 + Math.random() * 2.4,
+      drift: -0.7 + Math.random() * 1.4,
+      rotation: Math.random() * Math.PI,
+      rotationSpeed: -0.08 + Math.random() * 0.16,
+      phase: Math.random() * Math.PI * 2
+    })
+  );
 
   const start = performance.now();
   const duration = 3000;
   const colors = [
-    '#f7d774', '#8fd3ff', '#f29bb2',
-    '#b8e986', '#d8b4fe', '#ffffff'
+    '#f7d774',
+    '#8fd3ff',
+    '#f29bb2',
+    '#b8e986',
+    '#d8b4fe',
+    '#ffffff'
   ];
 
   function frame(now) {
     const elapsed = now - start;
-    context.clearRect(0, 0, window.innerWidth, window.innerHeight);
+
+    context.clearRect(
+      0,
+      0,
+      window.innerWidth,
+      window.innerHeight
+    );
 
     pieces.forEach((piece, index) => {
-      const sway = Math.sin(elapsed * 0.002 + piece.phase) * 0.7;
+      const sway = Math.sin(
+        elapsed * 0.002 + piece.phase
+      ) * 0.7;
+
       piece.y += piece.speed;
       piece.x += piece.drift + sway;
       piece.rotation += piece.rotationSpeed;
@@ -206,7 +262,9 @@ function startConfetti() {
       context.translate(piece.x, piece.y);
       context.rotate(piece.rotation);
       context.globalAlpha = 1;
-      context.fillStyle = colors[index % colors.length];
+      context.fillStyle = colors[
+        index % colors.length
+      ];
       context.fillRect(
         -piece.width / 2,
         -piece.height / 2,
@@ -216,9 +274,13 @@ function startConfetti() {
       context.restore();
     });
 
-    if (elapsed < duration) requestAnimationFrame(frame);
-    else {
-      window.removeEventListener('resize', resize);
+    if (elapsed < duration) {
+      requestAnimationFrame(frame);
+    } else {
+      window.removeEventListener(
+        'resize',
+        resize
+      );
       canvas.remove();
     }
   }
@@ -246,19 +308,24 @@ async function greeting() {
   await buildTitleLine(3);
   await wait(800);
 
-  document.querySelector('#keyboard').classList.add('hide');
+  document.querySelector('#keyboard')
+    .classList.add('hide');
 
-  /* Let the confetti run for 3 seconds before showing any copy. */
+  /* Let confetti run before showing the copy. */
   startConfetti();
   await wait(3000);
 
-  for (const line of document.querySelectorAll('.greeting-copy p')) {
+  for (const line of document.querySelectorAll(
+    '.greeting-copy p'
+  )) {
     line.classList.add('show');
     await wait(2000);
   }
 
   await wait(7000);
-  await typePrompt('There is something more →');
+  await typePrompt(
+    'There is something more →'
+  );
   await wait(1800);
 
   showScene(2);
@@ -303,21 +370,27 @@ function imagePath(name) {
   return `assets/${encodeURIComponent(name)}`;
 }
 
-const memoryPrefix = 'WhatsApp Image 2026-09-04 at 11.54.05 AM';
+const memoryPrefix =
+  'WhatsApp Image 2026-09-04 at 11.54.05 AM';
+
 assets.memory = Array.from(
   { length: 50 },
-  (_, index) => `${memoryPrefix} (${index + 1}).jpeg`
+  (_, index) =>
+    `${memoryPrefix} (${index + 1}).jpeg`
 );
 
 function makePhoto(stage, name, caption = '') {
   const card = document.createElement('div');
   const img = document.createElement('img');
+
   card.className = 'photo-card';
   img.src = imagePath(name);
   img.alt = caption || 'CICE memory';
+
   img.addEventListener('error', () => {
     card.classList.add('asset-missing');
   });
+
   card.appendChild(img);
   stage.appendChild(card);
   return card;
@@ -335,8 +408,8 @@ async function archive() {
   const year = document.querySelector('.origin-year');
   const line = document.querySelector('.origin-line');
 
-  document.querySelector('#archiveStatus').textContent =
-    'Searching archives...';
+  document.querySelector('#archiveStatus')
+    .textContent = 'Searching archives...';
 
   for (let n = 0; n <= 100; n += 2) {
     bar.style.width = `${n}%`;
@@ -361,7 +434,9 @@ async function archive() {
   await wait(450);
   year.textContent = '2016';
   await wait(250);
-  line.textContent = 'This is when it all began.';
+
+  line.textContent =
+    'This is when it all began.';
   await wait(2500);
 
   showScene(3);
@@ -381,28 +456,47 @@ async function classroom() {
     'The lessons evolved.'
   ];
 
-  const stage = document.querySelector('#classroomPhotos');
-  const caption = document.querySelector('#classroomCaption');
+  const stage = document.querySelector(
+    '#classroomPhotos'
+  );
+  const caption = document.querySelector(
+    '#classroomCaption'
+  );
+
   stage.innerHTML = '';
 
   for (let i = 0; i < assets.classroom.length; i++) {
-    const card = makePhoto(stage, assets.classroom[i], captions[i]);
+    const card = makePhoto(
+      stage,
+      assets.classroom[i],
+      captions[i]
+    );
+
     caption.textContent = captions[i];
     card.classList.add('show');
     caption.classList.add('show');
+
     await wait(3600);
+
     card.classList.remove('show');
     caption.classList.remove('show');
     await wait(900);
   }
 
-  const record = document.querySelector('#timeRecord');
+  const record = document.querySelector(
+    '#timeRecord'
+  );
   const year = document.querySelector('#timeYear');
-  const topMessage = document.querySelector('#timeMessageTop');
-  const bottomMessage = document.querySelector('#timeMessageBottom');
+  const topMessage = document.querySelector(
+    '#timeMessageTop'
+  );
+  const bottomMessage = document.querySelector(
+    '#timeMessageBottom'
+  );
 
   record.classList.add('show');
-  topMessage.textContent = 'And then, the years began to pass.';
+  topMessage.textContent =
+    'And then, the years began to pass.';
   bottomMessage.textContent = '';
   await wait(1700);
 
@@ -410,15 +504,22 @@ async function classroom() {
   await wait(1000);
 
   const start = performance.now();
+
   while (performance.now() - start < 2000) {
-    const progress = (performance.now() - start) / 2000;
-    year.textContent = String(Math.round(2016 + 10 * progress));
+    const progress =
+      (performance.now() - start) / 2000;
+
+    year.textContent = String(
+      Math.round(2016 + 10 * progress)
+    );
+
     await wait(20);
   }
 
   year.textContent = '2026';
   await wait(700);
-  bottomMessage.textContent = 'And along the way, lives were shaped.';
+  bottomMessage.textContent =
+    'And along the way, lives were shaped.';
   await wait(2200);
 
   record.classList.remove('show');
@@ -431,19 +532,33 @@ async function classroom() {
    ========================================================= */
 
 async function people() {
-  const stage = document.querySelector('#peopleStage');
-  const caption = document.querySelector('#peopleCaption');
-  const captions = ['Different faces.', 'Different beginnings.'];
+  const stage = document.querySelector(
+    '#peopleStage'
+  );
+  const caption = document.querySelector(
+    '#peopleCaption'
+  );
+  const captions = [
+    'Different faces.',
+    'Different beginnings.'
+  ];
 
   stage.innerHTML = '';
   caption.classList.remove('show');
 
   for (let i = 0; i < assets.people.length; i++) {
-    const card = makePhoto(stage, assets.people[i], captions[i]);
+    const card = makePhoto(
+      stage,
+      assets.people[i],
+      captions[i]
+    );
+
     caption.textContent = captions[i];
     card.classList.add('show');
     caption.classList.add('show');
+
     await wait(3600);
+
     card.classList.remove('show');
     caption.classList.remove('show');
     await wait(800);
@@ -458,10 +573,18 @@ async function people() {
    ========================================================= */
 
 async function teacher() {
-  const transition = document.querySelector('#teacherTransition');
-  const lines = transition.querySelectorAll('.teacher-transition-line');
-  const stage = document.querySelector('#teacherStage');
-  const caption = document.querySelector('#teacherCaption');
+  const transition = document.querySelector(
+    '#teacherTransition'
+  );
+  const lines = transition.querySelectorAll(
+    '.teacher-transition-line'
+  );
+  const stage = document.querySelector(
+    '#teacherStage'
+  );
+  const caption = document.querySelector(
+    '#teacherCaption'
+  );
 
   const captions = [
     'Someone who showed us where to begin.',
@@ -484,14 +607,23 @@ async function teacher() {
 
   transition.classList.remove('show');
   transition.classList.remove('exit');
-  lines.forEach(line => line.classList.remove('show'));
+  lines.forEach(line => {
+    line.classList.remove('show');
+  });
 
   for (let i = 0; i < assets.teacher.length; i++) {
-    const card = makePhoto(stage, assets.teacher[i], captions[i]);
+    const card = makePhoto(
+      stage,
+      assets.teacher[i],
+      captions[i]
+    );
+
     caption.textContent = captions[i];
     card.classList.add('show');
     caption.classList.add('show');
+
     await wait(3800);
+
     card.classList.remove('show');
     caption.classList.remove('show');
     await wait(850);
@@ -499,13 +631,18 @@ async function teacher() {
 
   /* -------------------- CLOSING REFLECTION -------------------- */
 
-  const closing = document.querySelector('#teacherClosing');
-  const closingLines = [...closing.querySelectorAll('p')];
+  const closing = document.querySelector(
+    '#teacherClosing'
+  );
+  const closingLines = [
+    ...closing.querySelectorAll('p')
+  ];
 
   closingLines.forEach(line => {
     line.style.opacity = '0';
     line.style.transform = 'translateY(14px)';
-    line.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
+    line.style.transition =
+      'opacity 0.8s ease, transform 0.8s ease';
   });
 
   closing.classList.add('show');
@@ -515,9 +652,13 @@ async function teacher() {
     closingLines[i].style.opacity = '1';
     closingLines[i].style.transform = 'none';
 
-    if (i === 3) await wait(1000);
-    else if (i === closingLines.length - 1) await wait(5000);
-    else await wait(2500);
+    if (i === 3) {
+      await wait(1000);
+    } else if (i === closingLines.length - 1) {
+      await wait(5000);
+    } else {
+      await wait(2500);
+    }
   }
 
   closing.classList.remove('show');
@@ -528,7 +669,135 @@ async function teacher() {
 
 /* =========================================================
    07 — IMPACT
+   Consolidated from the former override file.
    ========================================================= */
+
+/* Give photographic frames more breathing room. */
+const photoSizeStyle = document.createElement('style');
+photoSizeStyle.textContent = `
+  .photo-card {
+    inset: 9vh 9vw 14vh;
+  }
+
+  @media (max-width: 700px) {
+    .photo-card {
+      inset: 10vh 5vw 17vh;
+    }
+  }
+`;
+document.head.appendChild(photoSizeStyle);
+
+/* Memory mosaic styling belongs here now. */
+const memoryMosaicStyle = document.createElement(
+  'style'
+);
+
+memoryMosaicStyle.textContent = `
+  #mosaic {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+  }
+
+  .mosaic-photo {
+    position: absolute;
+    left: var(--x);
+    top: var(--y);
+    width: var(--w);
+    height: var(--h);
+    object-fit: cover;
+    display: block;
+    opacity: 0;
+    visibility: hidden;
+    transform:
+      translate(-50%, -50%)
+      rotate(var(--rot))
+      scale(.92);
+    transition:
+      opacity .8s ease,
+      transform .9s ease;
+  }
+
+  .mosaic-photo.show {
+    opacity: .84;
+    visibility: visible;
+    transform:
+      translate(-50%, -50%)
+      rotate(var(--rot))
+      scale(1);
+  }
+
+  .mosaic-photo.asset-missing {
+    display: none;
+  }
+
+  @media (max-width: 700px) {
+    .mosaic-photo {
+      width: 20vw;
+      height: 18vh;
+    }
+  }
+`;
+
+document.head.appendChild(memoryMosaicStyle);
+
+function createMemoryPhoto(name, index, mosaic) {
+  const img = document.createElement('img');
+  const column = index % 10;
+  const row = Math.floor(index / 10);
+
+  img.className = 'mosaic-photo';
+  img.alt = `CICE memory ${index + 1}`;
+
+  img.style.setProperty(
+    '--x',
+    `${column * 10 + 5}%`
+  );
+  img.style.setProperty(
+    '--y',
+    `${row * 20 + 10}%`
+  );
+  img.style.setProperty('--w', '11vw');
+  img.style.setProperty('--h', '22vh');
+  img.style.setProperty(
+    '--rot',
+    `${-2 + Math.random() * 4}deg`
+  );
+
+  img.addEventListener('error', () => {
+    img.classList.add('asset-missing');
+  });
+
+  mosaic.appendChild(img);
+  return img;
+}
+
+function loadMemoryPhoto(img, name) {
+  return new Promise(resolve => {
+    const finish = () => resolve();
+
+    img.addEventListener(
+      'load',
+      finish,
+      { once: true }
+    );
+    img.addEventListener(
+      'error',
+      finish,
+      { once: true }
+    );
+
+    img.src = `assets/memory/${encodeURIComponent(name)}`;
+  });
+}
+
+async function revealMemoryPhoto(img, index) {
+  await wait(120 + index * 85);
+
+  if (!img.classList.contains('asset-missing')) {
+    img.classList.add('show');
+  }
+}
 
 async function impact() {
   const captions = [
@@ -537,8 +806,13 @@ async function impact() {
     ['A milestone becomes a new beginning.']
   ];
 
-  const stage = document.querySelector('#impactStage');
-  const caption = document.querySelector('#impactCaption');
+  const stage = document.querySelector(
+    '#impactStage'
+  );
+  const caption = document.querySelector(
+    '#impactCaption'
+  );
+
   stage.innerHTML = '';
 
   for (let i = 0; i < assets.impact.length; i++) {
@@ -548,19 +822,25 @@ async function impact() {
       captions[i].join(' ')
     );
 
-    caption.innerHTML = captions[i].join(' ');
+    caption.innerHTML = captions[i].join('<br>');
     card.classList.add('show');
     caption.classList.add('show');
 
     await wait(i === 2 ? 4200 : 3800);
+
     card.classList.remove('show');
     caption.classList.remove('show');
     await wait(900);
   }
 
-  const screen = document.querySelector('#counterScreen');
-  const counter = document.querySelector('#studentCounter');
+  const screen = document.querySelector(
+    '#counterScreen'
+  );
+  const counter = document.querySelector(
+    '#studentCounter'
+  );
 
+  /* Build the final counter without changing HTML. */
   const content = document.createElement('div');
   const lead = document.createElement('div');
   const years = document.createElement('div');
@@ -582,7 +862,8 @@ async function impact() {
   lead.style.marginBottom = '2.2rem';
 
   [years, institution, teacherLine].forEach(line => {
-    line.style.fontSize = 'clamp(22px, 3vw, 38px)';
+    line.style.fontSize =
+      'clamp(22px, 3vw, 38px)';
     line.style.lineHeight = '1.35';
     line.style.opacity = '0';
     line.style.visibility = 'hidden';
@@ -590,7 +871,8 @@ async function impact() {
 
   taught.textContent = 'Students Taught';
   taught.style.marginTop = '1rem';
-  taught.style.fontSize = 'clamp(22px, 3vw, 38px)';
+  taught.style.fontSize =
+    'clamp(22px, 3vw, 38px)';
   taught.style.lineHeight = '1.35';
   taught.style.opacity = '0';
   taught.style.visibility = 'hidden';
@@ -599,7 +881,11 @@ async function impact() {
   institution.textContent = 'One Institution';
   teacherLine.textContent = 'One Teacher';
 
-  lead.append(years, institution, teacherLine);
+  lead.append(
+    years,
+    institution,
+    teacherLine
+  );
   content.append(lead, counter, taught);
   screen.replaceChildren(content);
 
@@ -621,13 +907,22 @@ async function impact() {
   const duration = 6000;
 
   while (performance.now() - start < duration) {
-    const progress = (performance.now() - start) / duration;
+    const progress =
+      (performance.now() - start) / duration;
     let eased;
 
     if (progress < 0.15) {
-      eased = 0.12 * Math.pow(progress / 0.15, 1.5);
+      eased = 0.12 * Math.pow(
+        progress / 0.15,
+        1.5
+      );
     } else {
-      eased = 0.12 + 0.88 * Math.pow((progress - 0.15) / 0.85, 1.7);
+      eased =
+        0.12 +
+        0.88 * Math.pow(
+          (progress - 0.15) / 0.85,
+          1.7
+        );
     }
 
     counter.textContent = Math.max(
@@ -640,6 +935,7 @@ async function impact() {
 
   counter.textContent = '3000+';
   await wait(1500);
+
   taught.style.opacity = '1';
   taught.style.visibility = 'visible';
 
@@ -648,19 +944,19 @@ async function impact() {
   screen.classList.remove('show');
   showScene(7);
 
-  assets.memory = assets.memory.map(name => `memory/${name}`);
-
   const memoryStyle = document.createElement('style');
   memoryStyle.textContent = `
     #memoryOpening:not(.show) {
       opacity: 0;
       visibility: hidden;
     }
+
     #memoryOpening.show {
       opacity: 1;
       visibility: visible;
     }
   `;
+
   document.head.appendChild(memoryStyle);
 
   await memory();
@@ -671,7 +967,9 @@ async function impact() {
    ========================================================= */
 
 async function memory() {
-  const opening = document.querySelector('#memoryOpening');
+  const opening = document.querySelector(
+    '#memoryOpening'
+  );
   const mosaic = document.querySelector('#mosaic');
 
   mosaic.innerHTML = '';
@@ -680,27 +978,59 @@ async function memory() {
   await wait(3000);
   opening.classList.remove('show');
 
-  for (let i = 0; i < assets.memory.length; i++) {
-    const img = createMemoryPhoto(assets.memory[i], i, mosaic);
-    const success = await loadMemoryPhoto(img, assets.memory[i]);
+  /* Create all 50 frames before loading them. */
+  const images = assets.memory.map(
+    (name, index) => ({
+      img: createMemoryPhoto(
+        name,
+        index,
+        mosaic
+      ),
+      name,
+      index
+    })
+  );
 
-    if (success) img.classList.add('show');
-    else img.remove();
+  /* Load every real file in assets/memory/. */
+  await Promise.all(
+    images.map(item =>
+      loadMemoryPhoto(
+        item.img,
+        item.name
+      )
+    )
+  );
 
-    await wait(100);
-  }
+  /* Reveal loaded photos in sequence. */
+  await Promise.all(
+    images.map(item =>
+      revealMemoryPhoto(
+        item.img,
+        item.index
+      )
+    )
+  );
 
-  await wait(2500);
+  await wait(3200);
+
   showScene(8);
   await poetry();
 }
 
+/* =========================================================
+   09 — POETIC CLOSING
+   ========================================================= */
+
 async function poetry() {
   const lines = [
-    ...document.querySelectorAll('#poeticLines p')
+    ...document.querySelectorAll(
+      '#poeticLines p'
+    )
   ];
 
-  lines.forEach(line => line.classList.remove('show'));
+  lines.forEach(line => {
+    line.classList.remove('show');
+  });
 
   for (const line of lines) {
     line.classList.add('show');
@@ -708,41 +1038,31 @@ async function poetry() {
   }
 
   await wait(3500);
+
   showScene(9);
   await finalMessage();
 }
 
+/* =========================================================
+   10 — FINAL MESSAGE
+   ========================================================= */
+
 async function finalMessage() {
   const lines = [
-    ...document.querySelectorAll('#finalMessage div')
+    ...document.querySelectorAll(
+      '#finalMessage div'
+    )
   ];
 
-  lines.forEach(line => line.classList.remove('show'));
+  lines.forEach(line => {
+    line.classList.remove('show');
+  });
 
   lines[0].classList.add('show');
   await wait(1800);
 
   lines[1].classList.add('show');
   await wait(6000);
-}
-
-/* -------------------- MEMORY HELPERS -------------------- */
-
-function createMemoryPhoto(name, index, mosaic) {
-  const img = document.createElement('img');
-  img.className = 'memory-photo';
-  img.alt = `CICE memory ${index + 1}`;
-  img.dataset.index = index;
-  mosaic.appendChild(img);
-  return img;
-}
-
-function loadMemoryPhoto(img, name) {
-  return new Promise(resolve => {
-    img.onload = () => resolve(true);
-    img.onerror = () => resolve(false);
-    img.src = imagePath(name);
-  });
 }
 
 /* =========================================================
