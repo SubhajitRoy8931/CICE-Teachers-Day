@@ -1,6 +1,6 @@
 /* =========================================================
    CICE TEACHERS' DAY
-   Background music and sound control
+   Background music and mute/unmute control.
    ========================================================= */
 
 const backgroundMusic = new Audio(
@@ -13,10 +13,9 @@ backgroundMusic.loop = true;
 backgroundMusic.volume = 0.42;
 backgroundMusic.setAttribute('aria-hidden', 'true');
 
-// Track whether the browser has allowed audio playback.
 let musicStarted = false;
 
-// Create the small mute/unmute control.
+/* Create the persistent mute/unmute control. */
 const createAudioControl = () => {
   const button = document.createElement('button');
 
@@ -43,10 +42,11 @@ const createAudioControl = () => {
     backdropFilter: 'blur(8px)',
     WebkitBackdropFilter: 'blur(8px)',
     boxShadow: '0 4px 18px rgba(0,0,0,0.28)',
-    transition: 'opacity 0.3s ease, transform 0.2s ease'
+    opacity: '0',
+    pointerEvents: 'none',
+    transition: 'opacity 0.5s ease, transform 0.2s ease'
   });
 
-  // Keep the button subtle on small screens.
   if (window.matchMedia('(max-width: 700px)').matches) {
     button.style.right = '14px';
     button.style.bottom = '14px';
@@ -55,19 +55,9 @@ const createAudioControl = () => {
     button.style.fontSize = '17px';
   }
 
-  // Toggle mute without restarting the music.
-  button.addEventListener('click', async () => {
-    if (!musicStarted) {
-      const started = await startBackgroundMusic();
-
-      if (!started) {
-        return;
-      }
-
-      backgroundMusic.muted = false;
-      updateAudioControl();
-      return;
-    }
+  /* Toggle mute without restarting the music. */
+  button.addEventListener('click', event => {
+    event.stopPropagation();
 
     backgroundMusic.muted = !backgroundMusic.muted;
     updateAudioControl();
@@ -76,7 +66,7 @@ const createAudioControl = () => {
   document.body.appendChild(button);
 };
 
-// Update the icon and accessibility text after every toggle.
+/* Update the icon and accessibility text. */
 const updateAudioControl = () => {
   const button = document.querySelector('#audioControl');
 
@@ -97,7 +87,19 @@ const updateAudioControl = () => {
   );
 };
 
-// Start music from the Start Experience click.
+/* Reveal the control once the experience has started. */
+const revealAudioControl = () => {
+  const button = document.querySelector('#audioControl');
+
+  if (!button) {
+    return;
+  }
+
+  button.style.opacity = '1';
+  button.style.pointerEvents = 'auto';
+};
+
+/* Start music from the user's Click to Start interaction. */
 const startBackgroundMusic = () => {
   if (musicStarted) {
     return Promise.resolve(true);
@@ -106,18 +108,17 @@ const startBackgroundMusic = () => {
   return backgroundMusic.play()
     .then(() => {
       musicStarted = true;
+      revealAudioControl();
       updateAudioControl();
       return true;
     })
-    .catch(() => {
-      return false;
-    });
+    .catch(() => false);
 };
 
-// Make the starter available to the main website script.
+/* Make the starter available to startup.js. */
 window.startBackgroundMusic = startBackgroundMusic;
 
-// Pause music when the website is no longer visible.
+/* Pause music when the website is no longer visible. */
 document.addEventListener(
   'visibilitychange',
   () => {
@@ -132,7 +133,7 @@ document.addEventListener(
   }
 );
 
-// Add the control after the page structure has loaded.
+/* Add the control as soon as this script is loaded. */
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', createAudioControl);
 } else {
