@@ -855,12 +855,34 @@ async function impact() {
 
 async function memory() {
   const opening = document.querySelector('#memoryOpening');
+  const openingLines = [
+    ...opening.querySelectorAll('p')
+  ];
   const mosaic = document.querySelector('#mosaic');
 
   mosaic.innerHTML = '';
 
+  /* Show the opening lines one at a time. */
+  openingLines.forEach(line => {
+    line.style.opacity = '0';
+    line.style.transform = 'translateY(12px)';
+    line.style.transition =
+      'opacity 0.8s ease, transform 0.8s ease';
+  });
+
   opening.classList.add('show');
-  await wait(3000);
+
+  openingLines[0].style.opacity = '1';
+  openingLines[0].style.transform = 'none';
+
+  /* Pause before revealing the second line. */
+  await wait(2500);
+
+  openingLines[1].style.opacity = '1';
+  openingLines[1].style.transform = 'none';
+
+  /* Keep both lines visible before continuing. */
+  await wait(4000);
   opening.classList.remove('show');
 
   /* Create all 50 frames before loading them. */
