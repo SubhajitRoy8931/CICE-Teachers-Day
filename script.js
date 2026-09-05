@@ -403,10 +403,10 @@ async function archive() {
 async function classroom() {
   const captions = [
     'A Classroom',
-    'A place to learn.',
-    'Then the room came alive.',
-    'Many questions. Many answers.',
-    'The lessons evolved.'
+    'A place to learn',
+    'Then the room came alive',
+    'Many questions, many answers',
+    'The lessons evolved'
   ];
 
   const stage = document.querySelector('#classroomPhotos');
@@ -477,8 +477,8 @@ async function people() {
   const stage = document.querySelector('#peopleStage');
   const caption = document.querySelector('#peopleCaption');
   const captions = [
-    'Different faces.',
-    'Different beginnings.'
+    'Different faces',
+    'Different beginnings'
   ];
 
   stage.innerHTML = '';
@@ -517,9 +517,9 @@ async function teacher() {
   const caption = document.querySelector('#teacherCaption');
 
   const captions = [
-    'Someone who showed us where to begin.',
-    'Someone who listened.',
-    'Someone who helped.',
+    'Someone who showed us where to begin',
+    'Someone who listened',
+    'Someone who helped',
     'Until we could do it ourselves.'
   ];
 
@@ -706,9 +706,9 @@ async function revealMemoryPhoto(img, index) {
 
 async function impact() {
   const captions = [
-    ['And then, we begin to use what we learned.'],
-    ['One step becomes a milestone.'],
-    ['A milestone becomes a new beginning.']
+    ['And then, we begin to use what we learned'],
+    ['One step becomes a milestone'],
+    ['A milestone becomes a new beginning']
   ];
 
   const stage = document.querySelector('#impactStage');
