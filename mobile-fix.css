@@ -1,0 +1,234 @@
+/* =========================================================
+   CICE TEACHERS' DAY
+   Mobile layout refinements
+   ========================================================= */
+
+/* Keep the start screen comfortable on small phones. */
+@media (max-width: 700px) {
+  .start-gate-content {
+    width: min(88vw, 420px);
+    padding: 24px 18px;
+  }
+
+  .start-gate-brand {
+    font-size: clamp(28px, 9vw, 44px);
+  }
+
+  .start-gate-title {
+    font-size: clamp(18px, 5vw, 26px);
+    letter-spacing: 0.12em;
+  }
+
+  .start-gate-button {
+    min-width: 180px;
+    min-height: 48px;
+    padding: 12px 20px;
+    font-size: 13px;
+  }
+
+  /* Give the terminal more usable width and height. */
+  .terminal-window {
+    width: 92vw;
+    height: min(560px, 76vh);
+    min-height: 320px;
+    border-radius: 8px;
+  }
+
+  .terminal-header {
+    height: 48px;
+  }
+
+  .window-buttons {
+    left: 13px;
+    gap: 6px;
+  }
+
+  .window-buttons span {
+    width: 8px;
+    height: 8px;
+  }
+
+  .terminal-name {
+    font-size: 10px;
+    letter-spacing: 0.1em;
+  }
+
+  .system-name {
+    right: 12px;
+    font-size: 8px;
+  }
+
+  .terminal-screen {
+    padding: 32px 20px;
+  }
+
+  #terminalText {
+    font-size: clamp(13px, 3.7vw, 18px);
+    line-height: 1.85;
+  }
+
+  .terminal-footer {
+    height: 34px;
+    padding: 0 12px;
+    font-size: 7px;
+  }
+
+  /* Keep the greeting title inside the phone viewport. */
+  .greeting-title {
+    top: 5vh;
+    width: 94vw;
+    font-size: clamp(29px, 9vw, 52px);
+    letter-spacing: 0.055em;
+  }
+
+  .flying-letter {
+    font-size: clamp(29px, 9vw, 52px);
+    letter-spacing: 0.055em;
+  }
+
+  .greeting-copy {
+    top: 36vh;
+    width: 88vw;
+    font-size: clamp(14px, 4vw, 18px);
+    line-height: 1.55;
+  }
+
+  .greeting-copy p {
+    margin-bottom: 0.65em;
+  }
+
+  /* Replace the wide desktop keyboard with a phone-friendly version. */
+  .keyboard {
+    width: 96vw;
+    bottom: 4vh;
+    padding: 10px 7px 8px;
+    border-radius: 12px;
+  }
+
+  .key-row {
+    gap: 3px;
+    margin: 3px 0;
+  }
+
+  .key {
+    height: 31px;
+    border-radius: 4px;
+    font-size: 8px;
+    box-shadow: 0 2px 0 #070b12, 0 4px 7px rgba(0, 0, 0, 0.35);
+  }
+
+  .key.utility {
+    font-size: 7px;
+  }
+
+  .key.wide {
+    flex: 1.7;
+  }
+
+  .key.wide-small {
+    flex: 1.35;
+  }
+
+  .key.space-key {
+    flex: 5;
+  }
+
+  /* Prevent long captions from touching the screen edges. */
+  .scene-caption {
+    bottom: 6vh;
+    width: 90vw;
+    font-size: clamp(18px, 5vw, 28px);
+    line-height: 1.35;
+  }
+
+  .time-year {
+    margin: 14px 0;
+    font-size: clamp(72px, 22vw, 130px);
+  }
+
+  .time-message {
+    width: 88vw;
+    font-size: clamp(15px, 4.2vw, 21px);
+    line-height: 1.4;
+    text-align: center;
+  }
+
+  .origin-record {
+    width: 88vw;
+  }
+
+  .origin-year {
+    font-size: clamp(64px, 21vw, 120px);
+  }
+
+  .origin-line {
+    font-size: clamp(16px, 4.5vw, 22px);
+  }
+
+  /* Make photo frames use the full useful phone area. */
+  .photo-card {
+    inset: 10vh 5vw 16vh;
+  }
+
+  /* Keep closing reflection text readable without crowding. */
+  .teacher-closing,
+  .people-intro {
+    padding: 0 7vw;
+    font-size: clamp(19px, 5vw, 29px);
+    line-height: 1.45;
+  }
+
+  /* Keep the impact sequence comfortably within the viewport. */
+  .counter-screen .counter {
+    font-size: clamp(56px, 18vw, 110px);
+  }
+
+  /* Prevent the final poem from becoming too wide. */
+  .poetic-lines {
+    width: 88vw;
+    font-size: clamp(19px, 5vw, 30px);
+    line-height: 1.45;
+  }
+
+  .final-message {
+    width: 90vw;
+  }
+
+  .final-message div {
+    font-size: clamp(30px, 8.5vw, 52px);
+    line-height: 1.25;
+  }
+}
+
+/* Extra protection for very small phones. */
+@media (max-width: 380px) {
+  .terminal-window {
+    width: 94vw;
+    height: 74vh;
+  }
+
+  .terminal-screen {
+    padding: 25px 15px;
+  }
+
+  #terminalText {
+    font-size: 12px;
+  }
+
+  .keyboard {
+    width: 98vw;
+    padding-left: 4px;
+    padding-right: 4px;
+  }
+
+  .key {
+    height: 28px;
+    font-size: 7px;
+  }
+
+  .greeting-copy {
+    top: 34vh;
+    width: 90vw;
+    font-size: 13px;
+  }
+}
