@@ -18,6 +18,89 @@ photoSizeStyle.textContent = `
 `;
 document.head.appendChild(photoSizeStyle);
 
+/* ---------------------------------------------------------
+   Memory mosaic helpers
+   The files are stored in assets/memory/.
+   Keep the asset names clean and build the folder path here.
+   --------------------------------------------------------- */
+const memoryMosaicStyle = document.createElement('style');
+memoryMosaicStyle.textContent = `
+  #mosaic {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+  }
+
+  .mosaic-photo {
+    position: absolute;
+    left: var(--x);
+    top: var(--y);
+    width: var(--w);
+    height: var(--h);
+    object-fit: cover;
+    display: block;
+    opacity: 0;
+    visibility: hidden;
+    transform: translate(-50%, -50%) rotate(var(--rot)) scale(.92);
+    transition: opacity .8s ease, transform .9s ease;
+  }
+
+  .mosaic-photo.show {
+    opacity: .84;
+    visibility: visible;
+    transform: translate(-50%, -50%) rotate(var(--rot)) scale(1);
+  }
+
+  .mosaic-photo.asset-missing {
+    display: none;
+  }
+
+  @media (max-width: 700px) {
+    .mosaic-photo {
+      width: 20vw;
+      height: 18vh;
+    }
+  }
+`;
+document.head.appendChild(memoryMosaicStyle);
+
+function createMemoryPhoto(name, index, mosaic) {
+  const img = document.createElement('img');
+  const column = index % 10;
+  const row = Math.floor(index / 10);
+
+  img.className = 'mosaic-photo';
+  img.alt = `CICE memory ${index + 1}`;
+  img.style.setProperty('--x', `${column * 10 + 5}%`);
+  img.style.setProperty('--y', `${row * 20 + 10}%`);
+  img.style.setProperty('--w', '11vw');
+  img.style.setProperty('--h', '22vh');
+  img.style.setProperty('--rot', `${-2 + Math.random() * 4}deg`);
+
+  img.addEventListener('error', () => {
+    img.classList.add('asset-missing');
+  });
+
+  mosaic.appendChild(img);
+  return img;
+}
+
+function loadMemoryPhoto(img, name) {
+  return new Promise(resolve => {
+    const finish = () => resolve();
+    img.addEventListener('load', finish, { once: true });
+    img.addEventListener('error', finish, { once: true });
+    img.src = `assets/memory/${encodeURIComponent(name)}`;
+  });
+}
+
+async function revealMemoryPhoto(img, index) {
+  await wait(120 + index * 85);
+  if (!img.classList.contains('asset-missing')) {
+    img.classList.add('show');
+  }
+}
+
 async function impact() {
   const captions = [
     ['And then, we begin to use what we learned.'],
@@ -138,7 +221,6 @@ async function impact() {
   screen.classList.remove('show');
   showScene(7);
 
-  /* Do not modify assets.memory here. It already contains memory/ paths. */
   const memoryStyle = document.createElement('style');
   memoryStyle.textContent = `
     #memoryOpening:not(.show) {
@@ -171,27 +253,22 @@ async function memory() {
   await wait(3000);
   opening.classList.remove('show');
 
-  /* Create every photo immediately so the mosaic can build as a whole. */
+  /* Create all 50 frames first. */
   const images = assets.memory.map((name, index) => {
     const img = createMemoryPhoto(name, index, mosaic);
     return { img, name, index };
   });
 
-  /* Load all 50 images in parallel. */
+  /* Load every real file from assets/memory/. */
   await Promise.all(
-    images.map(item =>
-      loadMemoryPhoto(item.img, item.name)
-    )
+    images.map(item => loadMemoryPhoto(item.img, item.name))
   );
 
-  /* Reveal the loaded photos in the original staggered mosaic rhythm. */
+  /* Reveal the successfully loaded photos in sequence. */
   await Promise.all(
-    images.map(item =>
-      revealMemoryPhoto(item.img, item.index)
-    )
+    images.map(item => revealMemoryPhoto(item.img, item.index))
   );
 
-  /* Let the completed mosaic breathe before moving to the poem. */
   await wait(3200);
 
   showScene(8);
