@@ -1,6 +1,6 @@
 /* =========================================================
    CICE TEACHERS' DAY
-   Cinematic start gate.
+   Cinematic start gate controller.
    ========================================================= */
 
 const startStyle = document.createElement('style');
@@ -27,7 +27,17 @@ startStyle.textContent = `
     pointer-events: none;
   }
 
-  .start-content {
+  #startGate::before {
+    content: '';
+    position: absolute;
+    inset: -20%;
+    background: radial-gradient(circle,
+      rgba(36,87,214,0.08),
+      transparent 48%);
+    animation: startGlow 7s ease-in-out infinite;
+  }
+
+  .start-gate-content {
     position: relative;
     z-index: 2;
     width: min(88vw, 620px);
@@ -35,7 +45,7 @@ startStyle.textContent = `
     transform: translateY(-2vh);
   }
 
-  .start-brand {
+  .start-gate-brand {
     color: #f5f7fb;
     font-size: clamp(34px, 5vw, 58px);
     font-weight: 600;
@@ -44,7 +54,7 @@ startStyle.textContent = `
     animation: startFade 1.5s ease 0.2s forwards;
   }
 
-  .start-title {
+  .start-gate-title {
     margin-top: 0.8rem;
     color: #aab8cf;
     font-size: clamp(13px, 1.8vw, 18px);
@@ -53,7 +63,7 @@ startStyle.textContent = `
     animation: startFade 1.5s ease 0.8s forwards;
   }
 
-  .start-line {
+  .start-gate-line {
     width: min(420px, 70vw);
     height: 1px;
     margin: 2.2rem auto 2.4rem;
@@ -63,7 +73,7 @@ startStyle.textContent = `
     animation: startLine 1.4s ease 1.3s forwards;
   }
 
-  .start-button {
+  .start-gate-button {
     appearance: none;
     border: 1px solid rgba(110,145,223,0.55);
     border-radius: 999px;
@@ -83,23 +93,14 @@ startStyle.textContent = `
     -webkit-backdrop-filter: blur(8px);
   }
 
-  .start-button:hover {
+  .start-gate-button:hover {
     border-color: rgba(110,145,223,0.95);
     background: rgba(36,87,214,0.16);
   }
 
-  .start-button:focus-visible {
+  .start-gate-button:focus-visible {
     outline: 2px solid #6e91df;
     outline-offset: 5px;
-  }
-
-  .start-glow {
-    position: absolute;
-    inset: -20%;
-    background: radial-gradient(circle,
-      rgba(36,87,214,0.08),
-      transparent 48%);
-    animation: startGlow 7s ease-in-out infinite;
   }
 
   @keyframes startFade {
@@ -122,11 +123,11 @@ startStyle.textContent = `
   }
 
   @media (max-width: 700px) {
-    .start-title {
+    .start-gate-title {
       letter-spacing: 0.22em;
     }
 
-    .start-button {
+    .start-gate-button {
       padding: 12px 24px;
       font-size: 12px;
     }
@@ -135,24 +136,8 @@ startStyle.textContent = `
 
 document.head.appendChild(startStyle);
 
-const startGate = document.createElement('div');
-
-startGate.id = 'startGate';
-startGate.innerHTML = `
-  <div class="start-glow"></div>
-  <div class="start-content">
-    <div class="start-brand">CICE</div>
-    <div class="start-title">TEACHERS' DAY 2026</div>
-    <div class="start-line"></div>
-    <button class="start-button" type="button">
-      CLICK TO START
-    </button>
-  </div>
-`;
-
-document.body.appendChild(startGate);
-
-const startButton = startGate.querySelector('.start-button');
+const startGate = document.querySelector('#startGate');
+const startButton = document.querySelector('#startExperience');
 let experienceStarted = false;
 
 /* Load a script only when it is needed. */
@@ -183,15 +168,15 @@ async function startExperience() {
   }
 
   /* Start the existing cinematic sequence from the beginning. */
-  await loadScript('script.js?v=cinematic-start-1');
+  await loadScript('script.js?v=cinematic-start-2');
   await loadScript('memory-fix.js?v=1');
 
   await new Promise(resolve => setTimeout(resolve, 650));
   startGate.remove();
 }
 
-/* The button itself is the only visible start control. */
+/* The button is the single intentional start action. */
 startButton.addEventListener('click', startExperience);
 
 /* Load audio before the visitor reaches the start button. */
-loadScript('audio.js?v=start-gate-2').catch(() => {});
+loadScript('audio.js?v=start-gate-3').catch(() => {});
