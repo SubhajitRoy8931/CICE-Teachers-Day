@@ -232,3 +232,78 @@
     font-size: 13px;
   }
 }
+
+/* =========================================================
+   MOBILE MEMORY MOSAIC
+   Desktop stays 10 columns x 5 rows.
+   Mobile becomes 5 columns x 10 rows.
+   ========================================================= */
+
+@media (max-width: 700px) {
+  .mosaic-photo {
+    width: 20vw !important;
+    height: 10vh !important;
+  }
+
+  /* Five columns. */
+  .mosaic-photo:nth-child(5n + 1) {
+    left: 10% !important;
+  }
+
+  .mosaic-photo:nth-child(5n + 2) {
+    left: 30% !important;
+  }
+
+  .mosaic-photo:nth-child(5n + 3) {
+    left: 50% !important;
+  }
+
+  .mosaic-photo:nth-child(5n + 4) {
+    left: 70% !important;
+  }
+
+  .mosaic-photo:nth-child(5n + 5) {
+    left: 90% !important;
+  }
+
+  /* Ten rows. */
+  .mosaic-photo:nth-child(n + 1):nth-child(-n + 5) {
+    top: 5% !important;
+  }
+
+  .mosaic-photo:nth-child(n + 6):nth-child(-n + 10) {
+    top: 15% !important;
+  }
+
+  .mosaic-photo:nth-child(n + 11):nth-child(-n + 15) {
+    top: 25% !important;
+  }
+
+  .mosaic-photo:nth-child(n + 16):nth-child(-n + 20) {
+    top: 35% !important;
+  }
+
+  .mosaic-photo:nth-child(n + 21):nth-child(-n + 25) {
+    top: 45% !important;
+  }
+
+  .mosaic-photo:nth-child(n + 26):nth-child(-n + 30) {
+    top: 55% !important;
+  }
+
+  .mosaic-photo:nth-child(n + 31):nth-child(-n + 35) {
+    top: 65% !important;
+  }
+
+  .mosaic-photo:nth-child(n + 36):nth-child(-n + 40) {
+    top: 75% !important;
+  }
+
+  .mosaic-photo:nth-child(n + 41):nth-child(-n + 45) {
+    top: 85% !important;
+  }
+
+  .mosaic-photo:nth-child(n + 46):nth-child(-n + 50) {
+    top: 95% !important;
+  }
+}
