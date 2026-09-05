@@ -908,7 +908,7 @@ async function memory() {
     )
   );
 
-  await wait(3200);
+  await wait(5000);
 
   showScene(8);
   await poetry();
