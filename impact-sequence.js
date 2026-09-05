@@ -94,7 +94,6 @@ async function impact() {
 
   screen.classList.add('show');
 
-  /* Each statement appears instantly and remains visible. */
   years.style.opacity = '1';
   years.style.visibility = 'visible';
   await wait(2000);
@@ -107,7 +106,6 @@ async function impact() {
   teacher.style.visibility = 'visible';
   await wait(900);
 
-  /* Existing counter animation, starting visibly from 1. */
   const start = performance.now();
   const duration = 6000;
 
@@ -131,7 +129,6 @@ async function impact() {
 
   counter.textContent = '3000+';
 
-  /* Wait exactly 1.5 seconds before revealing the label. */
   await wait(1500);
   taught.style.opacity = '1';
   taught.style.visibility = 'visible';
@@ -141,9 +138,7 @@ async function impact() {
   screen.classList.remove('show');
   showScene(7);
 
-  /* Section 08: use the real memory folder. */
-  assets.memory = assets.memory.map(name => `memory/${name}`);
-
+  /* Do not modify assets.memory here. It already contains memory/ paths. */
   const memoryStyle = document.createElement('style');
   memoryStyle.textContent = `
     #memoryOpening:not(.show) {
@@ -182,7 +177,7 @@ async function memory() {
     return { img, name, index };
   });
 
-  /* Load all 50 images in parallel instead of one at a time. */
+  /* Load all 50 images in parallel. */
   await Promise.all(
     images.map(item =>
       loadMemoryPhoto(item.img, item.name)
@@ -215,7 +210,6 @@ async function poetry() {
     await wait(2500);
   }
 
-  /* Hold the complete poem before the final message. */
   await wait(3500);
 
   showScene(9);
