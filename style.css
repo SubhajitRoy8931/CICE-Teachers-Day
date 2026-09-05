@@ -701,9 +701,15 @@ body { font-family: Inter, "Segoe UI", Arial, sans-serif; }
   text-align: center;
 }
 
+/* Both closing lines use exactly the same visual treatment. */
 .final-message div {
   opacity: 0;
   transform: translateY(14px);
+  color: #f5f7fb;
+  font-size: clamp(38px, 5vw, 70px);
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: 0.02em;
   transition: opacity 1s ease, transform 1s ease;
 }
 
@@ -712,16 +718,8 @@ body { font-family: Inter, "Segoe UI", Arial, sans-serif; }
   transform: none;
 }
 
-.final-message div:first-child {
-  font-size: clamp(38px, 5vw, 70px);
-  font-weight: 600;
-  letter-spacing: 0.02em;
-}
-
-.final-message div:last-child {
+.final-message div + div {
   margin-top: 0.55em;
-  color: #cbd5e7;
-  font-size: clamp(22px, 2.5vw, 34px);
 }
 
 /* Keep the closing sections comfortable on smaller screens. */
