@@ -6,6 +6,48 @@
   <meta name="theme-color" content="#020711">
   <title>CICE — Teachers' Day</title>
   <link rel="stylesheet" href="style.css?v=final-closing-2">
+
+  <style>
+    /* Subtle creator credit for the final screen. */
+    .creator-credit {
+      position: absolute;
+      left: 50%;
+      bottom: 6vh;
+      transform: translateX(-50%);
+      width: max-content;
+      max-width: 90vw;
+      overflow: hidden;
+      white-space: nowrap;
+      color: #71809a;
+      font-size: 14px;
+      font-weight: 400;
+      letter-spacing: 0.08em;
+      opacity: 0;
+      border-right: 1px solid #71809a;
+      padding-right: 3px;
+      animation:
+        creatorType 2.4s steps(21, end) 2.1s forwards,
+        creatorCursor 0.7s steps(1) 2.1s infinite;
+    }
+
+    @keyframes creatorType {
+      from { width: 0; opacity: 0; }
+      1% { opacity: 1; }
+      to { width: 21ch; opacity: 1; }
+    }
+
+    @keyframes creatorCursor {
+      0%, 50% { border-color: #71809a; }
+      51%, 100% { border-color: transparent; }
+    }
+
+    @media (max-width: 700px) {
+      .creator-credit {
+        bottom: 5vh;
+        font-size: 12px;
+      }
+    }
+  </style>
 </head>
 <body>
   <!-- Full-screen cinematic sequence. -->
@@ -19,7 +61,7 @@
     <section class="scene impact" data-scene="impact"><div class="impact-stage" id="impactStage"></div><div class="scene-caption" id="impactCaption"></div><div class="counter-screen" id="counterScreen"><div class="counter" id="studentCounter">0</div></div></section>
     <section class="scene memory" data-scene="memory"><div class="memory-opening" id="memoryOpening"><p>Some things are measured in numbers.</p><p>Some are remembered in moments.</p></div><div class="mosaic" id="mosaic"></div></section>
     <section class="scene poetic-closing" data-scene="poetic-closing"><div class="poetic-lines" id="poeticLines"><p>You lit the spark, we learned to see,</p><p>You helped us find what we could be.</p><p>Though years may take us far away,</p><p>Your lessons walk with us each day.</p></div></section>
-    <section class="scene final-closing" data-scene="final-closing"><div class="final-message" id="finalMessage"><div>Thank you, Sir.</div><div>Happy Teachers' Day</div></div></section>
+    <section class="scene final-closing" data-scene="final-closing"><div class="final-message" id="finalMessage"><div>Thank you, Sir.</div><div>Happy Teachers' Day</div></div><div class="creator-credit">Created by Subhajit Roy</div></section>
   </main>
 
   <!-- All website logic now lives in one JavaScript file. -->
