@@ -1,7 +1,252 @@
 /* =========================================================
    CICE TEACHERS' DAY
    Main website script
+   Includes start gate, music control, and memory fix.
    ========================================================= */
+
+/* =========================================================
+   START GATE + BACKGROUND MUSIC
+   ========================================================= */
+
+const startStyle = document.createElement('style');
+
+startStyle.textContent = `
+  #startGate {
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    background:
+      radial-gradient(circle at center,
+        rgba(36,87,214,0.12),
+        transparent 46%),
+      #020711;
+    opacity: 1;
+    transition: opacity 1.2s ease;
+  }
+
+  #startGate.leaving {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  #startGate::before {
+    content: '';
+    position: absolute;
+    inset: -20%;
+    background: radial-gradient(circle,
+      rgba(36,87,214,0.08),
+      transparent 48%);
+    animation: startGlow 7s ease-in-out infinite;
+  }
+
+  .start-gate-content {
+    position: relative;
+    z-index: 2;
+    width: min(88vw, 620px);
+    text-align: center;
+    transform: translateY(-2vh);
+  }
+
+  .start-gate-brand {
+    color: #f5f7fb;
+    font-size: clamp(34px, 5vw, 58px);
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    opacity: 0;
+    animation: startFade 1.5s ease 0.2s forwards;
+  }
+
+  .start-gate-title {
+    margin-top: 0.8rem;
+    color: #aab8cf;
+    font-size: clamp(13px, 1.8vw, 18px);
+    letter-spacing: 0.34em;
+    opacity: 0;
+    animation: startFade 1.5s ease 0.8s forwards;
+  }
+
+  .start-gate-line {
+    width: min(420px, 70vw);
+    height: 1px;
+    margin: 2.2rem auto 2.4rem;
+    background: rgba(110,145,223,0.5);
+    transform: scaleX(0);
+    transform-origin: center;
+    animation: startLine 1.4s ease 1.3s forwards;
+  }
+
+  .start-gate-button {
+    appearance: none;
+    border: 1px solid rgba(110,145,223,0.55);
+    border-radius: 999px;
+    padding: 13px 30px;
+    background: rgba(7,19,38,0.72);
+    color: #f5f7fb;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    cursor: pointer;
+    opacity: 0;
+    animation:
+      startFade 1.2s ease 1.8s forwards,
+      startPulse 2.4s ease-in-out 3s infinite;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+
+  .start-gate-button:hover {
+    border-color: rgba(110,145,223,0.95);
+    background: rgba(36,87,214,0.16);
+  }
+
+  .start-gate-button:focus-visible {
+    outline: 2px solid #6e91df;
+    outline-offset: 5px;
+  }
+
+  @keyframes startFade {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: none; }
+  }
+
+  @keyframes startLine {
+    to { transform: scaleX(1); }
+  }
+
+  @keyframes startPulse {
+    0%, 100% { opacity: 0.72; }
+    50% { opacity: 1; }
+  }
+
+  @keyframes startGlow {
+    0%, 100% { transform: scale(0.92); opacity: 0.7; }
+    50% { transform: scale(1.08); opacity: 1; }
+  }
+
+  @media (max-width: 700px) {
+    .start-gate-title {
+      letter-spacing: 0.22em;
+    }
+
+    .start-gate-button {
+      padding: 12px 24px;
+      font-size: 12px;
+    }
+  }
+`;
+
+document.head.appendChild(startStyle);
+
+const backgroundMusic = new Audio(
+  'assets/CICE_Teachers_Day_3m38s_CONTINUOUS.mp3'
+);
+
+backgroundMusic.id = 'ciceBackgroundMusic';
+backgroundMusic.preload = 'auto';
+backgroundMusic.loop = true;
+backgroundMusic.volume = 0.42;
+backgroundMusic.setAttribute('aria-hidden', 'true');
+
+let musicStarted = false;
+
+const createAudioControl = () => {
+  const button = document.createElement('button');
+
+  button.id = 'audioControl';
+  button.type = 'button';
+  button.textContent = '🔊';
+  button.setAttribute('aria-label', 'Mute music');
+  button.setAttribute('title', 'Mute music');
+
+  Object.assign(button.style, {
+    position: 'fixed',
+    right: '22px',
+    bottom: '22px',
+    zIndex: '9999',
+    width: '44px',
+    height: '44px',
+    border: '1px solid rgba(255,255,255,0.18)',
+    borderRadius: '50%',
+    background: 'rgba(2,7,17,0.72)',
+    color: '#f5f7fb',
+    fontSize: '19px',
+    lineHeight: '1',
+    cursor: 'pointer',
+    backdropFilter: 'blur(8px)',
+    WebkitBackdropFilter: 'blur(8px)',
+    boxShadow: '0 4px 18px rgba(0,0,0,0.28)',
+    opacity: '0',
+    pointerEvents: 'none',
+    transition: 'opacity 0.5s ease, transform 0.2s ease'
+  });
+
+  if (window.matchMedia('(max-width: 700px)').matches) {
+    button.style.right = '14px';
+    button.style.bottom = '14px';
+    button.style.width = '40px';
+    button.style.height = '40px';
+    button.style.fontSize = '17px';
+  }
+
+  button.addEventListener('click', event => {
+    event.stopPropagation();
+    backgroundMusic.muted = !backgroundMusic.muted;
+    updateAudioControl();
+  });
+
+  document.body.appendChild(button);
+};
+
+const updateAudioControl = () => {
+  const button = document.querySelector('#audioControl');
+
+  if (!button) return;
+
+  const muted = backgroundMusic.muted;
+  button.textContent = muted ? '🔇' : '🔊';
+  button.setAttribute(
+    'aria-label',
+    muted ? 'Unmute music' : 'Mute music'
+  );
+  button.setAttribute(
+    'title',
+    muted ? 'Unmute music' : 'Mute music'
+  );
+};
+
+const revealAudioControl = () => {
+  const button = document.querySelector('#audioControl');
+
+  if (!button) return;
+
+  button.style.opacity = '1';
+  button.style.pointerEvents = 'auto';
+};
+
+const startBackgroundMusic = () => {
+  if (musicStarted) return Promise.resolve(true);
+
+  return backgroundMusic.play()
+    .then(() => {
+      musicStarted = true;
+      revealAudioControl();
+      updateAudioControl();
+      return true;
+    })
+    .catch(() => false);
+};
+
+window.startBackgroundMusic = startBackgroundMusic;
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', createAudioControl);
+} else {
+  createAudioControl();
+}
 
 /* -------------------- BASIC HELPERS -------------------- */
 
@@ -461,7 +706,6 @@ async function classroom() {
   await wait(700);
   bottomMessage.textContent = 'And along the way, lives were shaped.';
 
-  /* Keep this time-record scene visible one second longer. */
   await wait(3200);
 
   record.classList.remove('show');
@@ -559,8 +803,6 @@ async function teacher() {
     await wait(850);
   }
 
-  /* -------------------- CLOSING REFLECTION -------------------- */
-
   const closing = document.querySelector('#teacherClosing');
   const closingLines = [...closing.querySelectorAll('p')];
 
@@ -595,10 +837,8 @@ async function teacher() {
 
 /* =========================================================
    07 — IMPACT
-   Consolidated from the former override file.
    ========================================================= */
 
-/* Give photographic frames more breathing room. */
 const photoSizeStyle = document.createElement('style');
 photoSizeStyle.textContent = `
   .photo-card {
@@ -613,7 +853,6 @@ photoSizeStyle.textContent = `
 `;
 document.head.appendChild(photoSizeStyle);
 
-/* Memory mosaic styling belongs here now. */
 const memoryMosaicStyle = document.createElement('style');
 memoryMosaicStyle.textContent = `
   #mosaic {
@@ -737,7 +976,6 @@ async function impact() {
   const screen = document.querySelector('#counterScreen');
   const counter = document.querySelector('#studentCounter');
 
-  /* Build the final counter without changing HTML. */
   const content = document.createElement('div');
   const lead = document.createElement('div');
   const years = document.createElement('div');
@@ -862,30 +1100,39 @@ async function memory() {
 
   mosaic.innerHTML = '';
 
-  /* Show the opening lines one at a time. */
+  opening.classList.add('show');
+  opening.style.opacity = '1';
+  opening.style.visibility = 'visible';
+  opening.style.transition = 'none';
+
   openingLines.forEach(line => {
     line.style.opacity = '0';
+    line.style.visibility = 'hidden';
     line.style.transform = 'translateY(12px)';
-    line.style.transition =
-      'opacity 0.8s ease, transform 0.8s ease';
+    line.style.transition = 'none';
   });
 
-  opening.classList.add('show');
+  void opening.offsetHeight;
 
+  openingLines[0].style.visibility = 'visible';
+  openingLines[0].style.transition =
+    'opacity 0.8s ease, transform 0.8s ease';
   openingLines[0].style.opacity = '1';
   openingLines[0].style.transform = 'none';
 
-  /* Pause before revealing the second line. */
   await wait(2500);
 
+  openingLines[1].style.visibility = 'visible';
+  openingLines[1].style.transition =
+    'opacity 0.8s ease, transform 0.8s ease';
   openingLines[1].style.opacity = '1';
   openingLines[1].style.transform = 'none';
 
-  /* Keep both lines visible before continuing. */
   await wait(4000);
-  opening.classList.remove('show');
 
-  /* Create all 50 frames before loading them. */
+  opening.style.opacity = '0';
+  opening.style.visibility = 'hidden';
+
   const images = assets.memory.map(
     (name, index) => ({
       img: createMemoryPhoto(name, index, mosaic),
@@ -894,21 +1141,19 @@ async function memory() {
     })
   );
 
-  /* Load every real file in assets/memory/. */
   await Promise.all(
     images.map(item =>
       loadMemoryPhoto(item.img, item.name)
     )
   );
 
-  /* Reveal loaded photos in sequence. */
   await Promise.all(
     images.map(item =>
       revealMemoryPhoto(item.img, item.index)
     )
   );
 
-  await wait(5000);
+  await wait(3200);
 
   showScene(8);
   await poetry();
@@ -959,7 +1204,26 @@ async function finalMessage() {
 }
 
 /* =========================================================
-   START
+   START EXPERIENCE
    ========================================================= */
 
-boot();
+const startGate = document.querySelector('#startGate');
+const startButton = document.querySelector('#startExperience');
+let experienceStarted = false;
+
+async function startExperience() {
+  if (experienceStarted) return;
+
+  experienceStarted = true;
+  startButton.disabled = true;
+  startGate.classList.add('leaving');
+
+  /* Music and website begin from the same click. */
+  await startBackgroundMusic();
+  boot();
+
+  await wait(650);
+  startGate.remove();
+}
+
+startButton.addEventListener('click', startExperience);
