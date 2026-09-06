@@ -242,6 +242,29 @@ const startBackgroundMusic = () => {
 
 window.startBackgroundMusic = startBackgroundMusic;
 
+/* Pause music when the tab is hidden. */
+let musicWasPlaying = false;
+
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) {
+    musicWasPlaying = !backgroundMusic.paused;
+
+    if (musicWasPlaying) {
+      backgroundMusic.pause();
+    }
+
+    return;
+  }
+
+  if (
+    musicWasPlaying &&
+    musicStarted &&
+    !backgroundMusic.muted
+  ) {
+    backgroundMusic.play().catch(() => {});
+  }
+});
+
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', createAudioControl);
 } else {
