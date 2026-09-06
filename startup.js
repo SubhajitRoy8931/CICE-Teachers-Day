@@ -140,6 +140,37 @@ const startGate = document.querySelector('#startGate');
 const startButton = document.querySelector('#startExperience');
 let experienceStarted = false;
 
+/* Create the background music without creating any visible control. */
+const backgroundMusic = new Audio(
+  'assets/CICE_Teachers_Day_3m38s_CONTINUOUS.mp3'
+);
+
+backgroundMusic.preload = 'auto';
+backgroundMusic.loop = true;
+backgroundMusic.volume = 0.42;
+
+/* Start the music from the same user click as the experience. */
+function startBackgroundMusic() {
+  return backgroundMusic.play().catch(() => false);
+}
+
+window.startBackgroundMusic = startBackgroundMusic;
+
+/* Pause music while the page is hidden. */
+document.addEventListener(
+  'visibilitychange',
+  () => {
+    if (document.hidden) {
+      backgroundMusic.pause();
+      return;
+    }
+
+    if (!backgroundMusic.paused) {
+      backgroundMusic.play().catch(() => {});
+    }
+  }
+);
+
 /* Load a script only when it is needed. */
 function loadScript(src) {
   return new Promise((resolve, reject) => {
@@ -162,13 +193,9 @@ async function startExperience() {
   startButton.disabled = true;
   startGate.classList.add('leaving');
 
-  /* Audio was loaded before the visitor clicked. */
-  if (window.startBackgroundMusic) {
-    window.startBackgroundMusic();
-  }
-
-  /* Start the existing cinematic sequence from the beginning. */
-  await loadScript('script.js?v=cinematic-start-2');
+  /* Audio and the cinematic sequence start from this click. */
+  startBackgroundMusic();
+  await loadScript('script.js?v=cinematic-start-3');
   await loadScript('memory-fix.js?v=1');
 
   await new Promise(resolve => setTimeout(resolve, 650));
@@ -177,6 +204,3 @@ async function startExperience() {
 
 /* The button is the single intentional start action. */
 startButton.addEventListener('click', startExperience);
-
-/* Load audio before the visitor reaches the start button. */
-loadScript('audio.js?v=start-gate-3').catch(() => {});
