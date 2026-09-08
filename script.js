@@ -153,6 +153,38 @@ backgroundMusic.setAttribute('aria-hidden', 'true');
 
 let musicStarted = false;
 
+/* Keep the device screen awake while the experience is running. */
+let wakeLock = null;
+
+const requestWakeLock = async () => {
+  if (!('wakeLock' in navigator)) return false;
+
+  try {
+    wakeLock = await navigator.wakeLock.request('screen');
+
+    wakeLock.addEventListener('release', () => {
+      wakeLock = null;
+    });
+
+    return true;
+  } catch (error) {
+    wakeLock = null;
+    return false;
+  }
+};
+
+const releaseWakeLock = async () => {
+  if (!wakeLock) return;
+
+  try {
+    await wakeLock.release();
+  } catch (error) {
+    /* Ignore wake-lock release failures. */
+  }
+
+  wakeLock = null;
+};
+
 const createAudioControl = () => {
   const button = document.createElement('button');
 
@@ -262,6 +294,10 @@ document.addEventListener('visibilitychange', () => {
     !backgroundMusic.muted
   ) {
     backgroundMusic.play().catch(() => {});
+  }
+
+  if (experienceStarted && !wakeLock) {
+    requestWakeLock();
   }
 });
 
@@ -1224,6 +1260,8 @@ async function finalMessage() {
 
   lines[1].classList.add('show');
   await wait(6000);
+
+  await releaseWakeLock();
 }
 
 /* =========================================================
@@ -1241,7 +1279,8 @@ async function startExperience() {
   startButton.disabled = true;
   startGate.classList.add('leaving');
 
-  /* Music and website begin from the same click. */
+  /* Music, wake lock, and website begin from the same click. */
+  await requestWakeLock();
   await startBackgroundMusic();
   boot();
 
